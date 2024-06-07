@@ -1,0 +1,11 @@
+load("@doxygen//:doxygen.bzl", "doxygen")
+
+doxygen(
+    name = "doxygen",
+    srcs = glob([
+        "*.h",
+        "*.cpp",
+    ]),
+    project_brief = "Example project for doxygen",
+    project_name = "base",
+)

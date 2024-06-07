@@ -1,0 +1,20 @@
+load("@doxygen//:doxygen.bzl", "doxygen")
+
+doxygen(
+    name = "doxygen",
+    srcs = ["README.md"] + glob([
+        "*.h",
+        "*.cpp",
+    ]),
+    outs = [
+        "html",
+        "latex",
+    ],
+    configurations = [
+        "USE_MDFILE_AS_MAINPAGE = README.md",
+        "GENERATE_HTML = YES",
+        "GENERATE_LATEX = YES",
+    ],
+    project_brief = "Example project for doxygen",
+    project_name = "doxyfile_latex",
+)

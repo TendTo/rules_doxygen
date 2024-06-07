@@ -1,0 +1,8 @@
+filegroup(
+    name = "sources",
+    srcs = [
+        "lib_a.cpp",
+        "lib_a.h",
+    ],
+    visibility = ["//visibility:public"],
+)

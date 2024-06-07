@@ -1,0 +1,23 @@
+"""Doxygen BUILD file"""
+
+filegroup(
+    name = "Doxyfile",
+    srcs = ["@rules_doxygen//:Doxyfile"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "Doxyfile.template",
+    srcs = ["@rules_doxygen//:Doxyfile.template"],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "executable",
+    srcs = select({
+        "@platforms//os:linux": ["bin/doxygen"],
+        "@platforms//os:macos": ["doxygen"],
+        "@platforms//os:windows": ["doxygen.exe"],
+    }, "Unsupported platform"),
+    visibility = ["//visibility:public"],
+)

@@ -1,0 +1,13 @@
+{
+  "homepage": "https://github.com/TendTo/rules_doxygen",
+  "maintainers": [
+    {
+      "name": "Ernesto Casablanca",
+      "email": "casablancaernesto@gmail.com",
+      "github": "TendTo"
+    }
+  ],
+  "repository": ["github:TendTo/rules_doxygen"],
+  "versions": [],
+  "yanked_versions": {}
+}

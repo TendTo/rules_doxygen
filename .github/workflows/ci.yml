@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  examples:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        subdir: [base, doxyfile, latex, nested]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build ${{ matrix.subdir }}
+        run: bazel build //${{ matrix.subdir }}:doxygen
+        working-directory: examples
+      - name: Check output
+        uses: thebinaryfelix/check-file-existence-action@1.0.0
+        with:
+          files: "examples/bazel-bin/${{ matrix.subdir }}/html/index.html"

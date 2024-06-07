@@ -1,0 +1,17 @@
+load("@doxygen//:doxygen.bzl", "doxygen")
+
+doxygen(
+    name = "doxygen",
+    srcs = glob([
+        "*.h",
+        "*.cpp",
+        "lib_b/*.h",
+        "lib_b/*.cpp",
+    ]) + ["//nested/lib_a:sources"],
+    configurations = [
+        "USE_MDFILE_AS_MAINPAGE = README.md",
+        "INPUT = nested nested/lib_a nested/lib_b",
+    ],
+    project_brief = "Example project for doxygen",
+    project_name = "nested",
+)
