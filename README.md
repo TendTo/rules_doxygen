@@ -50,6 +50,9 @@ The build will fail with an error message containing the correct SHA256.
 Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_0/doxygen-1.10.0.windows.x64.bin.zip failed: class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b but wanted 0000000000000000000000000000000000000000000000000000000000000000
 ```
 
+> [!Note]
+> See [the documentation](docs/extensions_doc.md) for more information.
+
 ## Use
 
 The main macro exposed by this module is `doxygen`.
@@ -78,7 +81,7 @@ Use the [Doxygen documentation](https://www.doxygen.nl/manual/config.html) or ge
 They will simply be appended at the end of the file, overriding the default values.
 
 > [!Note]
-> See the [examples](examples) directory for examples of how to use the rules.
+> See the [documentation](docs/doxygen_doc.md) for more information or the [examples](examples) directory for examples of how to use the rules.
 
 ## Build
 
