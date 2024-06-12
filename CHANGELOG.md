@@ -11,9 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release
 
-## [NEXT.VERSION]
+## [1.1.0]
 
-- TODO
+### Added
+
+- Possibility of using a custom Doxyfile
+- Added documentation to rules, macro and extensions
+
+### Fixed
+
+- Correctly use `project_name` and `project_brief` in the macro
+- Unfreeze default list in macro
 
 [1.0.0]: https://github.com/TendTo/rules_doxygen/tree/1.0.0
-[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/1.0.0...HEAD
+[1.1.0]: https://github.com/TendTo/rules_doxygen/compare/1.0.0...1.1.0
+[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/1.1.0...HEAD
