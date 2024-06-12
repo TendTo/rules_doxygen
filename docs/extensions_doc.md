@@ -15,8 +15,7 @@ Module extension for declaring the doxygen version to use.
 
 The resulting repository will have the following targets:
 - `@doxygen//:doxygen.bzl`, containing the doxygen macro used to generate the documentation.
-- `@doxygen//:Doxyfile` Doxyfile configuration file to use.
-- `@doxygen//:Doxyfile.template`, Doxyfile template used to generate the Doxyfile.
+- `@doxygen//:Doxyfile.template`, default Doxyfile template used to generate the Doxyfile.
 
 ### Example
 

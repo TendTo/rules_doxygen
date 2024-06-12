@@ -7,7 +7,7 @@ Doxygen rule for Bazel.
 ## doxygen
 
 <pre>
-doxygen(<a href="#doxygen-name">name</a>, <a href="#doxygen-srcs">srcs</a>, <a href="#doxygen-project_name">project_name</a>, <a href="#doxygen-project_brief">project_brief</a>, <a href="#doxygen-configurations">configurations</a>, <a href="#doxygen-outs">outs</a>)
+doxygen(<a href="#doxygen-name">name</a>, <a href="#doxygen-srcs">srcs</a>, <a href="#doxygen-project_name">project_name</a>, <a href="#doxygen-project_brief">project_brief</a>, <a href="#doxygen-configurations">configurations</a>, <a href="#doxygen-doxyfile_template">doxyfile_template</a>, <a href="#doxygen-outs">outs</a>)
 </pre>
 
 Generates documentation using Doxygen.
@@ -47,6 +47,7 @@ doxygen(
 | <a id="doxygen-project_name"></a>project_name |  The name of the project.   |  `None` |
 | <a id="doxygen-project_brief"></a>project_brief |  A brief description of the project.   |  `None` |
 | <a id="doxygen-configurations"></a>configurations |  A list of additional configuration parameters to pass to Doxygen.   |  `[]` |
+| <a id="doxygen-doxyfile_template"></a>doxyfile_template |  The template file to use to generate the Doxyfile. The following substitutions are available:<br> - `# {{INPUT}}`: Subpackage directory in the sandbox.<br> - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.<br> - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.   |  `"@doxygen//:Doxyfile.template"` |
 | <a id="doxygen-outs"></a>outs |  The output folders bazel will keep. If only the html outputs is of interest, the default value will do. otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).   |  `["html"]` |
 
 
