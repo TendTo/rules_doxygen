@@ -11,7 +11,7 @@ def _doxygen_impl(ctx):
     output_dir = output_path[0] if len(output_path) > 1 else ""
 
     ctx.actions.expand_template(
-        template = ctx.file._config_file_template,
+        template = ctx.file.doxyfile_template,
         output = doxyfile,
         substitutions = {
             "# {{INPUT}}": "INPUT = %s" % output_dir,
@@ -63,10 +63,15 @@ doxygen(
         "srcs": attr.label_list(allow_files = True, doc = "The source files to generate documentation for. Can include header files, source files, and any other file Doxygen can parse."),
         "configurations": attr.string_list(doc = "Additional configuration parameters to append to the Doxyfile. For example, to set the project name, use `PROJECT_NAME = example`."),
         "outs": attr.string_list(default = ["html"], allow_empty = False, doc = """The output folders to keep. If only the html outputs is of interest, the default value will do. Otherwise, a list of folders to keep is expected (e.g. `["html", "latex"]`)."""),
-        "_config_file_template": attr.label(
+        "doxyfile_template": attr.label(
             allow_single_file = True,
             default = Label("@doxygen//:Doxyfile.template"),
-            doc = "The template file to use for the Doxyfile.",
+            doc = """The template file to use to generate the Doxyfile. You can provide your own or use the default one. 
+The following substitutions are available: 
+- `# {{INPUT}}`: Subpackage directory in the sandbox.
+- `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.
+- `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.
+""",
         ),
         "_executable": attr.label(
             executable = True,
@@ -84,6 +89,7 @@ def doxygen(
         project_name = None,
         project_brief = None,
         configurations = [],
+        doxyfile_template = "@doxygen//:Doxyfile.template",
         outs = ["html"]):
     """
     Generates documentation using Doxygen.
@@ -118,6 +124,12 @@ def doxygen(
         project_name: The name of the project.
         project_brief: A brief description of the project.
         configurations: A list of additional configuration parameters to pass to Doxygen.
+        doxyfile_template: The template file to use to generate the Doxyfile.
+            The following substitutions are available:<br>
+            - `# {{INPUT}}`: Subpackage directory in the sandbox.<br>
+            - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.<br>
+            - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.
+
         outs: The output folders bazel will keep. If only the html outputs is of interest, the default value will do.
              otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).
     """
