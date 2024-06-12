@@ -133,13 +133,16 @@ def doxygen(
         outs: The output folders bazel will keep. If only the html outputs is of interest, the default value will do.
              otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).
     """
-    if project_name == None:
+    if not configurations:
+        configurations = []
+    if project_name != None:
         configurations.append("PROJECT_NAME = %s" % project_name)
-    if project_brief == None:
+    if project_brief != None:
         configurations.append("PROJECT_BRIEF = %s" % project_brief)
     _doxygen(
         name = name,
         srcs = srcs,
         outs = outs,
         configurations = configurations,
+        doxyfile_template = doxyfile_template,
     )
