@@ -1,0 +1,10 @@
+load("@doxygen//:doxygen.bzl", "doxygen")
+
+doxygen(
+    name = "doxygen",
+    srcs = ["README.md"] + glob([
+        "*.h",
+        "*.cpp",
+    ]),
+    doxyfile_template = "Doxyfile"
+)
