@@ -7,14 +7,12 @@ def _doxygen_impl(ctx):
     if len(outs) == 0:
         fail("At least one output folder must be specified")
 
-    output_path = outs[0].short_path.split("/")
-    output_dir = output_path[0] if len(output_path) > 1 else ""
-
+    input_dirs = {(file.dirname or "."): None for file in ctx.files.srcs}
     ctx.actions.expand_template(
         template = ctx.file.doxyfile_template,
         output = doxyfile,
         substitutions = {
-            "# {{INPUT}}": "INPUT = %s" % output_dir,
+            "# {{INPUT}}": "INPUT = %s" % " ".join(input_dirs.keys()),
             "# {{ADDITIONAL PARAMETERS}}": "\\n".join(ctx.attr.configurations),
             "# {{OUTPUT DIRECTORY}}": "OUTPUT_DIRECTORY = %s" % doxyfile.dirname,
         },

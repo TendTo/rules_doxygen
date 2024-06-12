@@ -23,6 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Correctly use `project_name` and `project_brief` in the macro
 - Unfreeze default list in macro
 
+## [NEXT.VERSION]
+
+### Added
+
+- Automatically determine the INPUT value for the Doxyfile based on the sources of the target
+
 [1.0.0]: https://github.com/TendTo/rules_doxygen/tree/1.0.0
 [1.1.0]: https://github.com/TendTo/rules_doxygen/compare/1.0.0...1.1.0
 [NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/1.1.0...HEAD

@@ -11,7 +11,7 @@ doxygen(
         "latex",
     ],
     configurations = [
-        "USE_MDFILE_AS_MAINPAGE = README.md",
+        "USE_MDFILE_AS_MAINPAGE = latex/README.md",
         "GENERATE_HTML = YES",
         "GENERATE_LATEX = YES",
     ],

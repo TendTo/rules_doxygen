@@ -9,8 +9,9 @@ doxygen(
         "lib_b/*.cpp",
     ]) + ["//nested/lib_a:sources"],
     configurations = [
-        "USE_MDFILE_AS_MAINPAGE = README.md",
-        "INPUT = nested nested/lib_a nested/lib_b",
+        # The rule should be able to determine the location of the srcs files, 
+        # but it is still possible to specify the input location manually 
+        # "INPUT = nested nested/lib_a nested/lib_b",
     ],
     project_brief = "Example project for doxygen",
     project_name = "nested",

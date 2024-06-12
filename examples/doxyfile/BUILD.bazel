@@ -7,7 +7,7 @@ doxygen(
         "*.cpp",
     ]),
     configurations = [
-        "USE_MDFILE_AS_MAINPAGE = README.md",
+        "USE_MDFILE_AS_MAINPAGE = doxyfile/README.md",
         "ALIASES                = \"licence=@par Licence:^^\"",
     ],
     project_brief = "Example project for doxygen",
