@@ -1,7 +1,5 @@
 """Doxygen BUILD file"""
 
-exports_files(["Doxyfile"])
-
 filegroup(
     name = "Doxyfile.template",
     srcs = ["@rules_doxygen//:Doxyfile.template"],
