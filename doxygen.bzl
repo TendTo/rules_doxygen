@@ -111,6 +111,7 @@ def doxygen(
         project_name = "example",
     )
     ```
+
     Args:
         name: A name for the target.
         srcs: A list of source files to generate documentation for.

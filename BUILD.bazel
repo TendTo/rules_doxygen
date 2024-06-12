@@ -1,7 +1,15 @@
 """rules_doxygen BUILD file"""
 
+load("@stardoc//stardoc:stardoc.bzl", "stardoc")
+
 exports_files([
     "Doxyfile.template",
     "doxygen.BUILD.bazel",
     "doxygen.bzl",
 ])
+
+stardoc(
+    name = "stardoc",
+    out = "stardoc.md",
+    input = "doxygen.bzl",
+)

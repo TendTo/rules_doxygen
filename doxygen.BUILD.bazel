@@ -1,10 +1,6 @@
 """Doxygen BUILD file"""
 
-filegroup(
-    name = "Doxyfile",
-    srcs = ["@rules_doxygen//:Doxyfile"],
-    visibility = ["//visibility:public"],
-)
+exports_files(["Doxyfile"])
 
 filegroup(
     name = "Doxyfile.template",

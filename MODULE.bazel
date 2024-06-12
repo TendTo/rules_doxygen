@@ -2,3 +2,4 @@
 module(name = "rules_doxygen", version = "1.0.0", compatibility_level = 1)
 
 bazel_dep(name = "platforms", version = "0.0.5")
+bazel_dep(name = "stardoc", version = "0.6.2", dev_dependency = True)
