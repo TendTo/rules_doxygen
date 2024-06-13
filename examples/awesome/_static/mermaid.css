@@ -1,0 +1,13 @@
+html .mermaid > svg {
+  display: block;
+  margin: 0 auto;
+  filter: invert(1);
+}
+@media (prefers-color-scheme: dark) {
+  html:not(.light-mode) .mermaid > svg {
+    filter: invert(0);
+  }
+}
+html.dark-mode .mermaid > svg {
+  filter: invert(0);
+}

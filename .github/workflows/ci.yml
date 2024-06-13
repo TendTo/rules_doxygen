@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        subdir: [base, doxyfile, latex, nested, custom]
+        subdir: [base, doxyfile, latex, nested, custom, awesome]
     runs-on: ${{ matrix.os }}
 
     steps:

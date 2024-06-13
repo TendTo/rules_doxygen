@@ -1,0 +1,40 @@
+load("@doxygen//:doxygen.bzl", "doxygen")
+
+doxygen(
+    name = "doxygen",
+    srcs = ["README.md"] + glob([
+        "*.h",
+        "*.cpp",
+        "_static/*",
+    ]),
+    aliases = [
+        "licence=\"@par Licence:^^\"",
+        "constructor{1}=\"Construct a new \\1 object.^^\"",
+    ],
+    disable_index = False,
+    extract_private = True,
+    full_sidebar = False,
+    generate_treeview = True,
+    html_colorstyle = "LIGHT",
+    html_extra_files = [
+        "awesome/_static/doxygen-awesome-darkmode-toggle.js",
+        "awesome/_static/doxygen-awesome-fragment-copy-button.js",
+        "awesome/_static/doxygen-awesome-interactive-toc.js",
+        "awesome/_static/doxygen-awesome-paragraph-link.js",
+        "awesome/_static/doxygen-awesome-tabs.js",
+        "awesome/_static/mermaid.dist.js",
+    ],
+    html_extra_stylesheet = [
+        "awesome/_static/doxygen-awesome.css",
+        "awesome/_static/mermaid.css",
+    ],
+    html_footer = "awesome/_static/footer.html",
+    html_header = "awesome/_static/header.html",
+    project_brief = "Awesome project",
+    project_icon = "awesome/_static/logo.svg",
+    project_logo = "awesome/_static/logo.svg",
+    project_name = "awesome",
+    project_number = "1.0.0",
+    use_mathjax = True,
+    use_mdfile_as_mainpage = "awesome/README.md",
+)

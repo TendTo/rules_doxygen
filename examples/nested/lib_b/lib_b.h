@@ -9,7 +9,8 @@ namespace lib_b {
 
 /**
  * @brief Subtract two integers
- *
+ * 
+ * Very simple function.
  * @param a First integer
  * @param b Second integer
  * @return Subtraction of a and b
