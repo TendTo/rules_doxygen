@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Correctly use `project_name` and `project_brief` in the macro
 - Unfreeze default list in macro
 
-## [NEXT.VERSION]
+## [1.1.1]
 
 ### Added
 
@@ -35,6 +35,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove superfluous `\` before the `\n` in the `doxygen` configurations list formatting
 
+## [NEXT.VERSION]
+
 [1.0.0]: https://github.com/TendTo/rules_doxygen/tree/1.0.0
 [1.1.0]: https://github.com/TendTo/rules_doxygen/compare/1.0.0...1.1.0
-[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/1.1.0...HEAD
+[1.1.1]: https://github.com/TendTo/rules_doxygen/compare/1.1.0...1.1.1
+[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/1.1.1...HEAD
