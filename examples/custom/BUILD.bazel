@@ -6,5 +6,10 @@ doxygen(
         "*.h",
         "*.cpp",
     ]),
-    doxyfile_template = "Doxyfile"
+    configurations = [
+        "USE_MDFILE_AS_MAINPAGE = README.md",
+        "ALIASES                = \"licence=@par Licence:^^\"",
+    ],
+    project_brief = "Example project for doxygen",
+    project_name = "custom",
 )
