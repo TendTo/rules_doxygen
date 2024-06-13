@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Automatically determine the INPUT value for the Doxyfile based on the sources of the target
 - Customizable extra args to doxygen invocation
+- Some more easy to use common configurations
 
 ### Fixed
 

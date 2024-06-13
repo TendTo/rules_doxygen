@@ -89,6 +89,7 @@ def doxygen(
         project_brief = None,
         project_number = None,
         project_logo = None,
+        project_icon = None,
         use_mdfile_as_mainpage = None,
         extract_private = None,
         html_footer = None,
@@ -97,10 +98,14 @@ def doxygen(
         use_mathjax = None,
         html_extra_stylesheet = [],
         html_extra_files = [],
+        html_colorstyle = None,
         aliases = [],
         have_dot = None,
         dot_image_format = None,
         dot_transparent = None,
+        disable_index = None,
+        full_sidebar = None,
+        generate_treeview = None,
         configurations = [],
         doxyfile_template = "@doxygen//:Doxyfile.template",
         doxygen_extra_args = [],
@@ -139,6 +144,7 @@ def doxygen(
         project_brief: A brief description of the project.
         project_number: The version number of the project.
         project_logo: The path to the project logo.
+        project_icon: The path to the project icon.
         use_mdfile_as_mainpage: The path to the markdown file to use as the main page.
         extract_private: Whether to extract private members.
         html_footer: The path to the HTML footer file.
@@ -147,10 +153,14 @@ def doxygen(
         use_mathjax: Whether to use MathJax.
         html_extra_stylesheet: A list of extra stylesheets.
         html_extra_files: A list of extra files.
+        html_colorstyle: The color style to use for HTML.
         aliases: A list of aliases.
         have_dot: Whether to use dot.
         dot_image_format: The image format to use for dot.
         dot_transparent: Whether to use transparent backgrounds for dot.
+        disable_index: Whether to disable the index.
+        full_sidebar: Whether to use a full sidebar.
+        generate_treeview: Whether to generate a tree view.
         configurations: A list of additional configuration parameters to pass to Doxygen.
         doxyfile_template: The template file to use to generate the Doxyfile.
             The following substitutions are available:<br>
@@ -171,12 +181,16 @@ def doxygen(
         configurations.append("PROJECT_NUMBER = %s" % project_number)
     if project_logo != None:
         configurations.append("PROJECT_LOGO = %s" % project_logo)
+    if project_icon != None:
+        configurations.append("PROJECT_ICON = %s" % project_icon)
     if use_mdfile_as_mainpage != None:
         configurations.append("USE_MDFILE_AS_MAINPAGE = %s" % use_mdfile_as_mainpage)
     if extract_private != None:
-        if isinstance(extract_private, bool):
+        if type(extract_private) == type(True):
             extract_private = "YES" if extract_private else "NO"
         configurations.append("EXTRACT_PRIVATE = %s" % extract_private)
+    if html_colorstyle != None:
+        configurations.append("HTML_COLORSTYLE = %s" % html_colorstyle)
     if html_footer != None:
         configurations.append("HTML_FOOTER = %s" % html_footer)
     if html_header != None:
@@ -184,7 +198,7 @@ def doxygen(
     if filter_patterns:
         configurations.append("FILTER_PATTERNS = %s" % " ".join(filter_patterns))
     if use_mathjax != None:
-        if isinstance(use_mathjax, bool):
+        if type(use_mathjax) == type(True):
             use_mathjax = "YES" if use_mathjax else "NO"
         configurations.append("USE_MATHJAX = %s" % use_mathjax)
     if html_extra_stylesheet:
@@ -194,15 +208,27 @@ def doxygen(
     if aliases:
         configurations.append("ALIASES = %s" % " ".join(aliases))
     if have_dot != None:
-        if isinstance(have_dot, bool):
+        if type(have_dot) == type(True):
             have_dot = "YES" if have_dot else "NO"
         configurations.append("HAVE_DOT = %s" % have_dot)
     if dot_image_format != None:
         configurations.append("DOT_IMAGE_FORMAT = %s" % dot_image_format)
     if dot_transparent != None:
-        if isinstance(dot_transparent, bool):
+        if type(dot_transparent) == type(True):
             dot_transparent = "YES" if dot_transparent else "NO"
         configurations.append("DOT_TRANSPARENT = %s" % dot_transparent)
+    if disable_index != None:
+        if type(disable_index) == type(True):
+            disable_index = "YES" if disable_index else "NO"
+        configurations.append("DISABLE_INDEX = %s" % disable_index)
+    if full_sidebar != None:
+        if type(full_sidebar) == type(True):
+            full_sidebar = "YES" if full_sidebar else "NO"
+        configurations.append("FULL_SIDEBAR = %s" % full_sidebar)
+    if generate_treeview != None:
+        if type(generate_treeview) == type(True):
+            generate_treeview = "YES" if generate_treeview else "NO"
+        configurations.append("GENERATE_TREEVIEW = %s" % generate_treeview)
 
     _doxygen(
         name = name,
