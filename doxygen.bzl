@@ -21,7 +21,7 @@ def _doxygen_impl(ctx):
     ctx.actions.run(
         inputs = ctx.files.srcs + [doxyfile],
         outputs = outs,
-        arguments = [doxyfile.path],
+        arguments = [doxyfile.path] + ctx.attr.doxygen_extra_args,
         progress_message = "Running doxygen",
         executable = ctx.executable._executable,
     )
@@ -71,6 +71,7 @@ The following substitutions are available:
 - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.
 """,
         ),
+        "doxygen_extra_args": attr.string_list(default = [], doc = "Extra arguments to pass to the doxygen executable."),
         "_executable": attr.label(
             executable = True,
             cfg = "exec",
@@ -102,6 +103,7 @@ def doxygen(
         dot_transparent = None,
         configurations = [],
         doxyfile_template = "@doxygen//:Doxyfile.template",
+        doxygen_extra_args = [],
         outs = ["html"]):
     """
     Generates documentation using Doxygen.
@@ -155,7 +157,7 @@ def doxygen(
             - `# {{INPUT}}`: Subpackage directory in the sandbox.<br>
             - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.<br>
             - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.
-
+        doxygen_extra_args: Extra arguments to pass to the doxygen executable.
         outs: The output folders bazel will keep. If only the html outputs is of interest, the default value will do.
              otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).
     """
@@ -208,4 +210,5 @@ def doxygen(
         outs = outs,
         configurations = configurations,
         doxyfile_template = doxyfile_template,
+        doxygen_extra_args = doxygen_extra_args,
     )
