@@ -13,7 +13,7 @@ def _doxygen_impl(ctx):
         output = doxyfile,
         substitutions = {
             "# {{INPUT}}": "INPUT = %s" % " ".join(input_dirs.keys()),
-            "# {{ADDITIONAL PARAMETERS}}": "\\n".join(ctx.attr.configurations),
+            "# {{ADDITIONAL PARAMETERS}}": "\n".join(ctx.attr.configurations),
             "# {{OUTPUT DIRECTORY}}": "OUTPUT_DIRECTORY = %s" % doxyfile.dirname,
         },
     )
