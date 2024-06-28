@@ -29,15 +29,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Automatically determine the INPUT value for the Doxyfile based on the sources of the target
 - Customizable extra args to doxygen invocation
-- Some more easy to use common configurations
+- Some more easy to use common configurations for the `doxygen` macro
 
 ### Fixed
 
 - Remove superfluous `\` before the `\n` in the `doxygen` configurations list formatting
+
+## [1.1.2]
+
+### Added
+
+- Forward `**kwargs` from the `doxygen` macro to the underlying `_doxygen` rule invocation
+- Some more easy to use common configurations for the `doxygen` macro
+
+### Changed
+
+- Updated documentation
 
 ## [NEXT.VERSION]
 
 [1.0.0]: https://github.com/TendTo/rules_doxygen/tree/1.0.0
 [1.1.0]: https://github.com/TendTo/rules_doxygen/compare/1.0.0...1.1.0
 [1.1.1]: https://github.com/TendTo/rules_doxygen/compare/1.1.0...1.1.1
-[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/1.1.1...HEAD
+[1.1.2]: https://github.com/TendTo/rules_doxygen/compare/1.1.1...1.1.2
+[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/1.1.2...HEAD
