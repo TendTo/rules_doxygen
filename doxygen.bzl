@@ -106,6 +106,12 @@ def doxygen(
         disable_index = None,
         full_sidebar = None,
         generate_treeview = None,
+        javadoc_autobrief = None,
+        builtin_stl_support = None,
+        hide_undoc_members = None,
+        hide_in_body_docs = None,
+        exclude_symbols = [],
+        example_path = None,
         configurations = [],
         doxyfile_template = "@doxygen//:Doxyfile.template",
         doxygen_extra_args = [],
@@ -162,6 +168,12 @@ def doxygen(
         disable_index: Whether to disable the index.
         full_sidebar: Whether to use a full sidebar.
         generate_treeview: Whether to generate a tree view.
+        javadoc_autobrief: Whether to use Javadoc-style auto brief.
+        builtin_stl_support: Whether to support the built-in standard library.
+        hide_undoc_members: Whether to hide undocumented members.
+        hide_in_body_docs: Whether to hide in body docs.
+        exclude_symbols: A list of symbols to exclude.
+        example_path: The path to the examples. They must be added to the source files.
         configurations: A list of additional configuration parameters to pass to Doxygen.
         doxyfile_template: The template file to use to generate the Doxyfile.
             The following substitutions are available:<br>
@@ -231,6 +243,26 @@ def doxygen(
         if type(generate_treeview) == type(True):
             generate_treeview = "YES" if generate_treeview else "NO"
         configurations.append("GENERATE_TREEVIEW = %s" % generate_treeview)
+    if javadoc_autobrief != None:
+        if type(javadoc_autobrief) == type(True):
+            javadoc_autobrief = "YES" if javadoc_autobrief else "NO"
+        configurations.append("JAVADOC_AUTOBRIEF = %s" % javadoc_autobrief)
+    if builtin_stl_support != None:
+        if type(builtin_stl_support) == type(True):
+            builtin_stl_support = "YES" if builtin_stl_support else "NO"
+        configurations.append("BUILTIN_STL_SUPPORT = %s" % builtin_stl_support)
+    if hide_undoc_members != None:
+        if type(hide_undoc_members) == type(True):
+            hide_undoc_members = "YES" if hide_undoc_members else "NO"
+        configurations.append("HIDE_UNDOC_MEMBERS = %s" % hide_undoc_members)
+    if hide_in_body_docs != None:
+        if type(hide_in_body_docs) == type(True):
+            hide_in_body_docs = "YES" if hide_in_body_docs else "NO"
+        configurations.append("HIDE_IN_BODY_DOCS = %s" % hide_in_body_docs)
+    if exclude_symbols:
+        configurations.append("EXCLUDE_SYMBOLS = %s" % " ".join(exclude_symbols))
+    if example_path != None:
+        configurations.append("EXAMPLE_PATH = %s" % example_path)
 
     _doxygen(
         name = name,
