@@ -109,7 +109,8 @@ def doxygen(
         configurations = [],
         doxyfile_template = "@doxygen//:Doxyfile.template",
         doxygen_extra_args = [],
-        outs = ["html"]):
+        outs = ["html"],
+        **kwargs):
     """
     Generates documentation using Doxygen.
 
@@ -170,6 +171,7 @@ def doxygen(
         doxygen_extra_args: Extra arguments to pass to the doxygen executable.
         outs: The output folders bazel will keep. If only the html outputs is of interest, the default value will do.
              otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).
+        **kwargs: Additional arguments to pass to the rule (e.g. `visibility = ["//visibility:public"], tags = ["manual"]`)
     """
     if not configurations:
         configurations = []
@@ -237,4 +239,5 @@ def doxygen(
         configurations = configurations,
         doxyfile_template = doxyfile_template,
         doxygen_extra_args = doxygen_extra_args,
+        **kwargs
     )

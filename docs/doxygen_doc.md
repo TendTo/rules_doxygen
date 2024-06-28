@@ -11,7 +11,7 @@ doxygen(<a href="#doxygen-name">name</a>, <a href="#doxygen-srcs">srcs</a>, <a h
         <a href="#doxygen-use_mdfile_as_mainpage">use_mdfile_as_mainpage</a>, <a href="#doxygen-extract_private">extract_private</a>, <a href="#doxygen-html_footer">html_footer</a>, <a href="#doxygen-html_header">html_header</a>, <a href="#doxygen-filter_patterns">filter_patterns</a>,
         <a href="#doxygen-use_mathjax">use_mathjax</a>, <a href="#doxygen-html_extra_stylesheet">html_extra_stylesheet</a>, <a href="#doxygen-html_extra_files">html_extra_files</a>, <a href="#doxygen-html_colorstyle">html_colorstyle</a>, <a href="#doxygen-aliases">aliases</a>, <a href="#doxygen-have_dot">have_dot</a>,
         <a href="#doxygen-dot_image_format">dot_image_format</a>, <a href="#doxygen-dot_transparent">dot_transparent</a>, <a href="#doxygen-disable_index">disable_index</a>, <a href="#doxygen-full_sidebar">full_sidebar</a>, <a href="#doxygen-generate_treeview">generate_treeview</a>,
-        <a href="#doxygen-configurations">configurations</a>, <a href="#doxygen-doxyfile_template">doxyfile_template</a>, <a href="#doxygen-doxygen_extra_args">doxygen_extra_args</a>, <a href="#doxygen-outs">outs</a>)
+        <a href="#doxygen-configurations">configurations</a>, <a href="#doxygen-doxyfile_template">doxyfile_template</a>, <a href="#doxygen-doxygen_extra_args">doxygen_extra_args</a>, <a href="#doxygen-outs">outs</a>, <a href="#doxygen-kwargs">kwargs</a>)
 </pre>
 
 Generates documentation using Doxygen.
@@ -73,5 +73,6 @@ doxygen(
 | <a id="doxygen-doxyfile_template"></a>doxyfile_template |  The template file to use to generate the Doxyfile. The following substitutions are available:<br> - `# {{INPUT}}`: Subpackage directory in the sandbox.<br> - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.<br> - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.   |  `"@doxygen//:Doxyfile.template"` |
 | <a id="doxygen-doxygen_extra_args"></a>doxygen_extra_args |  Extra arguments to pass to the doxygen executable.   |  `[]` |
 | <a id="doxygen-outs"></a>outs |  The output folders bazel will keep. If only the html outputs is of interest, the default value will do. otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).   |  `["html"]` |
+| <a id="doxygen-kwargs"></a>kwargs |  Additional arguments to pass to the rule (e.g. `visibility = ["//visibility:public"], tags = ["manual"]`)   |  none |
 
 
