@@ -20,6 +20,6 @@ jobs:
         run: bazel build //${{ matrix.subdir }}:doxygen
         working-directory: examples
       - name: Check output
-        uses: thebinaryfelix/check-file-existence-action@1.0.0
+        uses: thebinaryfelix/check-file-existence-action@3.0.0
         with:
           files: "examples/bazel-bin/${{ matrix.subdir }}/html/index.html"
