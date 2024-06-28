@@ -74,6 +74,7 @@ doxygen(
         "GENERATE_LATEX = NO",                      # and will override the default values
         "USE_MDFILE_AS_MAINPAGE = README.md",
     ]
+    tags = ["manual"]  # Tags to add to the target. This way the target won't run unless explicitly called
 )
 ```
 
@@ -130,5 +131,5 @@ tar -czvf doxygen.tar.gz bazel-bin/<subpackage>/html
 
 ## TODO
 
-- [ ] Add support for macos (I cant't be bothered :D)
+- [ ] Add support for macos (I can't be bothered :D)
 - [ ] Add more easy-to-use common configuration for the Doxyfile
