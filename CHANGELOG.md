@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Forward `**kwargs` from the `doxygen` macro to the underlying `_doxygen` rule invocation
+- Forward `**kwargs` from the `doxygen` macro to the underlying `_doxygen` rule invocation [#1](https://github.com/TendTo/rules_doxygen/issues/1)
 - Some more easy to use common configurations for the `doxygen` macro
 
 ### Changed
