@@ -13,6 +13,7 @@ def _doxygen_impl(ctx):
         output = doxyfile,
         substitutions = {
             "# {{INPUT}}": "INPUT = %s" % " ".join(input_dirs.keys()),
+            "# {{DOT_PATH}}": ("DOT_PATH = %s" % ctx.executable.dot_executable.dirname) if ctx.executable.dot_executable else "",
             "# {{ADDITIONAL PARAMETERS}}": "\n".join(ctx.attr.configurations),
             "# {{OUTPUT DIRECTORY}}": "OUTPUT_DIRECTORY = %s" % doxyfile.dirname,
         },
@@ -67,15 +68,22 @@ doxygen(
             doc = """The template file to use to generate the Doxyfile. You can provide your own or use the default one. 
 The following substitutions are available: 
 - `# {{INPUT}}`: Subpackage directory in the sandbox.
+- `# {{DOT_PATH}}`: Indicate to doxygen the location of the `dot_executable`
 - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.
 - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.
 """,
+        ),
+        "dot_executable": attr.label(
+            executable = True,
+            cfg = "exec",
+            allow_single_file = True,
+            doc = "The dot executable to use.",
         ),
         "doxygen_extra_args": attr.string_list(default = [], doc = "Extra arguments to pass to the doxygen executable."),
         "_executable": attr.label(
             executable = True,
             cfg = "exec",
-            allow_files = True,
+            allow_single_file = True,
             default = Label("@doxygen//:executable"),
             doc = "The doxygen executable to use.",
         ),
@@ -112,6 +120,7 @@ def doxygen(
         hide_in_body_docs = None,
         exclude_symbols = [],
         example_path = None,
+        dot_executable = None,
         configurations = [],
         doxyfile_template = "@doxygen//:Doxyfile.template",
         doxygen_extra_args = [],
@@ -174,6 +183,7 @@ def doxygen(
         hide_in_body_docs: Whether to hide in body docs.
         exclude_symbols: A list of symbols to exclude.
         example_path: The path to the examples. They must be added to the source files.
+        dot_executable: Label of the doxygen executable. Make sure it is also added to the `srcs` of the macro 
         configurations: A list of additional configuration parameters to pass to Doxygen.
         doxyfile_template: The template file to use to generate the Doxyfile.
             The following substitutions are available:<br>
@@ -271,5 +281,6 @@ def doxygen(
         configurations = configurations,
         doxyfile_template = doxyfile_template,
         doxygen_extra_args = doxygen_extra_args,
+        dot_executable = dot_executable,
         **kwargs
     )

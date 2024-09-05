@@ -34,11 +34,3 @@ graph TD;
     B-->D;
     C-->D;
 </pre>
-
-<pre class="mermaid">
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
-</pre>

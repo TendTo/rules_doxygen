@@ -2903,6 +2903,8 @@ MSCFILE_DIRS           =
 
 # {{INPUT}}
 
+# {{DOT_PATH}}
+
 # {{ADDITIONAL PARAMETERS}}
 
 # {{OUTPUT DIRECTORY}}
