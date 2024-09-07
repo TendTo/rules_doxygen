@@ -30,6 +30,8 @@ filegroup(
     ),
 )
 
+# Ideally, instead of using a local filegroup, you would want and external module, like "@graphviz//:bin/dot"
+
 doxygen(
     name = "doxygen",
     srcs = glob([
