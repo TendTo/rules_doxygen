@@ -54,14 +54,14 @@ def _doxygen_extension_impl(ctx):
             strip_prefix = strip_prefix,
         )
 
-_version = tag_class(attrs = {
+_doxygen_version = tag_class(attrs = {
     "version": attr.string(doc = "The version of doxygen to use", mandatory = True),
     "sha256": attr.string(doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used."),
 })
 
 doxygen_extension = module_extension(
     implementation = _doxygen_extension_impl,
-    tag_classes = {"version": _version},
+    tag_classes = {"version": _doxygen_version},
     doc = """
 Module extension for declaring the doxygen version to use.
 
