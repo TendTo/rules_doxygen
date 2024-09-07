@@ -12,8 +12,8 @@ doxygen(<a href="#doxygen-name">name</a>, <a href="#doxygen-srcs">srcs</a>, <a h
         <a href="#doxygen-use_mathjax">use_mathjax</a>, <a href="#doxygen-html_extra_stylesheet">html_extra_stylesheet</a>, <a href="#doxygen-html_extra_files">html_extra_files</a>, <a href="#doxygen-html_colorstyle">html_colorstyle</a>, <a href="#doxygen-aliases">aliases</a>, <a href="#doxygen-have_dot">have_dot</a>,
         <a href="#doxygen-dot_image_format">dot_image_format</a>, <a href="#doxygen-dot_transparent">dot_transparent</a>, <a href="#doxygen-disable_index">disable_index</a>, <a href="#doxygen-full_sidebar">full_sidebar</a>, <a href="#doxygen-generate_treeview">generate_treeview</a>,
         <a href="#doxygen-javadoc_autobrief">javadoc_autobrief</a>, <a href="#doxygen-builtin_stl_support">builtin_stl_support</a>, <a href="#doxygen-hide_undoc_members">hide_undoc_members</a>, <a href="#doxygen-hide_in_body_docs">hide_in_body_docs</a>,
-        <a href="#doxygen-exclude_symbols">exclude_symbols</a>, <a href="#doxygen-example_path">example_path</a>, <a href="#doxygen-configurations">configurations</a>, <a href="#doxygen-doxyfile_template">doxyfile_template</a>, <a href="#doxygen-doxygen_extra_args">doxygen_extra_args</a>, <a href="#doxygen-outs">outs</a>,
-        <a href="#doxygen-kwargs">kwargs</a>)
+        <a href="#doxygen-exclude_symbols">exclude_symbols</a>, <a href="#doxygen-example_path">example_path</a>, <a href="#doxygen-dot_executable">dot_executable</a>, <a href="#doxygen-configurations">configurations</a>, <a href="#doxygen-doxyfile_template">doxyfile_template</a>,
+        <a href="#doxygen-doxygen_extra_args">doxygen_extra_args</a>, <a href="#doxygen-outs">outs</a>, <a href="#doxygen-kwargs">kwargs</a>)
 </pre>
 
 Generates documentation using Doxygen.
@@ -77,6 +77,7 @@ doxygen(
 | <a id="doxygen-hide_in_body_docs"></a>hide_in_body_docs |  Whether to hide in body docs.   |  `None` |
 | <a id="doxygen-exclude_symbols"></a>exclude_symbols |  A list of symbols to exclude.   |  `[]` |
 | <a id="doxygen-example_path"></a>example_path |  The path to the examples. They must be added to the source files.   |  `None` |
+| <a id="doxygen-dot_executable"></a>dot_executable |  Label of the doxygen executable. Make sure it is also added to the `srcs` of the macro   |  `None` |
 | <a id="doxygen-configurations"></a>configurations |  A list of additional configuration parameters to pass to Doxygen.   |  `[]` |
 | <a id="doxygen-doxyfile_template"></a>doxyfile_template |  The template file to use to generate the Doxyfile. The following substitutions are available:<br> - `# {{INPUT}}`: Subpackage directory in the sandbox.<br> - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.<br> - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.   |  `"@doxygen//:Doxyfile.template"` |
 | <a id="doxygen-doxygen_extra_args"></a>doxygen_extra_args |  Extra arguments to pass to the doxygen executable.   |  `[]` |

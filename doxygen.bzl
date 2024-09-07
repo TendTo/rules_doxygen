@@ -77,7 +77,7 @@ The following substitutions are available:
             executable = True,
             cfg = "exec",
             allow_single_file = True,
-            doc = "The dot executable to use.",
+            doc = "The dot executable to use. Must refer to an executable file.",
         ),
         "doxygen_extra_args": attr.string_list(default = [], doc = "Extra arguments to pass to the doxygen executable."),
         "_executable": attr.label(
@@ -85,7 +85,7 @@ The following substitutions are available:
             cfg = "exec",
             allow_single_file = True,
             default = Label("@doxygen//:executable"),
-            doc = "The doxygen executable to use.",
+            doc = "The doxygen executable to use. Must refer to an executable file.",
         ),
     },
 )
