@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install doxygen
         uses: ssciwr/doxygen-install@v1
-      - name: Enable use of system doxygen
+      - name: Enable use of system doxygen by decommenting the module extension line
         run: sed -i 's/# doxygen_extension.version(version = "0.0.0")/doxygen_extension.version(version = "0.0.0")/' MODULE.bazel
         working-directory: examples
         shell: bash

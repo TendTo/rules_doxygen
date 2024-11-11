@@ -14,9 +14,9 @@ def _local_repository_doxygen(ctx):
 
     # Copy the necessary files to the repository by reading them from the current repository
     ctx.file("WORKSPACE", "workspace(name = %s)\n" % repr(ctx.name))
-    ctx.file("doxygen.bzl", ctx.read(ctx.attr._doxygen_bzl))
-    ctx.file("BUILD.bazel", ctx.read(ctx.attr._build))
-    ctx.file("Doxyfile.template", ctx.read(ctx.attr._doxyfile_template))
+    ctx.file("doxygen.bzl", ctx.read(ctx.attr.doxygen_bzl))
+    ctx.file("BUILD.bazel", ctx.read(ctx.attr.build))
+    ctx.file("Doxyfile.template", ctx.read(ctx.attr.doxyfile_template))
 
     # Copy the doxygen executable to the repository
     doxygen_content = ctx.read(ctx.attr.executable or ctx.which("doxygen"))
