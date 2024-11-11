@@ -9,13 +9,13 @@ This repository contains a Starlark implementation of Doxygen rules in Bazel.
 Add the following to your _MODULE.bazel_:
 
 ```bzl
-bazel_dep(name = "rules_doxygen", version = "1.1.3", dev_dependency = True)
+bazel_dep(name = "rules_doxygen", version = "1.2.0", dev_dependency = True)
 ```
 
 If you don't want to depend on the [Bazel package registry](https://bazel.build/external/bazelbuild/rules_pkg) or you want to use a not-yet-published version of this module, you can use an archive override by adding the following lines below the `bazel_dep` rule in your _MODULE.bazel_ file:
 
 ```bzl
-bazel_dep(name = "rules_doxygen", version = "1.1.3", dev_dependency = True)
+bazel_dep(name = "rules_doxygen", version = "1.2.0", dev_dependency = True)
 archive_override(
     module_name = "rules_doxygen",
     urls = "https://github.com/TendTo/rules_doxygen/archive/refs/heads/main.tar.gz",
@@ -49,6 +49,10 @@ The build will fail with an error message containing the correct SHA256.
 ```bash
 Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_0/doxygen-1.10.0.windows.x64.bin.zip failed: class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b but wanted 0000000000000000000000000000000000000000000000000000000000000000
 ```
+
+If you set the version to `0.0.0`, the doxygen executable will be assumed to be available from the PATH.
+No download will be performed and bazel will use the installed version of doxygen.
+Keep in mind that this will break the hermeticity of your build, as it will now depend on the environment.
 
 > [!Note]
 > See [the documentation](docs/extensions_doc.md) for more information.

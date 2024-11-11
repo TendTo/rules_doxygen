@@ -7,4 +7,6 @@ local_path_override(
 )
 
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+# Test doxygen_extension with a system installation of doxygen
+# doxygen_extension.version(version = "0.0.0")
 use_repo(doxygen_extension, "doxygen")

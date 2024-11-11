@@ -2,13 +2,82 @@
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+def _local_repository_doxygen(ctx):
+    """
+    Repository rule for doxygen.
+
+    Used to create a local repository for doxygen, containing the installed doxygen binary and all the necessary files to run the doxygen macro.
+
+    Args:
+        ctx: a [repository context](https://bazel.build/rules/lib/builtins/repository_ctx) object containing the repository's attributes
+    """
+
+    # Copy the necessary files to the repository by reading them from the current repository
+    ctx.file("WORKSPACE", "workspace(name = %s)\n" % repr(ctx.name))
+    ctx.file("doxygen.bzl", ctx.read(ctx.attr.doxygen_bzl))
+    ctx.file("BUILD.bazel", ctx.read(ctx.attr.build))
+    ctx.file("Doxyfile.template", ctx.read(ctx.attr.doxyfile_template))
+
+    # Copy the doxygen executable to the repository
+    doxygen_content = ctx.read(ctx.attr.executable or ctx.which("doxygen"))
+    if ctx.os.name.startswith("windows"):
+        ctx.file("doxygen.exe", doxygen_content, legacy_utf8 = False)
+    elif ctx.os.name.startswith("mac"):
+        ctx.file("doxygen", doxygen_content, legacy_utf8 = False)
+    elif ctx.os.name == "linux":
+        ctx.file("bin/doxygen", doxygen_content, legacy_utf8 = False)
+    else:
+        fail("Unsuppported OS: %s" % ctx.os.name)
+
+local_repository_doxygen = repository_rule(
+    implementation = _local_repository_doxygen,
+    doc = """
+Repository rule for doxygen.
+
+Used to create a local repository for doxygen, containing the installed doxygen binary and all the necessary files to run the doxygen macro.
+In order to use this rule, you must have doxygen installed on your system and the binary (named doxygen) must available in the PATH.
+Keep in mind that this will break the hermeticity of your build, as it will now depend on the environment.
+
+### Example
+
+```starlark
+local_repository_doxygen(
+    name = "doxygen",
+)
+```
+""",
+    attrs = {
+        "doxygen_bzl": attr.label(
+            doc = "The starlark file containing the doxygen macro",
+            allow_single_file = True,
+            default = Label("@rules_doxygen//:doxygen.bzl"),
+        ),
+        "build": attr.label(
+            doc = "The BUILD file of the repository",
+            allow_single_file = True,
+            default = Label("@rules_doxygen//:doxygen.BUILD.bazel"),
+        ),
+        "doxyfile_template": attr.label(
+            doc = "The Doxyfile template to use",
+            allow_single_file = True,
+            default = Label("@rules_doxygen//:Doxyfile.template"),
+        ),
+        "executable": attr.label(
+            executable = True,
+            cfg = "exec",
+            allow_single_file = True,
+            doc = "The doxygen executable to use. Must refer to an executable file. Defaults to the doxygen executable in the PATH.",
+        ),
+    },
+)
+
 def _doxygen_extension_impl(ctx):
     """_doxygen_module_impl
 
     Downloads the correct version of doxygen and make the repository available to the requesting module.
 
     Args:
-        ctx: a context object that contains the module's attributes
+        ctx: a [module context](https://bazel.build/rules/lib/builtins/module_ctx) object containing the module's attributes
     """
     for mod in ctx.modules:
         if len(mod.tags.version) > 1:
@@ -17,8 +86,8 @@ def _doxygen_extension_impl(ctx):
         strip_prefix = ""
         if ctx.os.name.startswith("windows"):
             doxygen_sha256 = "478fc9897d00ca181835d248a4d3e5c83c26a32d1c7571f4321ddb0f2e97459f"
-        elif ctx.os.name == "macos":  # TODO: Update this to the correct version
-            doxygen_sha256 = "0" * 64
+        elif ctx.os.name.startswith("mac"):
+            doxygen_sha256 = "7ffb89909800242e29585e619582972c901ee0045cf4b7c4ef58a91c445f89eb"
         elif ctx.os.name == "linux":
             doxygen_sha256 = "db68ca22b43c3d7efd15351329db5af9146ab1ac7eaccd61a894fe36612da8fb"
         else:
@@ -28,22 +97,27 @@ def _doxygen_extension_impl(ctx):
             doxygen_version = attr.version if attr.version != "" else fail("Version must be specified")
             doxygen_sha256 = attr.sha256 if attr.sha256 != "" else "0" * 64
 
+        if doxygen_version == "0.0.0":
+            local_repository_doxygen(
+                name = "doxygen",
+            )
+            return
+
         doxygen_version_dash = doxygen_version.replace(".", "_")
 
         url = "https://github.com/doxygen/doxygen/releases/download/Release_%s/doxygen-%s.%s"
         if ctx.os.name.startswith("windows"):
             url = url % (doxygen_version_dash, doxygen_version, "windows.x64.bin.zip")
-            # elif ctx.os.name == "macos": # TODO: support macos
-            # url = url % (doxygen_version_dash, doxygen_version, "dmg")
-
+        elif ctx.os.name.startswith("mac"):  # TODO: support macos for hermetic build
+            url = url % (doxygen_version_dash, doxygen_version, "dmg")
+            fail("Unsuppported OS: %s" % ctx.os.name)
         elif ctx.os.name == "linux":
             url = url % (doxygen_version_dash, doxygen_version, "linux.bin.tar.gz")
             strip_prefix = "doxygen-%s" % doxygen_version
         else:
             fail("Unsuppported OS: %s" % ctx.os.name)
 
-        doxygen_bzl = Label("@rules_doxygen//:doxygen.bzl")
-        doxygen_bzl_content = ctx.read(doxygen_bzl)
+        doxygen_bzl_content = ctx.read(Label("@rules_doxygen//:doxygen.bzl"))
         http_archive(
             name = "doxygen",
             build_file = "@rules_doxygen//:doxygen.BUILD.bazel",
@@ -55,7 +129,7 @@ def _doxygen_extension_impl(ctx):
         )
 
 _doxygen_version = tag_class(attrs = {
-    "version": attr.string(doc = "The version of doxygen to use", mandatory = True),
+    "version": attr.string(doc = "The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH", mandatory = True),
     "sha256": attr.string(doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used."),
 })
 
@@ -77,6 +151,10 @@ The build will fail with an error message containing the correct SHA256.
 ```bash
 Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_0/doxygen-1.10.0.windows.x64.bin.zip failed: class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b but wanted 0000000000000000000000000000000000000000000000000000000000000000
 ```
+
+If you set the version to `0.0.0`, the doxygen executable will be assumed to be available from the PATH.
+No download will be performed and bazel will use the installed version of doxygen.
+Keep in mind that this will break the hermeticity of your build, as it will now depend on the environment.
 
 ### Example
 

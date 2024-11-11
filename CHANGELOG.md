@@ -53,6 +53,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `dot_executable` parameter in the macro
 - Example of how to use the `doxygen` alongside `graphviz` in hermetic builds
 
+## [1.2.0]
+
+### Added
+
+- Support for system-wide doxygen installation. This allows the rule to run on mac os, but loses hermeticity. Can be enabled by using doxygen version `0.0.0`.
+- Testes for the new feature in the CI pipeline
+- Local repository rule for doxygen
+
 ## [NEXT.VERSION]
 
 [1.0.0]: https://github.com/TendTo/rules_doxygen/tree/1.0.0
@@ -60,4 +68,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.1.1]: https://github.com/TendTo/rules_doxygen/compare/1.1.0...1.1.1
 [1.1.2]: https://github.com/TendTo/rules_doxygen/compare/1.1.1...1.1.2
 [1.1.3]: https://github.com/TendTo/rules_doxygen/compare/1.1.2...1.1.3
-[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/1.1.3...HEAD
+[1.2.0]: https://github.com/TendTo/rules_doxygen/compare/1.1.3...1.2.0
+[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/1.2.0...HEAD
