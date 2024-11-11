@@ -44,6 +44,7 @@ Keep in mind that this will break the hermeticity of your build, as it will now 
 local_repository_doxygen(
     name = "doxygen",
 )
+```
 """,
     attrs = {
         "doxygen_bzl": attr.label(
