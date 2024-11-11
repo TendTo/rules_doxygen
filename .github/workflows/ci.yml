@@ -37,12 +37,11 @@ jobs:
       - name: Install doxygen
         uses: ssciwr/doxygen-install@v1
       - name: Enable use of system doxygen by decommenting the module extension line
-        uses: jacobtomlinson/gha-find-replace@v3
+        uses: richardrigutins/replace-in-files@v2
         with:
-          find: '# doxygen_extension.version(version = "0.0.0")'
-          replace: doxygen_extension.version(version = "0.0.0")
-          regex: false
-          include: examples/MODULE.bazel
+          search-text: '# doxygen_extension.version(version = "0.0.0")'
+          replacement-text: doxygen_extension.version(version = "0.0.0")
+          files: examples/MODULE.bazel
       - name: Build ${{ matrix.subdir }}
         run: bazel build //${{ matrix.subdir }}:doxygen
         working-directory: examples
