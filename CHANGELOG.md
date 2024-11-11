@@ -61,6 +61,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Testes for the new feature in the CI pipeline
 - Local repository rule for doxygen
 
+### Change
+
+- Default doxygen version is now `1.12.0`
+
 ## [NEXT.VERSION]
 
 [1.0.0]: https://github.com/TendTo/rules_doxygen/tree/1.0.0

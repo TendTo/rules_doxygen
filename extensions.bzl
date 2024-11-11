@@ -82,14 +82,14 @@ def _doxygen_extension_impl(ctx):
     for mod in ctx.modules:
         if len(mod.tags.version) > 1:
             fail("Only one version of doxygen can be specified")
-        doxygen_version = "1.11.0"
+        doxygen_version = "1.12.0"
         strip_prefix = ""
         if ctx.os.name.startswith("windows"):
-            doxygen_sha256 = "478fc9897d00ca181835d248a4d3e5c83c26a32d1c7571f4321ddb0f2e97459f"
+            doxygen_sha256 = "07f1c92cbbb32816689c725539c0951f92c6371d3d7f66dfa3192cbe88dd3138"
         elif ctx.os.name.startswith("mac"):
-            doxygen_sha256 = "7ffb89909800242e29585e619582972c901ee0045cf4b7c4ef58a91c445f89eb"
+            doxygen_sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001"
         elif ctx.os.name == "linux":
-            doxygen_sha256 = "db68ca22b43c3d7efd15351329db5af9146ab1ac7eaccd61a894fe36612da8fb"
+            doxygen_sha256 = "3c42c3f3fb206732b503862d9c9c11978920a8214f223a3950bbf2520be5f647"
         else:
             fail("Unsuppported OS: %s" % ctx.os.name)
 
@@ -143,7 +143,7 @@ The resulting repository will have the following targets:
 - `@doxygen//:doxygen.bzl`, containing the doxygen macro used to generate the documentation.
 - `@doxygen//:Doxyfile.template`, default Doxyfile template used to generate the Doxyfile.
 
-By default, version `1.11.0` of Doxygen is used. To select a different version, indicate it in the `version` module:
+By default, version `1.12.0` of Doxygen is used. To select a different version, indicate it in the `version` module:
 
 If you don't know the SHA256 of the Doxygen binary, just leave it empty.
 The build will fail with an error message containing the correct SHA256.
@@ -163,7 +163,7 @@ bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 
-# Using the 1.10.0 version of Doxygen on Windows instead of the default 1.11.0
+# Using the 1.10.0 version of Doxygen on Windows instead of the default 1.12.0
 doxygen_extension.version(version = "1.10.0", sha256 = "2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b")
 
 use_repo(doxygen_extension, "doxygen")

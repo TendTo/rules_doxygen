@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/TendTo/rules_doxygen/actions/workflows/ci.yml/badge.svg)](https://github.com/TendTo/rules_doxygen/actions/workflows/ci.yml)
 
-This repository contains a Starlark implementation of Doxygen rules in Bazel.
+This repository contains a [Starlark](https://github.com/bazelbuild/starlark) implementation of [Doxygen](https://www.doxygen.nl/) rules in [Bazel](https://bazel.build/).
 
 ## Setup as a module dependency (bzlmod)
 
@@ -34,11 +34,11 @@ doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_ex
 use_repo(doxygen_extension, "doxygen")
 ```
 
-By default, version `1.11.0` of Doxygen is used. To select a different version, indicate it in the `version` module:
+By default, version `1.12.0` of Doxygen is used. To select a different version, indicate it in the `version` module:
 
 ```bzl
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
-# Using the 1.10.0 version of Doxygen on Windows instead of the default 1.11.0
+# Using the 1.10.0 version of Doxygen on Windows instead of the default 1.12.0
 doxygen_extension.version(version = "1.10.0", sha256 = "2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b")
 use_repo(doxygen_extension, "doxygen")
 ```
@@ -135,5 +135,5 @@ tar -czvf doxygen.tar.gz bazel-bin/<subpackage>/html
 
 ## TODO
 
-- [ ] Add support for macos (I can't be bothered :D)
+- [ ] Add support for macos other than the system-wide doxygen installation (I can't be bothered :D)
 - [ ] Add more easy-to-use common configuration for the Doxyfile
