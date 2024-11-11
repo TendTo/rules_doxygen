@@ -11,6 +11,7 @@ def _local_repository_doxygen(ctx):
     Args:
         ctx: a [repository context](https://bazel.build/rules/lib/builtins/repository_ctx) object containing the repository's attributes
     """
+
     # Copy the necessary files to the repository by reading them from the current repository
     ctx.file("WORKSPACE", "workspace(name = %s)\n" % repr(ctx.name))
     ctx.file("doxygen.bzl", ctx.read(ctx.attr._doxygen_bzl))
@@ -21,7 +22,7 @@ def _local_repository_doxygen(ctx):
     doxygen_content = ctx.read(ctx.attr.executable or ctx.which("doxygen"))
     if ctx.os.name.startswith("windows"):
         ctx.file("doxygen.exe", doxygen_content, legacy_utf8 = False)
-    elif ctx.os.name == "macos":
+    elif ctx.os.name.startswith("mac"):
         ctx.file("doxygen", doxygen_content, legacy_utf8 = False)
     elif ctx.os.name == "linux":
         ctx.file("bin/doxygen", doxygen_content, legacy_utf8 = False)
@@ -84,7 +85,7 @@ def _doxygen_extension_impl(ctx):
         strip_prefix = ""
         if ctx.os.name.startswith("windows"):
             doxygen_sha256 = "478fc9897d00ca181835d248a4d3e5c83c26a32d1c7571f4321ddb0f2e97459f"
-        elif ctx.os.name == "macos":
+        elif ctx.os.name.startswith("mac"):
             doxygen_sha256 = "7ffb89909800242e29585e619582972c901ee0045cf4b7c4ef58a91c445f89eb"
         elif ctx.os.name == "linux":
             doxygen_sha256 = "db68ca22b43c3d7efd15351329db5af9146ab1ac7eaccd61a894fe36612da8fb"
@@ -106,7 +107,7 @@ def _doxygen_extension_impl(ctx):
         url = "https://github.com/doxygen/doxygen/releases/download/Release_%s/doxygen-%s.%s"
         if ctx.os.name.startswith("windows"):
             url = url % (doxygen_version_dash, doxygen_version, "windows.x64.bin.zip")
-        elif ctx.os.name == "macos":  # TODO: support macos
+        elif ctx.os.name.startswith("mac"):  # TODO: support macos for hermetic build
             url = url % (doxygen_version_dash, doxygen_version, "dmg")
             fail("Unsuppported OS: %s" % ctx.os.name)
         elif ctx.os.name == "linux":
