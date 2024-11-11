@@ -9,13 +9,13 @@ This repository contains a Starlark implementation of Doxygen rules in Bazel.
 Add the following to your _MODULE.bazel_:
 
 ```bzl
-bazel_dep(name = "rules_doxygen", version = "1.1.3", dev_dependency = True)
+bazel_dep(name = "rules_doxygen", version = "1.2.0", dev_dependency = True)
 ```
 
 If you don't want to depend on the [Bazel package registry](https://bazel.build/external/bazelbuild/rules_pkg) or you want to use a not-yet-published version of this module, you can use an archive override by adding the following lines below the `bazel_dep` rule in your _MODULE.bazel_ file:
 
 ```bzl
-bazel_dep(name = "rules_doxygen", version = "1.1.3", dev_dependency = True)
+bazel_dep(name = "rules_doxygen", version = "1.2.0", dev_dependency = True)
 archive_override(
     module_name = "rules_doxygen",
     urls = "https://github.com/TendTo/rules_doxygen/archive/refs/heads/main.tar.gz",
