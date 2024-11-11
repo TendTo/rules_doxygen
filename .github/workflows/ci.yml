@@ -37,7 +37,7 @@ jobs:
       - name: Install doxygen
         uses: ssciwr/doxygen-install@v1
       - name: Enable use of system doxygen
-        run: sed 's/# doxygen_extension.version(version = "0.0.0")/doxygen_extension.version(version = "0.0.0")/' MODULE.bazel
+        run: sed -i 's/# doxygen_extension.version(version = "0.0.0")/doxygen_extension.version(version = "0.0.0")/' MODULE.bazel
         working-directory: examples
         shell: bash
       - name: Build ${{ matrix.subdir }}
