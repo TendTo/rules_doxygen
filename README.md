@@ -50,6 +50,10 @@ The build will fail with an error message containing the correct SHA256.
 Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_0/doxygen-1.10.0.windows.x64.bin.zip failed: class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b but wanted 0000000000000000000000000000000000000000000000000000000000000000
 ```
 
+If you set the version to `0.0.0`, the doxygen executable will be assumed to be available from the PATH.
+No download will be performed and bazel will use the installed version of doxygen.
+Keep in mind that this will break the hermeticity of your build, as it will now depend on the environment.
+
 > [!Note]
 > See [the documentation](docs/extensions_doc.md) for more information.
 

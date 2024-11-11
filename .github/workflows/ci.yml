@@ -7,15 +7,39 @@ on:
     branches: [main]
 
 jobs:
-  examples:
+  tests:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest] # No macOS for now
         subdir: [base, kwargs, doxyfile, latex, nested, custom, awesome]
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
+      - name: Build ${{ matrix.subdir }}
+        run: bazel build //${{ matrix.subdir }}:doxygen
+        working-directory: examples
+      - name: Check output
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "examples/bazel-bin/${{ matrix.subdir }}/html/index.html"
+          fail: true
+
+  tests-system-installation:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        subdir: [base, kwargs, doxyfile, latex, nested, custom, awesome]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install doxygen
+        uses: ssciwr/doxygen-install@v1
+      - name: Enable use of system doxygen
+        run: sed 's/# doxygen_extension.version(version = "0.0.0")/doxygen_extension.version(version = "0.0.0")/' MODULE.bazel
+        working-directory: examples
+        shell: bash
       - name: Build ${{ matrix.subdir }}
         run: bazel build //${{ matrix.subdir }}:doxygen
         working-directory: examples
