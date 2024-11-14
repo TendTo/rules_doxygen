@@ -2,6 +2,9 @@
 
 exports_files([
     "Doxyfile.template",
+    "bin/doxygen",
+    "doxygen",
+    "doxygen.exe",
     "doxygen.BUILD.bazel",
     "doxygen.bzl",
     "extensions.bzl",

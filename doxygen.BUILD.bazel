@@ -1,5 +1,11 @@
 """Doxygen BUILD file"""
 
+exports_files([
+    "bin/doxygen",
+    "doxygen",
+    "doxygen.exe",
+])
+
 filegroup(
     name = "Doxyfile.template",
     srcs = ["@rules_doxygen//:Doxyfile.template"],

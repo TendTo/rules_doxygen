@@ -13,19 +13,41 @@ def _local_repository_doxygen(ctx):
     """
 
     # Copy the necessary files to the repository by reading them from the current repository
-    ctx.file("WORKSPACE", "workspace(name = %s)\n" % repr(ctx.name))
+    ctx.file("WORKSPACE", "workspace(name = doxygen)\n")
     ctx.file("doxygen.bzl", ctx.read(ctx.attr.doxygen_bzl))
     ctx.file("BUILD.bazel", ctx.read(ctx.attr.build))
     ctx.file("Doxyfile.template", ctx.read(ctx.attr.doxyfile_template))
 
     # Copy the doxygen executable to the repository
-    doxygen_content = ctx.read(ctx.attr.executable or ctx.which("doxygen"))
     if ctx.os.name.startswith("windows"):
-        ctx.file("doxygen.exe", doxygen_content, legacy_utf8 = False)
+        doxygen_content = ctx.read(ctx.attr.executable or ctx.which("doxygen"))
+        ctx.file("doxygen.exe", doxygen_content, executable = True, legacy_utf8 = False)
     elif ctx.os.name.startswith("mac"):
-        ctx.file("doxygen", doxygen_content, legacy_utf8 = False)
+        if ctx.which("doxygen"):
+            doxygen_content = ctx.read(ctx.which("doxygen"))
+            ctx.file("doxygen", doxygen_content, legacy_utf8 = False)
+        elif ctx.attr.executable:
+            doxygen_content = ctx.read(ctx.attr.executable)
+            ctx.file("doxygen", doxygen_content, legacy_utf8 = False)
+        else:
+            doxygen_path = ctx.path("doxygen")
+            dmg_path = ctx.path("doxygen.dmg")
+            mount_path = ctx.path("tmp_mount")
+            executable_path = ctx.path("mac_executable")
+            ctx.download(url = ctx.attr.url, output = dmg_path, sha256 = ctx.attr.sha256)
+            ctx.execute(["mkdir", "-p", str(mount_path)])
+            ctx.execute(["hdiutil", "attach", str(dmg_path), "-mountpoint", str(mount_path), "-nobrowse"])
+            ctx.execute(["cp", str(mount_path) + "/Doxygen.app/Contents/Resources/doxygen", str(executable_path)])
+            ctx.execute(["chmod", "+x", str(executable_path)])
+            ctx.execute(["hdiutil", "detach", str(mount_path)])
+            ctx.execute(["rm", "-rf", str(mount_path)])
+            ctx.execute(["rm", str(dmg_path)])
+            doxygen_content = ctx.read(executable_path)
+            ctx.file(doxygen_path, doxygen_content, executable = True, legacy_utf8 = False)
     elif ctx.os.name == "linux":
-        ctx.file("bin/doxygen", doxygen_content, legacy_utf8 = False)
+        doxygen_path = ctx.path("bin/doxygen")
+        doxygen_content = ctx.read(ctx.attr.executable or ctx.which("doxygen"))
+        ctx.file(doxygen_path, doxygen_content, executable = True, legacy_utf8 = False)
     else:
         fail("Unsuppported OS: %s" % ctx.os.name)
 
@@ -68,6 +90,12 @@ local_repository_doxygen(
             allow_single_file = True,
             doc = "The doxygen executable to use. Must refer to an executable file. Defaults to the doxygen executable in the PATH.",
         ),
+        "url": attr.string(
+            doc = "The Doxygen download URL.",
+        ),
+        "sha256": attr.string(
+            doc = "The expected SHA-256 of the Doxygen download URL.",
+        ),
     },
 )
 
@@ -79,23 +107,17 @@ def _doxygen_extension_impl(ctx):
     Args:
         ctx: a [module context](https://bazel.build/rules/lib/builtins/module_ctx) object containing the module's attributes
     """
+
     for mod in ctx.modules:
+
         if len(mod.tags.version) > 1:
             fail("Only one version of doxygen can be specified")
-        doxygen_version = "1.12.0"
-        strip_prefix = ""
-        if ctx.os.name.startswith("windows"):
-            doxygen_sha256 = "07f1c92cbbb32816689c725539c0951f92c6371d3d7f66dfa3192cbe88dd3138"
-        elif ctx.os.name.startswith("mac"):
-            doxygen_sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001"
-        elif ctx.os.name == "linux":
-            doxygen_sha256 = "3c42c3f3fb206732b503862d9c9c11978920a8214f223a3950bbf2520be5f647"
-        else:
-            fail("Unsuppported OS: %s" % ctx.os.name)
 
         for attr in mod.tags.version:
             doxygen_version = attr.version if attr.version != "" else fail("Version must be specified")
-            doxygen_sha256 = attr.sha256 if attr.sha256 != "" else "0" * 64
+            doxygen_mac_sha256 = attr.mac_sha256 if attr.mac_sha256 != "" else "0" * 64
+            doxygen_linux_sha256 = attr.linux_sha256 if attr.linux_sha256 != "" else "0" * 64
+            doxygen_windows_sha256 = attr.windows_sha256 if attr.windows_sha256 != "" else "0" * 64
 
         if doxygen_version == "0.0.0":
             local_repository_doxygen(
@@ -103,34 +125,56 @@ def _doxygen_extension_impl(ctx):
             )
             return
 
-        doxygen_version_dash = doxygen_version.replace(".", "_")
+        if doxygen_version == "1.12.0":
+            doxygen_mac_sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001"
+            doxygen_linux_sha256 = "3c42c3f3fb206732b503862d9c9c11978920a8214f223a3950bbf2520be5f647"
+            doxygen_windows_sha256 = "07f1c92cbbb32816689c725539c0951f92c6371d3d7f66dfa3192cbe88dd3138"
 
-        url = "https://github.com/doxygen/doxygen/releases/download/Release_%s/doxygen-%s.%s"
+        strip_prefix = ""
+
+        use_http_archive = True
         if ctx.os.name.startswith("windows"):
-            url = url % (doxygen_version_dash, doxygen_version, "windows.x64.bin.zip")
-        elif ctx.os.name.startswith("mac"):  # TODO: support macos for hermetic build
-            url = url % (doxygen_version_dash, doxygen_version, "dmg")
-            fail("Unsuppported OS: %s" % ctx.os.name)
+            file_ext = "windows.x64.bin.zip"
+        elif ctx.os.name.startswith("mac"):
+            file_ext = "dmg"
+            use_http_archive = False
         elif ctx.os.name == "linux":
-            url = url % (doxygen_version_dash, doxygen_version, "linux.bin.tar.gz")
+            file_ext = "linux.bin.tar.gz"
             strip_prefix = "doxygen-%s" % doxygen_version
         else:
             fail("Unsuppported OS: %s" % ctx.os.name)
 
-        doxygen_bzl_content = ctx.read(Label("@rules_doxygen//:doxygen.bzl"))
-        http_archive(
-            name = "doxygen",
-            build_file = "@rules_doxygen//:doxygen.BUILD.bazel",
-            url = url,
-            sha256 = doxygen_sha256,
-            patch_cmds = ["cat > 'doxygen.bzl' <<- EOF\n%s\nEOF" % doxygen_bzl_content],
-            patch_cmds_win = ["Set-Content -Path 'doxygen.bzl' -Value '%s'" % doxygen_bzl_content],
-            strip_prefix = strip_prefix,
+        doxygen_version_dash = doxygen_version.replace(".", "_")
+        url = "https://github.com/doxygen/doxygen/releases/download/Release_%s/doxygen-%s.%s" % (
+            doxygen_version_dash,
+            doxygen_version,
+            file_ext
         )
+
+        if use_http_archive:
+            doxygen_bzl_content = ctx.read(Label("@rules_doxygen//:doxygen.bzl"))
+            sha256 = doxygen_linux_sha256 if ctx.os.name == "linux" else doxygen_windows_sha256
+            http_archive(
+                name = "doxygen",
+                build_file = "@rules_doxygen//:doxygen.BUILD.bazel",
+                url = url,
+                sha256 = sha256,
+                patch_cmds = ["cat > 'doxygen.bzl' <<- EOF\n%s\nEOF" % doxygen_bzl_content],
+                patch_cmds_win = ["Set-Content -Path 'doxygen.bzl' -Value '%s'" % doxygen_bzl_content],
+                strip_prefix = strip_prefix,
+            )
+        else:
+            local_repository_doxygen(
+                name = "doxygen",
+                url = url,
+                sha256 = doxygen_mac_sha256,
+            )
 
 _doxygen_version = tag_class(attrs = {
     "version": attr.string(doc = "The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH", mandatory = True),
-    "sha256": attr.string(doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used."),
+    "mac_sha256": attr.string(doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used."),
+    "linux_sha256": attr.string(doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used."),
+    "windows_sha256": attr.string(doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used."),
 })
 
 doxygen_extension = module_extension(
