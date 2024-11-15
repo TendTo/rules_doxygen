@@ -56,16 +56,16 @@ def _doxygen_repository(ctx):
         )
 
         # Mount the dmg file
-        ctx.execute(["hdiutil", "attach", "-nobrowse", "-readonly", "-mouontpoint", "Doxygen", "doxygen.dmg"])
+        ctx.execute(["hdiutil", "attach", "-nobrowse", "-readonly", "-mountpoint", "doxygen-mount", "doxygen.dmg"])
 
         # Copy the doxygen executable to the repository
-        ctx.file("doxygen", ctx.read("Doxygen/Applications/Doxygen.app/Contents/Resources/doxygen"), legacy_utf8 = False)
+        ctx.file("doxygen", ctx.read("doxygen-mount/Doxygen.app/Contents/Resources/doxygen"), legacy_utf8 = False)
 
         # Unmount the dmg file
-        ctx.execute(["hdiutil", "detach", "Doxygen"])
+        ctx.execute(["hdiutil", "detach", "doxygen-mount"])
 
         # Delete the temporary files
-        ctx.delete("doxygen-%s.dmg" % doxygen_version)
+        ctx.delete("doxygen.dmg")
 
     elif ctx.os.name == "linux":
         # For linux, download the tar.gz file and extract the executable
