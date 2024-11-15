@@ -1,13 +1,19 @@
 """Doxygen BUILD file"""
 
-exports_files(["Doxyfile.template"])
+exports_files([
+    "Doxyfile.template",
+    "doxygen.bzl",
+])
 
 filegroup(
     name = "executable",
-    srcs = select({
-        "@platforms//os:linux": ["doxygen"],
-        "@platforms//os:macos": ["doxygen"],
-        "@platforms//os:windows": ["doxygen.exe"],
-    }, "Unsupported platform"),
+    srcs = select(
+        {
+            "@platforms//os:linux": ["doxygen"],
+            "@platforms//os:macos": ["doxygen"],
+            "@platforms//os:windows": ["doxygen.exe"],
+        },
+        "Unsupported platform",
+    ),
     visibility = ["//visibility:public"],
 )
