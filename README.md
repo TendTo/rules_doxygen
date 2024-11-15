@@ -145,5 +145,4 @@ tar -czvf doxygen.tar.gz bazel-bin/<subpackage>/html
 
 ## TODO
 
-- [ ] Add support for macos other than the system-wide doxygen installation (I can't be bothered :D)
 - [ ] Add more easy-to-use common configuration for the Doxyfile
