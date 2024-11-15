@@ -10,7 +10,7 @@ jobs:
   tests:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest] # No macOS for now
+        os: [ubuntu-latest, windows-latest, macos-latest]
         subdir: [base, kwargs, doxyfile, latex, nested, custom, awesome]
     runs-on: ${{ matrix.os }}
 
