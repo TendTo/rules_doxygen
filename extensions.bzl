@@ -1,8 +1,9 @@
 """Repository rule for downloading the correct version of doxygen using module extensions."""
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:cache.bzl", "get_default_canonical_id")
+load("@bazel_tools//tools/build_defs/repo:utils.bzl", "get_auth")
 
-def _local_repository_doxygen(ctx):
+def _doxygen_repository(ctx):
     """
     Repository rule for doxygen.
 
@@ -18,31 +19,103 @@ def _local_repository_doxygen(ctx):
     ctx.file("BUILD.bazel", ctx.read(ctx.attr.build))
     ctx.file("Doxyfile.template", ctx.read(ctx.attr.doxyfile_template))
 
-    # Copy the doxygen executable to the repository
-    doxygen_content = ctx.read(ctx.attr.executable or ctx.which("doxygen"))
+    doxygen_version = ctx.attr.version
+
+    # If the version is set to 0.0.0 use the installed version of doxygen from the PATH
+    if doxygen_version == "0.0.0":
+        if ctx.os.name.startswith("windows"):
+            ctx.file("doxygen.exe", ctx.read(ctx.which("doxygen")), legacy_utf8 = False)
+        else:
+            ctx.file("doxygen", ctx.read(ctx.which("doxygen")), legacy_utf8 = False)
+        return
+
+    doxygen_version_dash = doxygen_version.replace(".", "_")
+
+    url = "https://github.com/doxygen/doxygen/releases/download/Release_%s/doxygen-%s.%s"
+
     if ctx.os.name.startswith("windows"):
-        ctx.file("doxygen.exe", doxygen_content, legacy_utf8 = False)
+        # For windows, download the zip file and extract the executable
+        url = url % (doxygen_version_dash, doxygen_version, "windows.x64.bin.zip")
+        ctx.download_and_extract(
+            url = url,
+            sha256 = ctx.attr.sha256,
+            type = "zip",
+            canonical_id = get_default_canonical_id(ctx, [url]),
+            auth = get_auth(ctx, [url]),
+        )
+
     elif ctx.os.name.startswith("mac"):
-        ctx.file("doxygen", doxygen_content, legacy_utf8 = False)
+        # For mac, download the dmg file, mount it and copy the executable
+        url = url % (doxygen_version_dash, doxygen_version, "dmg")
+        ctx.download(
+            url = url,
+            sha256 = ctx.attr.sha256,
+            canonical_id = get_default_canonical_id(ctx, [url]),
+            auth = get_auth(ctx, [url]),
+        )
+
+        # Mount the dmg file
+        ctx.execute(["hdiutil", "attach", "-nobrowse", "-readonly", "-mouontpoint", "Doxygen", "doxygen-%s.dmg" % doxygen_version])
+
+        # Copy the doxygen executable to the repository
+        ctx.file("doxygen", ctx.read("Doxygen/Applications/Doxygen.app/Contents/Resources/doxygen"), legacy_utf8 = False)
+
+        # Unmount the dmg file
+        ctx.execute(["hdiutil", "detach", "Doxygen"])
+
+        # Delete the temporary files
+        ctx.delete("doxygen-%s.dmg" % doxygen_version)
+
     elif ctx.os.name == "linux":
-        ctx.file("bin/doxygen", doxygen_content, legacy_utf8 = False)
+        # For linux, download the tar.gz file and extract the executable
+        url = url % (doxygen_version_dash, doxygen_version, "linux.bin.tar.gz")
+        ctx.download_and_extract(
+            url = url,
+            sha256 = ctx.attr.sha256,
+            type = "tar.gz",
+            canonical_id = get_default_canonical_id(ctx, [url]),
+            auth = get_auth(ctx, [url]),
+            stripPrefix = "doxygen-%s" % doxygen_version,
+        )
+
+        # Copy the doxygen executable to the repository
+        ctx.file("doxygen", ctx.read("bin/doxygen"), legacy_utf8 = False)
+
+        # Delete other temporary files
+        for file in ("bin", "examples", "html", "man"):
+            ctx.delete(file)
     else:
         fail("Unsuppported OS: %s" % ctx.os.name)
 
-local_repository_doxygen = repository_rule(
-    implementation = _local_repository_doxygen,
+doxygen_repository = repository_rule(
+    implementation = _doxygen_repository,
     doc = """
 Repository rule for doxygen.
 
-Used to create a local repository for doxygen, containing the installed doxygen binary and all the necessary files to run the doxygen macro.
-In order to use this rule, you must have doxygen installed on your system and the binary (named doxygen) must available in the PATH.
-Keep in mind that this will break the hermeticity of your build, as it will now depend on the environment.
+Depending on the version, the behavior will change:
+- If the version is set to `0.0.0`, the repository will use the installed version of doxygen, getting the binary from the PATH.
+- If a version is specified, the repository will download the correct version of doxygen and make it available to the requesting module.
+
+> [!Note]  
+> The local installation version of the rules needs doxygen to be installed on your system and the binary (named doxygen) must available in the PATH.
+> Keep in mind that this will break the hermeticity of your build, as it will now depend on the environment.
+
+You can further customize the repository by specifying the `doxygen_bzl`, `build`, and `doxyfile_template` attributes, but the default values should be enough for most use cases.
 
 ### Example
 
 ```starlark
-local_repository_doxygen(
+# Download the os specific version 1.12.0 of doxygen
+doxygen_repository(
     name = "doxygen",
+    version = "1.12.0",
+    sha256 = "07f1c92cbbb32816689c725539c0951f92c6371d3d7f66dfa3192cbe88dd3138",
+)
+
+# Use the system installed version of doxygen
+doxygen_repository(
+    name = "doxygen",
+    version = "0.0.0",
 )
 ```
 """,
@@ -50,23 +123,25 @@ local_repository_doxygen(
         "doxygen_bzl": attr.label(
             doc = "The starlark file containing the doxygen macro",
             allow_single_file = True,
-            default = Label("@rules_doxygen//:doxygen.bzl"),
+            default = Label("@rules_doxygen//doxygen:doxygen.bzl"),
         ),
         "build": attr.label(
             doc = "The BUILD file of the repository",
             allow_single_file = True,
-            default = Label("@rules_doxygen//:doxygen.BUILD.bazel"),
+            default = Label("@rules_doxygen//doxygen:BUILD.bazel"),
         ),
         "doxyfile_template": attr.label(
             doc = "The Doxyfile template to use",
             allow_single_file = True,
-            default = Label("@rules_doxygen//:Doxyfile.template"),
+            default = Label("@rules_doxygen//doxygen:Doxyfile.template"),
         ),
-        "executable": attr.label(
-            executable = True,
-            cfg = "exec",
-            allow_single_file = True,
-            doc = "The doxygen executable to use. Must refer to an executable file. Defaults to the doxygen executable in the PATH.",
+        "sha256": attr.string(
+            doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used.",
+            default = "0" * 64,
+        ),
+        "version": attr.string(
+            doc = "The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH",
+            mandatory = True,
         ),
     },
 )
@@ -83,7 +158,6 @@ def _doxygen_extension_impl(ctx):
         if len(mod.tags.version) > 1:
             fail("Only one version of doxygen can be specified")
         doxygen_version = "1.12.0"
-        strip_prefix = ""
         if ctx.os.name.startswith("windows"):
             doxygen_sha256 = "07f1c92cbbb32816689c725539c0951f92c6371d3d7f66dfa3192cbe88dd3138"
         elif ctx.os.name.startswith("mac"):
@@ -97,35 +171,10 @@ def _doxygen_extension_impl(ctx):
             doxygen_version = attr.version if attr.version != "" else fail("Version must be specified")
             doxygen_sha256 = attr.sha256 if attr.sha256 != "" else "0" * 64
 
-        if doxygen_version == "0.0.0":
-            local_repository_doxygen(
-                name = "doxygen",
-            )
-            return
-
-        doxygen_version_dash = doxygen_version.replace(".", "_")
-
-        url = "https://github.com/doxygen/doxygen/releases/download/Release_%s/doxygen-%s.%s"
-        if ctx.os.name.startswith("windows"):
-            url = url % (doxygen_version_dash, doxygen_version, "windows.x64.bin.zip")
-        elif ctx.os.name.startswith("mac"):  # TODO: support macos for hermetic build
-            url = url % (doxygen_version_dash, doxygen_version, "dmg")
-            fail("Unsuppported OS: %s" % ctx.os.name)
-        elif ctx.os.name == "linux":
-            url = url % (doxygen_version_dash, doxygen_version, "linux.bin.tar.gz")
-            strip_prefix = "doxygen-%s" % doxygen_version
-        else:
-            fail("Unsuppported OS: %s" % ctx.os.name)
-
-        doxygen_bzl_content = ctx.read(Label("@rules_doxygen//:doxygen.bzl"))
-        http_archive(
+        doxygen_repository(
             name = "doxygen",
-            build_file = "@rules_doxygen//:doxygen.BUILD.bazel",
-            url = url,
             sha256 = doxygen_sha256,
-            patch_cmds = ["cat > 'doxygen.bzl' <<- EOF\n%s\nEOF" % doxygen_bzl_content],
-            patch_cmds_win = ["Set-Content -Path 'doxygen.bzl' -Value '%s'" % doxygen_bzl_content],
-            strip_prefix = strip_prefix,
+            version = doxygen_version,
         )
 
 _doxygen_version = tag_class(attrs = {
