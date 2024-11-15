@@ -121,6 +121,14 @@ doxygen_repository(
 ```
 """,
     attrs = {
+        "version": attr.string(
+            doc = "The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH",
+            mandatory = True,
+        ),
+        "sha256": attr.string(
+            doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used.",
+            default = "0" * 64,
+        ),
         "doxygen_bzl": attr.label(
             doc = "The starlark file containing the doxygen macro",
             allow_single_file = True,
@@ -135,14 +143,6 @@ doxygen_repository(
             doc = "The Doxyfile template to use",
             allow_single_file = True,
             default = Label("@rules_doxygen//doxygen:Doxyfile.template"),
-        ),
-        "sha256": attr.string(
-            doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used.",
-            default = "0" * 64,
-        ),
-        "version": attr.string(
-            doc = "The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH",
-            mandatory = True,
         ),
     },
 )
