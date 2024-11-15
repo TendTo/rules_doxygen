@@ -31,12 +31,11 @@ def _doxygen_repository(ctx):
 
     url = "https://github.com/doxygen/doxygen/releases/download/Release_%s/doxygen-%s.%s"
     doxygen_version_dash = doxygen_version.replace(".", "_")
-    download_output = ""
+    download_output = "doxygen-dir"
 
     if ctx.os.name.startswith("windows"):
-        # For windows, download the zip file and extract the executable
+        # For windows, download the zip file and extract the executable and dll
         url = url % (doxygen_version_dash, doxygen_version, "windows.x64.bin.zip")
-        download_output = "doxygen-dir"
         ctx.download_and_extract(
             url = url,
             output = download_output,
@@ -46,8 +45,9 @@ def _doxygen_repository(ctx):
             auth = get_auth(ctx, [url]),
         )
 
-        # Copy the doxygen executable to the repository
+        # Copy the doxygen executable (and dll) to the repository
         ctx.file("doxygen.exe", ctx.read("doxygen-dir/doxygen.exe"), legacy_utf8 = False)
+        ctx.file("libclang.dll", ctx.read("doxygen-dir/libclang.dll"), legacy_utf8 = False)
 
     elif ctx.os.name.startswith("mac"):
         # For mac, download the dmg file, mount it and copy the executable
@@ -73,7 +73,6 @@ def _doxygen_repository(ctx):
     elif ctx.os.name == "linux":
         # For linux, download the tar.gz file and extract the executable
         url = url % (doxygen_version_dash, doxygen_version, "linux.bin.tar.gz")
-        download_output = "doxygen-dir"
         ctx.download_and_extract(
             url = url,
             output = download_output,
