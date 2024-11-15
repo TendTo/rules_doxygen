@@ -209,6 +209,8 @@ Keep in mind that this will break the hermeticity of your build, as it will now 
 ### Example
 
 ```starlark
+# MODULE.bazel file
+
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")

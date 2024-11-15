@@ -77,6 +77,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactor of internal repository and extension rules
 - Updated documentation
 
+## [NEXT.VERSION]
+
 [1.0.0]: https://github.com/TendTo/rules_doxygen/tree/1.0.0
 [1.1.0]: https://github.com/TendTo/rules_doxygen/compare/1.0.0...1.1.0
 [1.1.1]: https://github.com/TendTo/rules_doxygen/compare/1.1.0...1.1.1

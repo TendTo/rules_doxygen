@@ -183,7 +183,7 @@ def doxygen(
         hide_in_body_docs: Whether to hide in body docs.
         exclude_symbols: A list of symbols to exclude.
         example_path: The path to the examples. They must be added to the source files.
-        dot_executable: Label of the doxygen executable. Make sure it is also added to the `srcs` of the macro 
+        dot_executable: Label of the doxygen executable. Make sure it is also added to the `srcs` of the macro
         configurations: A list of additional configuration parameters to pass to Doxygen.
         doxyfile_template: The template file to use to generate the Doxyfile.
             The following substitutions are available:<br>

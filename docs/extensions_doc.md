@@ -2,25 +2,42 @@
 
 Repository rule for downloading the correct version of doxygen using module extensions.
 
-<a id="local_repository_doxygen"></a>
+<a id="doxygen_repository"></a>
 
-## local_repository_doxygen
+## doxygen_repository
 
 <pre>
-local_repository_doxygen(<a href="#local_repository_doxygen-name">name</a>, <a href="#local_repository_doxygen-build">build</a>, <a href="#local_repository_doxygen-doxyfile_template">doxyfile_template</a>, <a href="#local_repository_doxygen-doxygen_bzl">doxygen_bzl</a>, <a href="#local_repository_doxygen-executable">executable</a>, <a href="#local_repository_doxygen-repo_mapping">repo_mapping</a>)
+load("@rules_doxygen//:extensions.bzl", "doxygen_repository")
+
+doxygen_repository(<a href="#doxygen_repository-name">name</a>, <a href="#doxygen_repository-build">build</a>, <a href="#doxygen_repository-doxyfile_template">doxyfile_template</a>, <a href="#doxygen_repository-doxygen_bzl">doxygen_bzl</a>, <a href="#doxygen_repository-repo_mapping">repo_mapping</a>, <a href="#doxygen_repository-sha256">sha256</a>, <a href="#doxygen_repository-version">version</a>)
 </pre>
 
 Repository rule for doxygen.
 
-Used to create a local repository for doxygen, containing the installed doxygen binary and all the necessary files to run the doxygen macro.
-In order to use this rule, you must have doxygen installed on your system and the binary (named doxygen) must available in the PATH.
-Keep in mind that this will break the hermeticity of your build, as it will now depend on the environment.
+Depending on the version, the behavior will change:
+- If the version is set to `0.0.0`, the repository will use the installed version of doxygen, getting the binary from the PATH.
+- If a version is specified, the repository will download the correct version of doxygen and make it available to the requesting module.
+
+> [!Note]
+> The local installation version of the rules needs doxygen to be installed on your system and the binary (named doxygen) must available in the PATH.
+> Keep in mind that this will break the hermeticity of your build, as it will now depend on the environment.
+
+You can further customize the repository by specifying the `doxygen_bzl`, `build`, and `doxyfile_template` attributes, but the default values should be enough for most use cases.
 
 ### Example
 
 ```starlark
-local_repository_doxygen(
+# Download the os specific version 1.12.0 of doxygen
+doxygen_repository(
     name = "doxygen",
+    version = "1.12.0",
+    sha256 = "07f1c92cbbb32816689c725539c0951f92c6371d3d7f66dfa3192cbe88dd3138",
+)
+
+# Use the system installed version of doxygen
+doxygen_repository(
+    name = "doxygen",
+    version = "0.0.0",
 )
 ```
 
@@ -29,12 +46,13 @@ local_repository_doxygen(
 
 | Name  | Description | Type | Mandatory | Default |
 | :------------- | :------------- | :------------- | :------------- | :------------- |
-| <a id="local_repository_doxygen-name"></a>name |  A unique name for this repository.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
-| <a id="local_repository_doxygen-build"></a>build |  The BUILD file of the repository   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@rules_doxygen//:doxygen.BUILD.bazel"`  |
-| <a id="local_repository_doxygen-doxyfile_template"></a>doxyfile_template |  The Doxyfile template to use   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@rules_doxygen//:Doxyfile.template"`  |
-| <a id="local_repository_doxygen-doxygen_bzl"></a>doxygen_bzl |  The starlark file containing the doxygen macro   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@rules_doxygen//:doxygen.bzl"`  |
-| <a id="local_repository_doxygen-executable"></a>executable |  The doxygen executable to use. Must refer to an executable file. Defaults to the doxygen executable in the PATH.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `None`  |
-| <a id="local_repository_doxygen-repo_mapping"></a>repo_mapping |  In `WORKSPACE` context only: a dictionary from local repository name to global repository name. This allows controls over workspace dependency resolution for dependencies of this repository.<br><br>For example, an entry `"@foo": "@bar"` declares that, for any time this repository depends on `@foo` (such as a dependency on `@foo//some:target`, it should actually resolve that dependency within globally-declared `@bar` (`@bar//some:target`).<br><br>This attribute is _not_ supported in `MODULE.bazel` context (when invoking a repository rule inside a module extension's implementation function).   | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional |  |
+| <a id="doxygen_repository-name"></a>name |  A unique name for this repository.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
+| <a id="doxygen_repository-build"></a>build |  The BUILD file of the repository   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@rules_doxygen//doxygen:BUILD.bazel"`  |
+| <a id="doxygen_repository-doxyfile_template"></a>doxyfile_template |  The Doxyfile template to use   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@rules_doxygen//doxygen:Doxyfile.template"`  |
+| <a id="doxygen_repository-doxygen_bzl"></a>doxygen_bzl |  The starlark file containing the doxygen macro   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@rules_doxygen//doxygen:doxygen.bzl"`  |
+| <a id="doxygen_repository-repo_mapping"></a>repo_mapping |  In `WORKSPACE` context only: a dictionary from local repository name to global repository name. This allows controls over workspace dependency resolution for dependencies of this repository.<br><br>For example, an entry `"@foo": "@bar"` declares that, for any time this repository depends on `@foo` (such as a dependency on `@foo//some:target`, it should actually resolve that dependency within globally-declared `@bar` (`@bar//some:target`).<br><br>This attribute is _not_ supported in `MODULE.bazel` context (when invoking a repository rule inside a module extension's implementation function).   | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional |  |
+| <a id="doxygen_repository-sha256"></a>sha256 |  The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used.   | String | optional |  `"0000000000000000000000000000000000000000000000000000000000000000"`  |
+| <a id="doxygen_repository-version"></a>version |  The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH   | String | required |  |
 
 
 <a id="doxygen_extension"></a>
@@ -68,6 +86,8 @@ Keep in mind that this will break the hermeticity of your build, as it will now 
 ### Example
 
 ```starlark
+# MODULE.bazel file
+
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
