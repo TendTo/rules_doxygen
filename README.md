@@ -9,18 +9,22 @@ This repository contains a [Starlark](https://github.com/bazelbuild/starlark) im
 Add the following to your _MODULE.bazel_:
 
 ```bzl
-bazel_dep(name = "rules_doxygen", version = "1.2.0", dev_dependency = True)
+# MODULE.bazel file
+
+bazel_dep(name = "rules_doxygen", version = "1.3.0", dev_dependency = True)
 ```
 
 If you don't want to depend on the [Bazel package registry](https://bazel.build/external/bazelbuild/rules_pkg) or you want to use a not-yet-published version of this module, you can use an archive override by adding the following lines below the `bazel_dep` rule in your _MODULE.bazel_ file:
 
 ```bzl
-bazel_dep(name = "rules_doxygen", version = "1.2.0", dev_dependency = True)
+# MODULE.bazel file
+
+bazel_dep(name = "rules_doxygen", version = "1.3.0", dev_dependency = True)
 archive_override(
     module_name = "rules_doxygen",
     urls = "https://github.com/TendTo/rules_doxygen/archive/refs/heads/main.tar.gz",
     strip_prefix = "rules_doxygen-main",
-    # The SHA256 checksum of the archive file, based on the rules' version, for reproducibility
+    # The SHA256 checksum of the archive file, based on the rules' version
     # integrity = "sha256-0SCaZuAerluoDs6HXMb0Bj9FttZVieM4+Dpd9gnMM+o=", # Example
 )
 ```
@@ -30,18 +34,15 @@ archive_override(
 To select a doxygen version to use, use the `doxygen_extension` module extension below the `bazel_dep` rule in your MODULE.bazel file.
 
 ```bzl
+# MODULE.bazel file
+
+bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
+
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 use_repo(doxygen_extension, "doxygen")
 ```
 
 By default, version `1.12.0` of Doxygen is used. To select a different version, indicate it in the `version` module:
-
-```bzl
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
-# Using the 1.10.0 version of Doxygen on Windows instead of the default 1.12.0
-doxygen_extension.version(version = "1.10.0", sha256 = "2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b")
-use_repo(doxygen_extension, "doxygen")
-```
 
 If you don't know the SHA256 of the Doxygen binary, just leave it empty.
 The build will fail with an error message containing the correct SHA256.
@@ -52,7 +53,40 @@ Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_
 
 If you set the version to `0.0.0`, the doxygen executable will be assumed to be available from the PATH.
 No download will be performed and bazel will use the installed version of doxygen.
-Keep in mind that this will break the hermeticity of your build, as it will now depend on the environment.
+
+> [!Warning]  
+> Setting the version to `0.0.0` this will break the hermeticity of your build, as it will now depend on the environment.
+
+The module also supports multiple versions of doxygen for different platforms.
+Each will only be downloaded if the given platform matches the current platform.
+
+> [!Tip]  
+> Not indicating the platform will make the configuration apply to all platforms.
+> The build will fail when the downloaded file does not match the SHA256 checksum, i.e. when the platform changes.
+> Unless you are using a system-wide doxygen installation, you should always specify the platform.
+
+```bzl
+# MODULE.bazel file
+
+bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
+
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+
+# Download doxygen version 1.10.0 on linux
+doxygen_extension.version(
+    version = "1.10.0",
+    sha256 = "dcfc9aa4cc05aef1f0407817612ad9e9201d9bf2ce67cecf95a024bba7d39747",
+    platform = "linux",
+)
+# Use the local doxygen installation on mac
+doxygen_extension.version(
+    version = "0.0.0",
+    platform = "mac",
+)
+# Since no configuration has been provided, windows will fallback to the default version
+
+use_repo(doxygen_extension, "doxygen")
+```
 
 > [!Note]
 > See [the documentation](docs/extensions_doc.md) for more information.
@@ -65,6 +99,7 @@ Only the sources are required, the rest of the parameters are optional.
 
 ```bzl
 # My BUILD.bazel file
+
 doxygen(
     name = "doxygen",   # Name of the rule, can be anything
     srcs = glob([       # List of sources to document.
@@ -73,12 +108,13 @@ doxygen(
     ]) + ["README.md"],
     project_brief = "Example project for doxygen",  # Brief description of the project
     project_name = "base",                          # Name of the project
-    configurations = [                              # Additional configurations to add to the Doxyfile
-        "GENERATE_HTML = YES",                      # They are the same as the Doxyfile options,
-        "GENERATE_LATEX = NO",                      # and will override the default values
+    configurations = [                              # Customizable configurations
+        "GENERATE_HTML = YES",                      # that override the default ones
+        "GENERATE_LATEX = NO",                      # from the Doxyfile
         "USE_MDFILE_AS_MAINPAGE = README.md",
     ]
-    tags = ["manual"]  # Tags to add to the target. This way the target won't run unless explicitly called
+    tags = ["manual"]  # Tags to add to the target.
+                       # This way the target won't run unless explicitly called
 )
 ```
 
@@ -100,6 +136,7 @@ For example, if the _BUILD.bazel_ file is in the root of the repository, and the
 
 ```bzl
 # BUILD.bazel file in the root of the repository
+
 doxygen(
     name = "doxygen",
     srcs = glob([
@@ -135,5 +172,4 @@ tar -czvf doxygen.tar.gz bazel-bin/<subpackage>/html
 
 ## TODO
 
-- [ ] Add support for macos other than the system-wide doxygen installation (I can't be bothered :D)
 - [ ] Add more easy-to-use common configuration for the Doxyfile

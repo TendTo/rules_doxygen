@@ -7,6 +7,13 @@ local_path_override(
 )
 
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
-# Test doxygen_extension with a system installation of doxygen
+
+# doxygen_extension with a system installation of doxygen
 # doxygen_extension.version(version = "0.0.0")
+
+# Multiple versions of doxygen for different platforms
+# doxygen_extension.version(version = "1.10.0", sha256 = "dcfc9aa4cc05aef1f0407817612ad9e9201d9bf2ce67cecf95a024bba7d39747", platform = "linux")
+# doxygen_extension.version(version = "1.12.0", sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001", platform = "mac")
+# doxygen_extension.version(version = "1.11.0", sha256 = "478fc9897d00ca181835d248a4d3e5c83c26a32d1c7571f4321ddb0f2e97459f", platform = "windows")
+
 use_repo(doxygen_extension, "doxygen")

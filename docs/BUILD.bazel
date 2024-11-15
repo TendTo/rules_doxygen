@@ -13,7 +13,7 @@ bzl_library(
 stardoc(
     name = "doxygen_doc",
     out = "doxygen_doc.md",
-    input = "@rules_doxygen//:doxygen.bzl",
+    input = "@rules_doxygen//doxygen:doxygen.bzl",
 )
 
 stardoc(
