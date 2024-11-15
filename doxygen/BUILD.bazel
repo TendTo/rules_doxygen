@@ -9,9 +9,9 @@ filegroup(
     name = "executable",
     srcs = select(
         {
-            "@platforms//os:linux": ["doxygen"],
-            "@platforms//os:macos": ["doxygen"],
-            "@platforms//os:windows": ["doxygen.exe"],
+            "@platforms//os:linux": ["linux/doxygen"],
+            "@platforms//os:macos": ["mac/doxygen"],
+            "@platforms//os:windows": ["windows/doxygen.exe"],
         },
         "Unsupported platform",
     ),
