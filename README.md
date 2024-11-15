@@ -24,7 +24,7 @@ archive_override(
     module_name = "rules_doxygen",
     urls = "https://github.com/TendTo/rules_doxygen/archive/refs/heads/main.tar.gz",
     strip_prefix = "rules_doxygen-main",
-    # The SHA256 checksum of the archive file, based on the rules' version, for reproducibility
+    # The SHA256 checksum of the archive file, based on the rules' version
     # integrity = "sha256-0SCaZuAerluoDs6HXMb0Bj9FttZVieM4+Dpd9gnMM+o=", # Example
 )
 ```
@@ -47,7 +47,10 @@ By default, version `1.12.0` of Doxygen is used. To select a different version, 
 
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 # Using the 1.10.0 version of Doxygen on Windows instead of the default 1.12.0
-doxygen_extension.version(version = "1.10.0", sha256 = "2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b")
+doxygen_extension.version(
+    version = "1.10.0",
+    sha256 = "2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b",
+)
 use_repo(doxygen_extension, "doxygen")
 ```
 
@@ -82,12 +85,13 @@ doxygen(
     ]) + ["README.md"],
     project_brief = "Example project for doxygen",  # Brief description of the project
     project_name = "base",                          # Name of the project
-    configurations = [                              # Additional configurations to add to the Doxyfile
-        "GENERATE_HTML = YES",                      # They are the same as the Doxyfile options,
-        "GENERATE_LATEX = NO",                      # and will override the default values
+    configurations = [                              # Customizable configurations
+        "GENERATE_HTML = YES",                      # that override the default ones
+        "GENERATE_LATEX = NO",                      # from the Doxyfile
         "USE_MDFILE_AS_MAINPAGE = README.md",
     ]
-    tags = ["manual"]  # Tags to add to the target. This way the target won't run unless explicitly called
+    tags = ["manual"]  # Tags to add to the target. 
+                       # This way the target won't run unless explicitly called
 )
 ```
 
