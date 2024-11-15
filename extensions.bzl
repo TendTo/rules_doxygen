@@ -49,13 +49,14 @@ def _doxygen_repository(ctx):
         url = url % (doxygen_version_dash, doxygen_version, "dmg")
         ctx.download(
             url = url,
+            output = "doxygen.dmg",
             sha256 = ctx.attr.sha256,
             canonical_id = get_default_canonical_id(ctx, [url]),
             auth = get_auth(ctx, [url]),
         )
 
         # Mount the dmg file
-        ctx.execute(["hdiutil", "attach", "-nobrowse", "-readonly", "-mouontpoint", "Doxygen", "doxygen-%s.dmg" % doxygen_version])
+        ctx.execute(["hdiutil", "attach", "-nobrowse", "-readonly", "-mouontpoint", "Doxygen", "doxygen.dmg"])
 
         # Copy the doxygen executable to the repository
         ctx.file("doxygen", ctx.read("Doxygen/Applications/Doxygen.app/Contents/Resources/doxygen"), legacy_utf8 = False)
