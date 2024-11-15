@@ -65,11 +65,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Default doxygen version is now `1.12.0`
 
-## [NEXT.VERSION]
+## [1.3.0]
+
+### Added
+
+- Support hermetic build for `macos` platform
 
 ### Changed
 
 - Update dependencies (stardoc 0.6.2 -> 0.7.1, platforms 0.0.5 -> 0.0.10)
+- Refactor of internal repository and extension rules
+- Updated documentation
 
 [1.0.0]: https://github.com/TendTo/rules_doxygen/tree/1.0.0
 [1.1.0]: https://github.com/TendTo/rules_doxygen/compare/1.0.0...1.1.0
@@ -77,4 +83,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.1.2]: https://github.com/TendTo/rules_doxygen/compare/1.1.1...1.1.2
 [1.1.3]: https://github.com/TendTo/rules_doxygen/compare/1.1.2...1.1.3
 [1.2.0]: https://github.com/TendTo/rules_doxygen/compare/1.1.3...1.2.0
-[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/1.2.0...HEAD
+[1.3.0]: https://github.com/TendTo/rules_doxygen/compare/1.2.0...1.3.0
+[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/1.3.0...HEAD
