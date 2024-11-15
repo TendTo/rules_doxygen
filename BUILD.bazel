@@ -1,8 +1,8 @@
 """rules_doxygen BUILD file"""
 
 exports_files([
-    "Doxyfile.template",
-    "doxygen.BUILD.bazel",
-    "doxygen.bzl",
+    "doxygen/Doxyfile.template",
+    "doxygen/doxygen.BUILD.bazel",
+    "doxygen/doxygen.bzl",
     "extensions.bzl",
 ])

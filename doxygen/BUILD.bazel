@@ -1,15 +1,11 @@
 """Doxygen BUILD file"""
 
-filegroup(
-    name = "Doxyfile.template",
-    srcs = ["@rules_doxygen//:Doxyfile.template"],
-    visibility = ["//visibility:public"],
-)
+exports_files(["Doxyfile.template"])
 
 filegroup(
     name = "executable",
     srcs = select({
-        "@platforms//os:linux": ["bin/doxygen"],
+        "@platforms//os:linux": ["doxygen"],
         "@platforms//os:macos": ["doxygen"],
         "@platforms//os:windows": ["doxygen.exe"],
     }, "Unsupported platform"),
