@@ -29,34 +29,40 @@ def _doxygen_repository(ctx):
             ctx.file("doxygen", ctx.read(ctx.which("doxygen")), legacy_utf8 = False)
         return
 
-    doxygen_version_dash = doxygen_version.replace(".", "_")
-
     url = "https://github.com/doxygen/doxygen/releases/download/Release_%s/doxygen-%s.%s"
+    doxygen_version_dash = doxygen_version.replace(".", "_")
+    download_output = ""
 
     if ctx.os.name.startswith("windows"):
         # For windows, download the zip file and extract the executable
         url = url % (doxygen_version_dash, doxygen_version, "windows.x64.bin.zip")
+        download_output = "doxygen-dir"
         ctx.download_and_extract(
             url = url,
+            output = download_output,
             sha256 = ctx.attr.sha256,
             type = "zip",
             canonical_id = get_default_canonical_id(ctx, [url]),
             auth = get_auth(ctx, [url]),
         )
 
+        # Copy the doxygen executable to the repository
+        ctx.file("doxygen.exe", ctx.read("doxygen-dir/doxygen.exe"), legacy_utf8 = False)
+
     elif ctx.os.name.startswith("mac"):
         # For mac, download the dmg file, mount it and copy the executable
         url = url % (doxygen_version_dash, doxygen_version, "dmg")
+        download_output = "doxygen.dmg"
         ctx.download(
             url = url,
-            output = "doxygen.dmg",
+            output = download_output,
             sha256 = ctx.attr.sha256,
             canonical_id = get_default_canonical_id(ctx, [url]),
             auth = get_auth(ctx, [url]),
         )
 
         # Mount the dmg file
-        ctx.execute(["hdiutil", "attach", "-nobrowse", "-readonly", "-mountpoint", "doxygen-mount", "doxygen.dmg"])
+        ctx.execute(["hdiutil", "attach", "-nobrowse", "-readonly", "-mountpoint", "doxygen-mount", download_output])
 
         # Copy the doxygen executable to the repository
         ctx.file("doxygen", ctx.read("doxygen-mount/Doxygen.app/Contents/Resources/doxygen"), legacy_utf8 = False)
@@ -64,14 +70,13 @@ def _doxygen_repository(ctx):
         # Unmount the dmg file
         ctx.execute(["hdiutil", "detach", "doxygen-mount"])
 
-        # Delete the temporary files
-        ctx.delete("doxygen.dmg")
-
     elif ctx.os.name == "linux":
         # For linux, download the tar.gz file and extract the executable
         url = url % (doxygen_version_dash, doxygen_version, "linux.bin.tar.gz")
+        download_output = "doxygen-dir"
         ctx.download_and_extract(
             url = url,
+            output = download_output,
             sha256 = ctx.attr.sha256,
             type = "tar.gz",
             canonical_id = get_default_canonical_id(ctx, [url]),
@@ -80,13 +85,13 @@ def _doxygen_repository(ctx):
         )
 
         # Copy the doxygen executable to the repository
-        ctx.file("doxygen", ctx.read("bin/doxygen"), legacy_utf8 = False)
+        ctx.file("doxygen", ctx.read("doxygen-dir/bin/doxygen"), legacy_utf8 = False)
 
-        # Delete other temporary files
-        for file in ("bin", "examples", "html", "man"):
-            ctx.delete(file)
     else:
         fail("Unsuppported OS: %s" % ctx.os.name)
+
+    # Delete temporary files
+    ctx.delete(download_output)
 
 doxygen_repository = repository_rule(
     implementation = _doxygen_repository,
