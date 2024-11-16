@@ -10,7 +10,7 @@ jobs:
   tests:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest] # No macOS for now
+        os: [ubuntu-latest, windows-latest, macos-latest]
         subdir: [base, kwargs, doxyfile, latex, nested, custom, awesome]
     runs-on: ${{ matrix.os }}
 
@@ -41,6 +41,43 @@ jobs:
         with:
           search-text: '# doxygen_extension.version(version = "0.0.0")'
           replacement-text: doxygen_extension.version(version = "0.0.0")
+          files: examples/MODULE.bazel
+      - name: Build ${{ matrix.subdir }}
+        run: bazel build //${{ matrix.subdir }}:doxygen
+        working-directory: examples
+      - name: Check output
+        uses: andstor/file-existence-action@v3
+        with:
+          files: "examples/bazel-bin/${{ matrix.subdir }}/html/index.html"
+          fail: true
+
+  tests-multiple-installations:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        subdir: [base, kwargs, doxyfile, latex, nested, custom, awesome]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install doxygen
+        uses: ssciwr/doxygen-install@v1
+      - name: Enable use of windows doxygen by decommenting the module extension line
+        uses: richardrigutins/replace-in-files@v2
+        with:
+          search-text: '# doxygen_extension.version(version = "1.11.0", sha256 = "478fc9897d00ca181835d248a4d3e5c83c26a32d1c7571f4321ddb0f2e97459f", platform = "windows")'
+          replacement-text: doxygen_extension.version(version = "1.11.0", sha256 = "478fc9897d00ca181835d248a4d3e5c83c26a32d1c7571f4321ddb0f2e97459f", platform = "windows")
+          files: examples/MODULE.bazel
+      - name: Enable use of mac doxygen by decommenting the module extension line
+        uses: richardrigutins/replace-in-files@v2
+        with:
+          search-text: '# doxygen_extension.version(version = "1.12.0", sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001", platform = "mac")'
+          replacement-text: doxygen_extension.version(version = "1.12.0", sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001", platform = "mac")
+          files: examples/MODULE.bazel
+      - name: Enable use linux doxygen by decommenting the module extension line
+        uses: richardrigutins/replace-in-files@v2
+        with:
+          search-text: '# doxygen_extension.version(version = "1.10.0", sha256 = "dcfc9aa4cc05aef1f0407817612ad9e9201d9bf2ce67cecf95a024bba7d39747", platform = "linux")'
+          replacement-text: doxygen_extension.version(version = "1.10.0", sha256 = "dcfc9aa4cc05aef1f0407817612ad9e9201d9bf2ce67cecf95a024bba7d39747", platform = "linux")
           files: examples/MODULE.bazel
       - name: Build ${{ matrix.subdir }}
         run: bazel build //${{ matrix.subdir }}:doxygen

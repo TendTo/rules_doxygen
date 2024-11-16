@@ -7,6 +7,8 @@ Doxygen rule for Bazel.
 ## doxygen
 
 <pre>
+load("@doxygen//:doxygen.bzl", "doxygen")
+
 doxygen(<a href="#doxygen-name">name</a>, <a href="#doxygen-srcs">srcs</a>, <a href="#doxygen-project_name">project_name</a>, <a href="#doxygen-project_brief">project_brief</a>, <a href="#doxygen-project_number">project_number</a>, <a href="#doxygen-project_logo">project_logo</a>, <a href="#doxygen-project_icon">project_icon</a>,
         <a href="#doxygen-use_mdfile_as_mainpage">use_mdfile_as_mainpage</a>, <a href="#doxygen-extract_private">extract_private</a>, <a href="#doxygen-html_footer">html_footer</a>, <a href="#doxygen-html_header">html_header</a>, <a href="#doxygen-filter_patterns">filter_patterns</a>,
         <a href="#doxygen-use_mathjax">use_mathjax</a>, <a href="#doxygen-html_extra_stylesheet">html_extra_stylesheet</a>, <a href="#doxygen-html_extra_files">html_extra_files</a>, <a href="#doxygen-html_colorstyle">html_colorstyle</a>, <a href="#doxygen-aliases">aliases</a>, <a href="#doxygen-have_dot">have_dot</a>,
