@@ -114,11 +114,8 @@ No download will be performed and bazel will use the installed version of doxyge
 > [!Warning]
 > Setting the version to `0.0.0` this will break the hermeticity of your build, as it will now depend on the environment.
 
-The module also supports multiple versions of doxygen for different platforms.
-Each will only be downloaded if the given platform matches the current platform.
-
 > [!Tip]
-> Not indicating the platform will make the configuration apply to all platforms.
+> Not indicating the platform will make the configuration apply to the platform it is running on.
 > The build will fail when the downloaded file does not match the SHA256 checksum, i.e. when the platform changes.
 > Unless you are using a system-wide doxygen installation, you should always specify the platform.
 

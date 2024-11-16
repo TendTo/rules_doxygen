@@ -1,5 +1,6 @@
 # Doxygen rules for Bazel
 
+[![Bazel Central Repository](https://img.shields.io/badge/BCR-1.3.0-%230C713A?logo=bazel)](https://registry.bazel.build/modules/rules_doxygen)
 [![CI](https://github.com/TendTo/rules_doxygen/actions/workflows/ci.yml/badge.svg)](https://github.com/TendTo/rules_doxygen/actions/workflows/ci.yml)
 
 This repository contains a [Starlark](https://github.com/bazelbuild/starlark) implementation of [Doxygen](https://www.doxygen.nl/) rules in [Bazel](https://bazel.build/).
@@ -76,13 +77,12 @@ No download will be performed and bazel will use the installed version of doxyge
 > [!Warning]  
 > Setting the version to `0.0.0` this will break the hermeticity of your build, as it will now depend on the environment.
 
-The module also supports multiple versions of doxygen for different platforms.
-Each will only be downloaded if the given platform matches the current platform.
-
 > [!Tip]  
-> Not indicating the platform will make the configuration apply to all platforms.
+> Not indicating the platform will make the configuration apply to the platform it is running on.
 > The build will fail when the downloaded file does not match the SHA256 checksum, i.e. when the platform changes.
 > Unless you are using a system-wide doxygen installation, you should always specify the platform.
+
+Different strategies can be combined in the same file, one for each platform, as shown below:
 
 ```bzl
 # MODULE.bazel file
