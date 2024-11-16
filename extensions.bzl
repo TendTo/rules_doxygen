@@ -232,9 +232,28 @@ The resulting repository will have the following targets:
 - `@doxygen//:doxygen.bzl`, containing the doxygen macro used to generate the documentation.
 - `@doxygen//:Doxyfile.template`, default Doxyfile template used to generate the Doxyfile.
 
-By default, version `1.12.0` of Doxygen is used. To select a different version, indicate it in the `version` module:
+By default, version `1.12.0` of Doxygen is used.
+You can override this value with a custom one for each supported platform, i.e. _windows_, _mac_ and _linux_.
 
-If you don't know the SHA256 of the Doxygen binary, just leave it empty.
+```bzl
+# MODULE.bazel file
+
+bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
+
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+
+# Download doxygen version 1.10.0 on linux, default version on all other platforms
+doxygen_extension.version(
+    version = "1.10.0",
+    sha256 = "dcfc9aa4cc05aef1f0407817612ad9e9201d9bf2ce67cecf95a024bba7d39747",
+    platform = "linux",
+)
+
+use_repo(doxygen_extension, "doxygen")
+```
+
+When you do so, you must also provide the SHA256 of the given doxygen installation.
+If you don't know the SHA256 value, just leave it empty.
 The build will fail with an error message containing the correct SHA256.
 
 ```bash

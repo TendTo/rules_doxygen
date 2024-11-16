@@ -42,9 +42,28 @@ doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_ex
 use_repo(doxygen_extension, "doxygen")
 ```
 
-By default, version `1.12.0` of Doxygen is used. To select a different version, indicate it in the `version` module:
+By default, version `1.12.0` of Doxygen is used.
+You can override this value with a custom one for each supported platform, i.e. _windows_, _mac_ and _linux_.
 
-If you don't know the SHA256 of the Doxygen binary, just leave it empty.
+```bzl
+# MODULE.bazel file
+
+bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
+
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+
+# Download doxygen version 1.10.0 on linux, default version on all other platforms
+doxygen_extension.version(
+    version = "1.10.0",
+    sha256 = "dcfc9aa4cc05aef1f0407817612ad9e9201d9bf2ce67cecf95a024bba7d39747",
+    platform = "linux",
+)
+
+use_repo(doxygen_extension, "doxygen")
+```
+
+When you do so, you must also provide the SHA256 of the given doxygen installation.
+If you don't know the SHA256 value, just leave it empty.
 The build will fail with an error message containing the correct SHA256.
 
 ```bash
@@ -100,6 +119,8 @@ Only the sources are required, the rest of the parameters are optional.
 ```bzl
 # My BUILD.bazel file
 
+load("@doxygen//:doxygen.bzl", "doxygen")
+
 doxygen(
     name = "doxygen",   # Name of the rule, can be anything
     srcs = glob([       # List of sources to document.
@@ -136,6 +157,8 @@ For example, if the _BUILD.bazel_ file is in the root of the repository, and the
 
 ```bzl
 # BUILD.bazel file in the root of the repository
+
+load("@doxygen//:doxygen.bzl", "doxygen")
 
 doxygen(
     name = "doxygen",
