@@ -3,6 +3,37 @@
 load("@bazel_tools//tools/build_defs/repo:cache.bzl", "get_default_canonical_id")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "get_auth")
 
+def _get_current_platform(ctx):
+    """
+    Get the current platform.
+
+    It uses the context to get the current platform and architecture and returns the platform name.
+    The string returned is one of the following:
+
+    - windows
+    - mac
+    - mac-arm
+    - linux
+    - linux-arm
+
+    Args:
+        ctx: a [repository context](https://bazel.build/rules/lib/builtins/repository_ctx) object
+            or a [module context](https://bazel.build/rules/lib/builtins/module_ctx) object
+            containing the repository's attributes
+    """
+
+    if ctx.os.name.startswith("windows"):
+        return "windows"
+    if ctx.os.name.startswith("mac") and (ctx.os.arch == "amd64" or ctx.os.arch == "i686"):
+        return "mac"
+    if ctx.os.name.startswith("mac") and ctx.os.arch == "arm64":
+        return "mac-arm"
+    if ctx.os.name == "linux" and (ctx.os.arch == "amd64" or ctx.os.arch == "i686"):
+        return "linux"
+    if ctx.os.name == "linux" and ctx.os.arch == "arm64":
+        return "linux-arm"
+    fail("Unsupported platform: %s (%s)" % (ctx.os.name, ctx.os.arch))
+
 def _doxygen_repository(ctx):
     """
     Repository rule for doxygen.
@@ -17,8 +48,8 @@ def _doxygen_repository(ctx):
     if len(ctx.attr.versions) != len(ctx.attr.sha256s) or len(ctx.attr.versions) != len(ctx.attr.platforms):
         fail("The number of versions, sha256s and platforms must be the same")
     for platform in ctx.attr.platforms:
-        if platform not in ("windows", "mac", "linux"):
-            fail("Unsupported platform: '%s'. Available options are (windows, mac, linux)" % platform)
+        if platform not in ("windows", "mac", "mac-arm", "linux", "linux-arm"):
+            fail("Unsupported platform: '%s'. Available options are (windows, mac, mac-arm, linux, linux-arm)" % platform)
 
     ctx.file("WORKSPACE", "workspace(name = %s)\n" % repr(ctx.name))
     ctx.file("doxygen.bzl", ctx.read(ctx.attr.doxygen_bzl))
@@ -30,11 +61,11 @@ def _doxygen_repository(ctx):
         # No download will be performed
         # This happens only if the platform matches the current platform
         if doxygen_version == "0.0.0":
-            if platform == "windows" and ctx.os.name.startswith("windows"):
+            if platform == "windows" and _get_current_platform(ctx) == platform:
                 ctx.file("windows/doxygen.exe", ctx.read(ctx.which("doxygen")), legacy_utf8 = False)
-            elif platform == "mac" and ctx.os.name.startswith("mac"):
+            elif platform in ("mac", "mac-arm") and _get_current_platform(ctx) == platform:
                 ctx.file("mac/doxygen", ctx.read(ctx.which("doxygen")), legacy_utf8 = False)
-            elif platform == "linux" and ctx.os.name == "linux":
+            elif platform in ("linux", "linux-arm") and _get_current_platform(ctx) == platform:
                 ctx.file("linux/doxygen", ctx.read(ctx.which("doxygen")), legacy_utf8 = False)
             continue
 
@@ -42,7 +73,7 @@ def _doxygen_repository(ctx):
         doxygen_version_dash = doxygen_version.replace(".", "_")
         download_output = "doxygen-dir"
 
-        if platform == "windows" and ctx.os.name.startswith("windows"):
+        if platform == "windows" and _get_current_platform(ctx) == platform:
             # For windows, download the zip file and extract the executable and dll
             url = url % (doxygen_version_dash, doxygen_version, "windows.x64.bin.zip")
             ctx.download_and_extract(
@@ -58,7 +89,7 @@ def _doxygen_repository(ctx):
             ctx.file("windows/doxygen.exe", ctx.read("doxygen-dir/doxygen.exe"), legacy_utf8 = False)
             ctx.file("windows/libclang.dll", ctx.read("doxygen-dir/libclang.dll"), legacy_utf8 = False)
 
-        elif platform == "mac" and ctx.os.name.startswith("mac"):
+        elif platform in ("mac", "mac-arm") and _get_current_platform(ctx) == platform:
             # For mac, download the dmg file, mount it and copy the executable
             url = url % (doxygen_version_dash, doxygen_version, "dmg")
             download_output = "doxygen.dmg"
@@ -79,7 +110,7 @@ def _doxygen_repository(ctx):
             # Unmount the dmg file
             ctx.execute(["hdiutil", "detach", "doxygen-mount"])
 
-        elif platform == "linux" and ctx.os.name == "linux":
+        elif platform in ("linux", "linux-arm") and _get_current_platform(ctx) == platform:
             # For linux, download the tar.gz file and extract the executable
             url = url % (doxygen_version_dash, doxygen_version, "linux.bin.tar.gz")
             ctx.download_and_extract(
@@ -103,7 +134,7 @@ doxygen_repository = repository_rule(
     doc = """
 Repository rule for doxygen.
 
-It can be provided with a configuration for each of the three platforms (windows, mac, linux) to download the correct version of doxygen only when the configuration matches the current platform.
+It can be provided with a configuration for each of the three platforms (windows, mac, mac-arm, linux, linux-arm) to download the correct version of doxygen only when the configuration matches the current platform.
 Depending on the version, the behavior will change:
 - If the version is set to `0.0.0`, the repository will use the installed version of doxygen, getting the binary from the PATH.
 - If a version is specified, the repository will download the correct version of doxygen and make it available to the requesting module.
@@ -150,7 +181,7 @@ doxygen_repository(
             allow_empty = False,
         ),
         "platforms": attr.string_list(
-            doc = "List of platforms to download the doxygen binary for. Available options are (windows, mac, linux). Must be the same length as `version` and `sha256s`.",
+            doc = "List of platforms to download the doxygen binary for. Available options are (windows, mac, mac-arm, linux, linux-arm). Must be the same length as `version` and `sha256s`.",
             mandatory = True,
             allow_empty = False,
         ),
@@ -188,14 +219,16 @@ def _doxygen_extension_impl(ctx):
         default_configurations = {
             "windows": struct(version = "1.12.0", sha256 = "07f1c92cbbb32816689c725539c0951f92c6371d3d7f66dfa3192cbe88dd3138"),
             "mac": struct(version = "1.12.0", sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001"),
+            "mac-arm": struct(version = "1.12.0", sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001"),
             "linux": struct(version = "1.12.0", sha256 = "3c42c3f3fb206732b503862d9c9c11978920a8214f223a3950bbf2520be5f647"),
+            "linux-arm": struct(version = "1.12.0", sha256 = "3c42c3f3fb206732b503862d9c9c11978920a8214f223a3950bbf2520be5f647"),
         }
 
         # Otherwise, add all the configurations (version and sha256) for each platform
         for attr in mod.tags.version:
-            platform = attr.platform if attr.platform != "" else "windows" if ctx.os.name.startswith("windows") else "mac" if ctx.os.name.startswith("mac") else "linux"
+            platform = attr.platform if attr.platform != "" else _get_current_platform(ctx)
             if platform not in default_configurations:
-                fail("Unsupported platform: '%s'. Available options are (windows, mac, linux)" % platform)
+                fail("Unsupported platform: '%s'. Available options are (windows, mac, mac-arm, linux, linux-arm)" % platform)
             if platform in platforms:
                 fail("Doxygen version/sha256 for platform '%s' was already specified: (version = '%s', sha256 = '%s')" % (platform, versions[platforms.index(platform)], sha256s[platforms.index(platform)]))
             platforms.append(platform)
@@ -219,7 +252,7 @@ def _doxygen_extension_impl(ctx):
 _doxygen_version = tag_class(attrs = {
     "version": attr.string(doc = "The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH", mandatory = True),
     "sha256": attr.string(doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used."),
-    "platform": attr.string(doc = "The target platform for the doxygen binary. Available options are (windows, mac, linux). If not specified, it will select the platform it is currently running on."),
+    "platform": attr.string(doc = "The target platform for the doxygen binary. Available options are (windows, mac, mac-arm, linux, linux-arm). If not specified, it will select the platform it is currently running on."),
 })
 
 doxygen_extension = module_extension(
@@ -233,7 +266,7 @@ The resulting repository will have the following targets:
 - `@doxygen//:Doxyfile.template`, default Doxyfile template used to generate the Doxyfile.
 
 By default, version `1.12.0` of Doxygen is used.
-You can override this value with a custom one for each supported platform, i.e. _windows_, _mac_ and _linux_.
+You can override this value with a custom one for each supported platform, i.e. _windows_, _mac_, _mac-arm_, _linux_ and _linux-arm_.
 
 ```bzl
 # MODULE.bazel file

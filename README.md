@@ -44,7 +44,7 @@ use_repo(doxygen_extension, "doxygen")
 ```
 
 By default, version `1.12.0` of Doxygen is used.
-You can override this value with a custom one for each supported platform, i.e. _windows_, _mac_ and _linux_.
+You can override this value with a custom one for each supported platform, i.e. _windows_, _mac_, _mac-arm_, _linux_ and _linux-arm_.
 
 ```bzl
 # MODULE.bazel file
