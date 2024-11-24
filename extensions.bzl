@@ -26,11 +26,11 @@ def _get_current_platform(ctx):
         return "windows"
     if ctx.os.name.startswith("mac") and (ctx.os.arch == "amd64" or ctx.os.arch == "i686"):
         return "mac"
-    if ctx.os.name.startswith("mac") and ctx.os.arch == "arm64":
+    if ctx.os.name.startswith("mac") and ctx.os.arch == "aarch64":
         return "mac-arm"
     if ctx.os.name == "linux" and (ctx.os.arch == "amd64" or ctx.os.arch == "i686"):
         return "linux"
-    if ctx.os.name == "linux" and ctx.os.arch == "arm64":
+    if ctx.os.name == "linux" and ctx.os.arch == "aarch64":
         return "linux-arm"
     fail("Unsupported platform: %s (%s)" % (ctx.os.name, ctx.os.arch))
 
@@ -253,7 +253,7 @@ def _doxygen_extension_impl(ctx):
             platforms.append(platform)
             versions.append(attr.version)
             sha256s.append(attr.sha256 if attr.sha256 != "" else "0" * 64)
-            executables.append(str(ctx.path(Label(attr.executable))))
+            executables.append(str(ctx.path(Label(attr.executable))) if attr.executable != "" else "")
 
         # If no version is specified for a platform, use the default
         for platform in default_configurations:
