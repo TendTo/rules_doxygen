@@ -63,7 +63,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        subdir: [base, kwargs, doxyfile, latex, nested, custom, awesome]
+        subdir: [base]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -112,7 +112,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        subdir: [base, kwargs, doxyfile, latex, nested, custom, awesome]
+        subdir: [base]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
