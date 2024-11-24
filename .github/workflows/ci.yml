@@ -129,6 +129,12 @@ jobs:
           search-text: '# doxygen_extension.configuration(executable = "@@//:doxygen")'
           replacement-text: doxygen_extension.configuration(executable = "@@//:doxygen")
           files: examples/MODULE.bazel
+      - name: Export doxygen binary
+        uses: richardrigutins/replace-in-files@v2
+        with:
+          search-text: '# exports_files(["doxygen"])'
+          replacement-text: exports_files(["doxygen"])
+          files: examples/BUILD.bazel
       - name: Build ${{ matrix.subdir }}
         run: bazel build //${{ matrix.subdir }}:doxygen
         working-directory: examples
