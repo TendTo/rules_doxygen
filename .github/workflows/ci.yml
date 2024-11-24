@@ -121,7 +121,7 @@ jobs:
         with:
           version: "1.9.7"
       - name: Move binary to examples folder
-        run: mv $(which doxygen) examples/doxygen
+        run: cp $(which doxygen) examples/doxygen
         shell: bash
       - name: Enable use of local doxygen by decommenting the module extension line
         uses: richardrigutins/replace-in-files@v2
