@@ -54,7 +54,7 @@ bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 
 # Download doxygen version 1.10.0 on linux, default version on all other platforms
-doxygen_extension.version(
+doxygen_extension.configuration(
     version = "1.10.0",
     sha256 = "dcfc9aa4cc05aef1f0407817612ad9e9201d9bf2ce67cecf95a024bba7d39747",
     platform = "linux",
@@ -71,6 +71,8 @@ The build will fail with an error message containing the correct SHA256.
 Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_0/doxygen-1.10.0.windows.x64.bin.zip failed: class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b but wanted 0000000000000000000000000000000000000000000000000000000000000000
 ```
 
+#### System-wide doxygen installation
+
 If you set the version to `0.0.0`, the doxygen executable will be assumed to be available from the PATH.
 No download will be performed and bazel will use the installed version of doxygen.
 
@@ -82,6 +84,17 @@ No download will be performed and bazel will use the installed version of doxyge
 > The build will fail when the downloaded file does not match the SHA256 checksum, i.e. when the platform changes.
 > Unless you are using a system-wide doxygen installation, you should always specify the platform.
 
+#### Using a local doxygen executable
+
+You can also provide a label to the `doxygen` executable you want to use by using the `executable` parameter in the extension configuration.
+No download will be performed, and the file indicated by the label will be used as the doxygen executable.
+
+> [!Note]  
+> `version` and `executable` are mutually exclusive.
+> You must provide exactly one of them.
+
+#### Example
+
 Different strategies can be combined in the same file, one for each platform, as shown below:
 
 ```bzl
@@ -92,17 +105,22 @@ bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 
 # Download doxygen version 1.10.0 on linux
-doxygen_extension.version(
+doxygen_extension.configuration(
     version = "1.10.0",
     sha256 = "dcfc9aa4cc05aef1f0407817612ad9e9201d9bf2ce67cecf95a024bba7d39747",
     platform = "linux",
 )
 # Use the local doxygen installation on mac
-doxygen_extension.version(
+doxygen_extension.configuration(
     version = "0.0.0",
     platform = "mac",
 )
-# Since no configuration has been provided, windows will fallback to the default version
+# Use the doxygen provided executable on mac-arm
+doxygen_extension.configuration(
+    executable = "@@//path/to/doxygen:doxygen",
+    platform = "mac-arm",
+)
+# Since no configuration has been provided, all other platforms will fallback to the default version
 
 use_repo(doxygen_extension, "doxygen")
 ```
