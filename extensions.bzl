@@ -157,7 +157,7 @@ You can further customize the repository by specifying the `doxygen_bzl`, `build
 ### Example
 
 ```starlark
-# Download the os specific version 1.12.0 of doxygen supporting all platforms
+# Download the os specific version 1.12.0 of doxygen supporting all the indicated platforms
 doxygen_repository(
     name = "doxygen",
     versions = ["1.12.0", "1.12.0", "1.12.0"],
@@ -167,14 +167,16 @@ doxygen_repository(
         "3c42c3f3fb206732b503862d9c9c11978920a8214f223a3950bbf2520be5f647",
     ]
     platforms = ["windows", "mac", "linux"],
+    executables = ["", "", ""],
 )
 
-# Use the system installed version of doxygen on linux and download version 1.11.0 for windows. No support for mac
+# Use the system installed version of doxygen on linux and download version 1.11.0 for windows. Use the provided executable on mac-arm
 doxygen_repository(
     name = "doxygen",
-    version = ["0.0.0", "1.11.0"],
-    sha256s = ["", "478fc9897d00ca181835d248a4d3e5c83c26a32d1c7571f4321ddb0f2e97459f"],
-    platforms = ["linux", "windows"],
+    version = ["0.0.0", "1.11.0", ""],
+    sha256s = ["", "478fc9897d00ca181835d248a4d3e5c83c26a32d1c7571f4321ddb0f2e97459f", ""],
+    platforms = ["linux", "windows", "mac-arm"],
+    executables = ["", "", "/path/to/doxygen"],
 )
 ```
 """,
@@ -371,9 +373,19 @@ doxygen_extension.configuration(
     platform = "linux",
 )
 doxygen_extension.configuration(
+    version = "1.10.0",
+    sha256 = "dcfc9aa4cc05aef1f0407817612ad9e9201d9bf2ce67cecf95a024bba7d39747",
+    platform = "linux-arm",
+)
+doxygen_extension.configuration(
     version = "1.12.0",
     sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001",
     platform = "mac",
+)
+doxygen_extension.configuration(
+    version = "1.12.0",
+    sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001",
+    platform = "mac-arm",
 )
 doxygen_extension.configuration(
     version = "1.11.0",
@@ -402,7 +414,12 @@ doxygen_extension.configuration(
     version = "0.0.0",
     platform = "mac",
 )
-# Since no configuration has been provided, windows will fallback to the default version
+# Use the doxygen provided executable on mac-arm
+doxygen_extension.configuration(
+    executable = "@@//path/to/doxygen:doxygen",
+    platform = "mac-arm",
+)
+# Since no configuration has been provided, all other platforms will fallback to the default version
 
 use_repo(doxygen_extension, "doxygen")
 ```

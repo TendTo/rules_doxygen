@@ -78,12 +78,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refactor of internal repository and extension rules
 - Updated documentation
 
-## [NEXT.VERSION]
+## [2.0.0]
 
 ### Added
 
 - Platform `mac-silicon` to support the Apple silicon macs
 - Allow executable configuration in the `doxygen` extension rule
+
+### Changed
+
+- Module extension tag renamed from `version` to `configuration` **BREAKING CHANGE**
+
+## [NEXT.VERSION]
 
 [1.0.0]: https://github.com/TendTo/rules_doxygen/tree/1.0.0
 [1.1.0]: https://github.com/TendTo/rules_doxygen/compare/1.0.0...1.1.0
@@ -92,4 +98,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.1.3]: https://github.com/TendTo/rules_doxygen/compare/1.1.2...1.1.3
 [1.2.0]: https://github.com/TendTo/rules_doxygen/compare/1.1.3...1.2.0
 [1.3.0]: https://github.com/TendTo/rules_doxygen/compare/1.2.0...1.3.0
-[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/1.3.0...HEAD
+[2.0.0]: https://github.com/TendTo/rules_doxygen/compare/1.3.0...2.0.0
+[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/2.0.0...HEAD

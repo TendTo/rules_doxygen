@@ -1,6 +1,6 @@
 # Doxygen rules for Bazel
 
-[![Bazel Central Repository](https://img.shields.io/badge/BCR-1.3.0-%230C713A?logo=bazel)](https://registry.bazel.build/modules/rules_doxygen)
+[![Bazel Central Repository](https://img.shields.io/badge/BCR-2.0.0-%230C713A?logo=bazel)](https://registry.bazel.build/modules/rules_doxygen)
 [![CI](https://github.com/TendTo/rules_doxygen/actions/workflows/ci.yml/badge.svg)](https://github.com/TendTo/rules_doxygen/actions/workflows/ci.yml)
 
 This repository contains a [Starlark](https://github.com/bazelbuild/starlark) implementation of [Doxygen](https://www.doxygen.nl/) rules in [Bazel](https://bazel.build/).
@@ -12,7 +12,7 @@ Add the following to your _MODULE.bazel_:
 ```bzl
 # MODULE.bazel file
 
-bazel_dep(name = "rules_doxygen", version = "1.3.0", dev_dependency = True)
+bazel_dep(name = "rules_doxygen", version = "2.0.0", dev_dependency = True)
 ```
 
 If you don't want to depend on the [Bazel package registry](https://bazel.build/external/bazelbuild/rules_pkg) or you want to use a not-yet-published version of this module, you can use an archive override by adding the following lines below the `bazel_dep` rule in your _MODULE.bazel_ file:
@@ -20,7 +20,7 @@ If you don't want to depend on the [Bazel package registry](https://bazel.build/
 ```bzl
 # MODULE.bazel file
 
-bazel_dep(name = "rules_doxygen", version = "1.3.0", dev_dependency = True)
+bazel_dep(name = "rules_doxygen", version = "2.0.0", dev_dependency = True)
 archive_override(
     module_name = "rules_doxygen",
     urls = "https://github.com/TendTo/rules_doxygen/archive/refs/heads/main.tar.gz",
