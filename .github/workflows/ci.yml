@@ -119,22 +119,45 @@ jobs:
       - name: Install doxygen
         uses: ssciwr/doxygen-install@v1
         with:
-          version: "1.9.7"
-      - name: Move binary to examples folder
+          version: "1.10.0"
+
+      - name: Copy binary to examples folder (windows)
+        if: matrix.os == 'windows-latest'
+        run: cp $(Get-Command doxygen).Source examples/doxygen.exe
+      - name: Copy binary to examples folder (mac, linux)
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         run: cp $(which doxygen) examples/doxygen
-        shell: bash
-      - name: Enable use of local doxygen by decommenting the module extension line
+
+      - name: Enable use of local doxygen by decommenting the module extension line (windows)
         uses: richardrigutins/replace-in-files@v2
+        if: matrix.os == 'windows-latest'
+        with:
+          search-text: '# doxygen_extension.configuration(executable = "@@//:doxygen")'
+          replacement-text: doxygen_extension.configuration(executable = "@@//:doxygen.exe")
+          files: examples/MODULE.bazel
+      - name: Export doxygen binary (windows)
+        uses: richardrigutins/replace-in-files@v2
+        if: matrix.os == 'windows-latest'
+        with:
+          search-text: '# exports_files(["doxygen"])'
+          replacement-text: exports_files(["doxygen.exe"])
+          files: examples/BUILD.bazel
+
+      - name: Enable use of local doxygen by decommenting the module extension line (mac, linux)
+        uses: richardrigutins/replace-in-files@v2
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         with:
           search-text: '# doxygen_extension.configuration(executable = "@@//:doxygen")'
           replacement-text: doxygen_extension.configuration(executable = "@@//:doxygen")
           files: examples/MODULE.bazel
-      - name: Export doxygen binary
+      - name: Export doxygen binary (mac, linux)
         uses: richardrigutins/replace-in-files@v2
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         with:
           search-text: '# exports_files(["doxygen"])'
           replacement-text: exports_files(["doxygen"])
           files: examples/BUILD.bazel
+
       - name: Build ${{ matrix.subdir }}
         run: bazel build //${{ matrix.subdir }}:doxygen
         working-directory: examples
@@ -144,5 +167,5 @@ jobs:
           files: "examples/bazel-bin/${{ matrix.subdir }}/html/index.html"
           fail: true
       - name: Check doxygen version in produced index.html
-        run: grep 'Doxygen 1.9.7' examples/bazel-bin/${{ matrix.subdir }}/html/index.html
+        run: grep 'Doxygen 1.10.0' examples/bazel-bin/${{ matrix.subdir }}/html/index.html
         shell: bash
