@@ -117,7 +117,7 @@ doxygen_extension.configuration(
 )
 # Use the doxygen provided executable on mac-arm
 doxygen_extension.configuration(
-    executable = "@@//path/to/doxygen:doxygen",
+    executable = "@my_module//path/to/doxygen:doxygen",
     platform = "mac-arm",
 )
 # Since no configuration has been provided, all other platforms will fallback to the default version

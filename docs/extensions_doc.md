@@ -61,7 +61,7 @@ doxygen_repository(
 | <a id="doxygen_repository-build"></a>build |  The BUILD file of the repository   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@rules_doxygen//doxygen:BUILD.bazel"`  |
 | <a id="doxygen_repository-doxyfile_template"></a>doxyfile_template |  The Doxyfile template to use   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@rules_doxygen//doxygen:Doxyfile.template"`  |
 | <a id="doxygen_repository-doxygen_bzl"></a>doxygen_bzl |  The starlark file containing the doxygen macro   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@rules_doxygen//doxygen:doxygen.bzl"`  |
-| <a id="doxygen_repository-executables"></a>executables |  List of doxygen executables to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`. Must be the same length as `version`, `sha256s` and `platforms`.   | List of strings | required |  |
+| <a id="doxygen_repository-executables"></a>executables |  List of paths to doxygen executables to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`. Must be the same length as `version`, `sha256s` and `platforms`.   | List of strings | required |  |
 | <a id="doxygen_repository-platforms"></a>platforms |  List of platforms to download the doxygen binary for. Available options are (windows, mac, mac-arm, linux, linux-arm). Must be the same length as `version`, `sha256s` and `executables`.   | List of strings | required |  |
 | <a id="doxygen_repository-repo_mapping"></a>repo_mapping |  In `WORKSPACE` context only: a dictionary from local repository name to global repository name. This allows controls over workspace dependency resolution for dependencies of this repository.<br><br>For example, an entry `"@foo": "@bar"` declares that, for any time this repository depends on `@foo` (such as a dependency on `@foo//some:target`, it should actually resolve that dependency within globally-declared `@bar` (`@bar//some:target`).<br><br>This attribute is _not_ supported in `MODULE.bazel` context (when invoking a repository rule inside a module extension's implementation function).   | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional |  |
 | <a id="doxygen_repository-sha256s"></a>sha256s |  List of sha256 hashes of the doxygen archive. Must be the same length as `versions, `platforms` and `executables`.   | List of strings | required |  |
@@ -209,7 +209,7 @@ doxygen_extension.configuration(
 )
 # Use the doxygen provided executable on mac-arm
 doxygen_extension.configuration(
-    executable = "@@//path/to/doxygen:doxygen",
+    executable = "@my_module//path/to/doxygen:doxygen",
     platform = "mac-arm",
 )
 # Since no configuration has been provided, all other platforms will fallback to the default version

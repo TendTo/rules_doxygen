@@ -132,8 +132,8 @@ jobs:
         uses: richardrigutins/replace-in-files@v2
         if: matrix.os == 'windows-latest'
         with:
-          search-text: '# doxygen_extension.configuration(executable = "@@//:doxygen")'
-          replacement-text: doxygen_extension.configuration(executable = "@@//:doxygen.exe")
+          search-text: '# doxygen_extension.configuration(executable = "@//:doxygen")'
+          replacement-text: doxygen_extension.configuration(executable = "@//:doxygen.exe")
           files: examples/MODULE.bazel
       - name: Export doxygen binary (windows)
         uses: richardrigutins/replace-in-files@v2
@@ -147,8 +147,8 @@ jobs:
         uses: richardrigutins/replace-in-files@v2
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         with:
-          search-text: '# doxygen_extension.configuration(executable = "@@//:doxygen")'
-          replacement-text: doxygen_extension.configuration(executable = "@@//:doxygen")
+          search-text: '# doxygen_extension.configuration(executable = "@//:doxygen")'
+          replacement-text: doxygen_extension.configuration(executable = "@//:doxygen")
           files: examples/MODULE.bazel
       - name: Export doxygen binary (mac, linux)
         uses: richardrigutins/replace-in-files@v2

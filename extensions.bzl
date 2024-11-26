@@ -197,7 +197,7 @@ doxygen_repository(
             allow_empty = False,
         ),
         "executables": attr.string_list(
-            doc = "List of doxygen executables to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`. Must be the same length as `version`, `sha256s` and `platforms`.",
+            doc = "List of paths to doxygen executables to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`. Must be the same length as `version`, `sha256s` and `platforms`.",
             allow_empty = False,
             mandatory = True,
         ),
@@ -244,9 +244,10 @@ def _doxygen_extension_impl(ctx):
         # Otherwise, add all the configurations (version and sha256) for each platform
         for attr in mod.tags.configuration:
             platform = attr.platform if attr.platform != "" else _get_current_platform(ctx)
-            if attr.version != "" and attr.executable != "":
+            if attr.version != "" and attr.executable != None:
+                print(attr.version, attr.executable)
                 fail("`Version` and `executable` are mutually exclusive")
-            if attr.version == "" and attr.executable == "":
+            if attr.version == "" and attr.executable != None:
                 fail("Exactly one between `version` and `executable` must be specified")
             if platform not in default_configurations:
                 fail("Unsupported platform: '%s'. Available options are (windows, mac, mac-arm, linux, linux-arm)" % platform)
@@ -255,7 +256,7 @@ def _doxygen_extension_impl(ctx):
             platforms.append(platform)
             versions.append(attr.version)
             sha256s.append(attr.sha256 if attr.sha256 != "" else "0" * 64)
-            executables.append(str(ctx.path(attr.executable)) if attr.executable != "" else "")
+            executables.append(str(ctx.path(attr.executable)) if attr.executable != None else "")
 
         # If no version is specified for a platform, use the default
         for platform in default_configurations:
@@ -416,7 +417,7 @@ doxygen_extension.configuration(
 )
 # Use the doxygen provided executable on mac-arm
 doxygen_extension.configuration(
-    executable = "@@//path/to/doxygen:doxygen",
+    executable = "@my_module//path/to/doxygen:doxygen",
     platform = "mac-arm",
 )
 # Since no configuration has been provided, all other platforms will fallback to the default version
