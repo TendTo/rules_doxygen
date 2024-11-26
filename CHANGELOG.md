@@ -69,7 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Support hermetic build for `mac` platform (thanks to @kaycebasques)
+- Support hermetic build for `mac` platform (thanks to @kaycebasques, @wyverald, @tpudlik, @rickeylev)
 - Support for platform-specific configurations in the extension rule
 
 ### Changed

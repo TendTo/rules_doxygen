@@ -255,7 +255,7 @@ def _doxygen_extension_impl(ctx):
             platforms.append(platform)
             versions.append(attr.version)
             sha256s.append(attr.sha256 if attr.sha256 != "" else "0" * 64)
-            executables.append(str(ctx.path(Label(attr.executable))) if attr.executable != "" else "")
+            executables.append(str(ctx.path(attr.executable)) if attr.executable != "" else "")
 
         # If no version is specified for a platform, use the default
         for platform in default_configurations:
@@ -277,7 +277,7 @@ _doxygen_configuration = tag_class(attrs = {
     "version": attr.string(doc = "The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH. Mutually exclusive with `executable`."),
     "sha256": attr.string(doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used."),
     "platform": attr.string(doc = "The target platform for the doxygen binary. Available options are (windows, mac, mac-arm, linux, linux-arm). If not specified, it will select the platform it is currently running on."),
-    "executable": attr.string(doc = "The doxygen executable to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`."),
+    "executable": attr.label(doc = "The doxygen executable to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`."),
 })
 
 doxygen_extension = module_extension(
