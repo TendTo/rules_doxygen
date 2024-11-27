@@ -24,11 +24,11 @@ def _get_current_platform(ctx):
 
     if ctx.os.name.startswith("windows"):
         return "windows"
-    if ctx.os.name.startswith("mac") and (ctx.os.arch == "amd64" or ctx.os.arch == "i686"):
+    if ctx.os.name.startswith("mac") and (ctx.os.arch == "amd64" or ctx.os.arch == "i686" or ctx.os.arch == "x86_64"):
         return "mac"
     if ctx.os.name.startswith("mac") and ctx.os.arch == "aarch64":
         return "mac-arm"
-    if ctx.os.name == "linux" and (ctx.os.arch == "amd64" or ctx.os.arch == "i686"):
+    if ctx.os.name == "linux" and (ctx.os.arch == "amd64" or ctx.os.arch == "i686" or ctx.os.arch == "x86_64"):
         return "linux"
     if ctx.os.name == "linux" and ctx.os.arch == "aarch64":
         return "linux-arm"
