@@ -82,12 +82,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Platform `mac-silicon` to support the Apple silicon macs
-- Allow executable configuration in the `doxygen` extension rule
+- Platform `mac-silicon` to support the Apple silicon macs (thanks to @kaycebasques, @wyverald, @tpudlik, @rickeylev)
+- Allow executable configuration in the `doxygen` extension rule (thanks to @kaycebasques, @wyverald, @tpudlik, @rickeylev)
 
 ### Changed
 
 - Module extension tag renamed from `version` to `configuration` **BREAKING CHANGE**
+- Updated documentation
 
 ## [NEXT.VERSION]
 

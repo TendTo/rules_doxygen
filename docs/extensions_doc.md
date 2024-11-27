@@ -83,7 +83,7 @@ The resulting repository will have the following targets:
 - `@doxygen//:doxygen.bzl`, containing the doxygen macro used to generate the documentation.
 - `@doxygen//:Doxyfile.template`, default Doxyfile template used to generate the Doxyfile.
 
-By default, version `1.12.0` of Doxygen is used.
+The extension will create a default configuration for all platforms with the version `1.12.0` of Doxygen.
 You can override this value with a custom one for each supported platform, i.e. _windows_, _mac_, _mac-arm_, _linux_ and _linux-arm_.
 
 ```bzl
@@ -103,13 +103,18 @@ doxygen_extension.configuration(
 use_repo(doxygen_extension, "doxygen")
 ```
 
-When you do so, you must also provide the SHA256 of the given doxygen installation.
+When you do so, you must also provide the SHA256 of the given doxygen archive.
 If you don't know the SHA256 value, just leave it empty.
 The build will fail with an error message containing the correct SHA256.
 
 ```bash
 Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_0/doxygen-1.10.0.windows.x64.bin.zip failed: class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b but wanted 0000000000000000000000000000000000000000000000000000000000000000
 ```
+
+> [!Tip]
+> Not indicating the platform will make the configuration apply to the platform it is running on.
+> The build will fail when the download does not match the SHA256 checksum, i.e. when the platform changes.
+> Unless you are using a system-wide doxygen installation, you should always specify the platform.
 
 #### System-wide doxygen installation
 
@@ -119,14 +124,9 @@ No download will be performed and bazel will use the installed version of doxyge
 > [!Warning]
 > Setting the version to `0.0.0` this will break the hermeticity of your build, as it will now depend on the environment.
 
-> [!Tip]
-> Not indicating the platform will make the configuration apply to the platform it is running on.
-> The build will fail when the downloaded file does not match the SHA256 checksum, i.e. when the platform changes.
-> Unless you are using a system-wide doxygen installation, you should always specify the platform.
-
 #### Using a local doxygen executable
 
-You can also provide a label to the `doxygen` executable you want to use by using the `executable` parameter in the extension configuration.
+You can also provide a label pointing to the `doxygen` executable you want to use by using the `executable` parameter in the extension configuration.
 No download will be performed, and the file indicated by the label will be used as the doxygen executable.
 
 > [!Note]
@@ -142,7 +142,7 @@ bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 
-# Using the 1.10.0 version of Doxygen instead of the default 1.12.0.
+# Using the 1.10.0 version of Doxygen instead of the default one.
 # Note that che checksum is correct only if the platform is windows.
 # If the platform is different, the build will fail.
 doxygen_extension.configuration(
@@ -212,7 +212,8 @@ doxygen_extension.configuration(
     executable = "@my_module//path/to/doxygen:doxygen",
     platform = "mac-arm",
 )
-# Since no configuration has been provided, all other platforms will fallback to the default version
+# Since no configuration has been provided for them,
+# all other platforms will fallback to the default version
 
 use_repo(doxygen_extension, "doxygen")
 ```
@@ -228,7 +229,7 @@ use_repo(doxygen_extension, "doxygen")
 
 | Name  | Description | Type | Mandatory | Default |
 | :------------- | :------------- | :------------- | :------------- | :------------- |
-| <a id="doxygen_extension.configuration-executable"></a>executable |  The doxygen executable to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`.   | String | optional |  `""`  |
+| <a id="doxygen_extension.configuration-executable"></a>executable |  The doxygen executable to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `None`  |
 | <a id="doxygen_extension.configuration-platform"></a>platform |  The target platform for the doxygen binary. Available options are (windows, mac, mac-arm, linux, linux-arm). If not specified, it will select the platform it is currently running on.   | String | optional |  `""`  |
 | <a id="doxygen_extension.configuration-sha256"></a>sha256 |  The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used.   | String | optional |  `""`  |
 | <a id="doxygen_extension.configuration-version"></a>version |  The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH. Mutually exclusive with `executable`.   | String | optional |  `""`  |
