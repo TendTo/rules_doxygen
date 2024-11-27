@@ -1,6 +1,6 @@
 # Doxygen rules for Bazel
 
-[![Bazel Central Repository](https://img.shields.io/badge/BCR-1.3.0-%230C713A?logo=bazel)](https://registry.bazel.build/modules/rules_doxygen)
+[![Bazel Central Repository](https://img.shields.io/badge/BCR-2.0.0-%230C713A?logo=bazel)](https://registry.bazel.build/modules/rules_doxygen)
 [![CI](https://github.com/TendTo/rules_doxygen/actions/workflows/ci.yml/badge.svg)](https://github.com/TendTo/rules_doxygen/actions/workflows/ci.yml)
 
 This repository contains a [Starlark](https://github.com/bazelbuild/starlark) implementation of [Doxygen](https://www.doxygen.nl/) rules in [Bazel](https://bazel.build/).
@@ -12,27 +12,25 @@ Add the following to your _MODULE.bazel_:
 ```bzl
 # MODULE.bazel file
 
-bazel_dep(name = "rules_doxygen", version = "1.3.0", dev_dependency = True)
+bazel_dep(name = "rules_doxygen", version = "2.0.0", dev_dependency = True)
 ```
 
-If you don't want to depend on the [Bazel package registry](https://bazel.build/external/bazelbuild/rules_pkg) or you want to use a not-yet-published version of this module, you can use an archive override by adding the following lines below the `bazel_dep` rule in your _MODULE.bazel_ file:
+If you don't want to depend on the [Bazel package registry](https://bazel.build/external/bazelbuild/rules_pkg) or need a not-yet-published version of this module, you can use a `git_override` by adding the following lines below `bazel_dep` in your _MODULE.bazel_ file:
 
 ```bzl
 # MODULE.bazel file
 
-bazel_dep(name = "rules_doxygen", version = "1.3.0", dev_dependency = True)
-archive_override(
+bazel_dep(name = "rules_doxygen", version = "2.0.0", dev_dependency = True)
+git_override(
     module_name = "rules_doxygen",
-    urls = "https://github.com/TendTo/rules_doxygen/archive/refs/heads/main.tar.gz",
-    strip_prefix = "rules_doxygen-main",
-    # The SHA256 checksum of the archive file, based on the rules' version
-    # integrity = "sha256-0SCaZuAerluoDs6HXMb0Bj9FttZVieM4+Dpd9gnMM+o=", # Example
+    commit = "aacc1c856c350a89a0fa9c43b9318a248d5f1781", # Commit hash you want to use
+    remote = "https://github.com/TendTo/rules_doxygen.git",
 )
 ```
 
 ### Doxygen version selection
 
-To select a doxygen version to use, use the `doxygen_extension` module extension below the `bazel_dep` rule in your MODULE.bazel file.
+To add the `@doxygen` repository to your module, use `doxygen_extension` under `bazel_dep` in your MODULE.bazel file.
 
 ```bzl
 # MODULE.bazel file
@@ -43,8 +41,8 @@ doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_ex
 use_repo(doxygen_extension, "doxygen")
 ```
 
-By default, version `1.12.0` of Doxygen is used.
-You can override this value with a custom one for each supported platform, i.e. _windows_, _mac_ and _linux_.
+The extension will create a default configuration for all platforms with the version `1.12.0` of Doxygen.
+You can override this value with a custom one for each supported platform, i.e. _windows_, _mac_, _mac-arm_, _linux_ and _linux-arm_.
 
 ```bzl
 # MODULE.bazel file
@@ -54,7 +52,7 @@ bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 
 # Download doxygen version 1.10.0 on linux, default version on all other platforms
-doxygen_extension.version(
+doxygen_extension.configuration(
     version = "1.10.0",
     sha256 = "dcfc9aa4cc05aef1f0407817612ad9e9201d9bf2ce67cecf95a024bba7d39747",
     platform = "linux",
@@ -63,7 +61,7 @@ doxygen_extension.version(
 use_repo(doxygen_extension, "doxygen")
 ```
 
-When you do so, you must also provide the SHA256 of the given doxygen installation.
+When you do so, you must also provide the SHA256 of the given doxygen archive.
 If you don't know the SHA256 value, just leave it empty.
 The build will fail with an error message containing the correct SHA256.
 
@@ -71,16 +69,29 @@ The build will fail with an error message containing the correct SHA256.
 Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_0/doxygen-1.10.0.windows.x64.bin.zip failed: class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b but wanted 0000000000000000000000000000000000000000000000000000000000000000
 ```
 
+> [!Tip]  
+> Not indicating the platform will make the configuration apply to the platform it is running on.
+> The build will fail when the download does not match the SHA256 checksum, i.e. when the platform changes.
+> Unless you are using a system-wide doxygen installation, you should always specify the platform.
+
+#### System-wide doxygen installation
+
 If you set the version to `0.0.0`, the doxygen executable will be assumed to be available from the PATH.
 No download will be performed and bazel will use the installed version of doxygen.
 
 > [!Warning]  
 > Setting the version to `0.0.0` this will break the hermeticity of your build, as it will now depend on the environment.
 
-> [!Tip]  
-> Not indicating the platform will make the configuration apply to the platform it is running on.
-> The build will fail when the downloaded file does not match the SHA256 checksum, i.e. when the platform changes.
-> Unless you are using a system-wide doxygen installation, you should always specify the platform.
+#### Using a local doxygen executable
+
+You can also provide a label pointing to the `doxygen` executable you want to use by using the `executable` parameter in the extension configuration.
+No download will be performed, and the file indicated by the label will be used as the doxygen executable.
+
+> [!Note]  
+> `version` and `executable` are mutually exclusive.
+> You must provide exactly one of them.
+
+#### Example
 
 Different strategies can be combined in the same file, one for each platform, as shown below:
 
@@ -92,17 +103,23 @@ bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 
 # Download doxygen version 1.10.0 on linux
-doxygen_extension.version(
+doxygen_extension.configuration(
     version = "1.10.0",
     sha256 = "dcfc9aa4cc05aef1f0407817612ad9e9201d9bf2ce67cecf95a024bba7d39747",
     platform = "linux",
 )
 # Use the local doxygen installation on mac
-doxygen_extension.version(
+doxygen_extension.configuration(
     version = "0.0.0",
     platform = "mac",
 )
-# Since no configuration has been provided, windows will fallback to the default version
+# Use the doxygen provided executable on mac-arm
+doxygen_extension.configuration(
+    executable = "@my_module//path/to/doxygen:doxygen",
+    platform = "mac-arm",
+)
+# Since no configuration has been provided for them,
+# all other platforms will fallback to the default version
 
 use_repo(doxygen_extension, "doxygen")
 ```
