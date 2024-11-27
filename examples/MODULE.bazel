@@ -17,6 +17,6 @@ doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_ex
 # doxygen_extension.configuration(version = "1.11.0", sha256 = "478fc9897d00ca181835d248a4d3e5c83c26a32d1c7571f4321ddb0f2e97459f", platform = "windows")
 
 # doxygen_extension with a provided doxygen binary
-doxygen_extension.configuration(executable = "@//:doxygen")
+# doxygen_extension.configuration(executable = "@//:doxygen")
 
 use_repo(doxygen_extension, "doxygen")

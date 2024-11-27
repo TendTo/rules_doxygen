@@ -247,7 +247,7 @@ def _doxygen_extension_impl(ctx):
             if attr.version != "" and attr.executable != None:
                 print(attr.version, attr.executable)
                 fail("`Version` and `executable` are mutually exclusive")
-            if attr.version == "" and attr.executable != None:
+            if attr.version == "" and attr.executable == None:
                 fail("Exactly one between `version` and `executable` must be specified")
             if platform not in default_configurations:
                 fail("Unsupported platform: '%s'. Available options are (windows, mac, mac-arm, linux, linux-arm)" % platform)
