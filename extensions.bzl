@@ -75,7 +75,7 @@ def _doxygen_repository(ctx):
 
         # If an executable is provided, use it instead of downloading the doxygen binary
         if executable != "":
-            ctx.file(executable_destination, ctx.read(executable), legacy_utf8 = False)
+            ctx.file(executable_destination, ctx.read(Label(executable)), legacy_utf8 = False)
             continue
 
         url = "https://github.com/doxygen/doxygen/releases/download/Release_%s/doxygen-%s.%s"
@@ -245,7 +245,6 @@ def _doxygen_extension_impl(ctx):
         for attr in mod.tags.configuration:
             platform = attr.platform if attr.platform != "" else _get_current_platform(ctx)
             if attr.version != "" and attr.executable != None:
-                print(attr.version, attr.executable)
                 fail("`Version` and `executable` are mutually exclusive")
             if attr.version == "" and attr.executable == None:
                 fail("Exactly one between `version` and `executable` must be specified")
@@ -256,7 +255,7 @@ def _doxygen_extension_impl(ctx):
             platforms.append(platform)
             versions.append(attr.version)
             sha256s.append(attr.sha256 if attr.sha256 != "" else "0" * 64)
-            executables.append(str(ctx.path(attr.executable)) if attr.executable != None else "")
+            executables.append(str(attr.executable) if attr.executable != None else "")
 
         # If no version is specified for a platform, use the default
         for platform in default_configurations:
