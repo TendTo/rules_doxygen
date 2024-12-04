@@ -1,0 +1,22 @@
+load("@doxygen//:doxygen.bzl", "doxygen")
+load("//substitutions:make_var_substitution.bzl", "make_var_substitution")
+
+make_var_substitution(
+    name = "make_var_substitution",
+    variables = {
+        "DESC": "Example project for doxygen using make vars substitutions",
+        "NAME": "substitutions",
+    },
+)
+
+doxygen(
+    name = "doxygen",
+    srcs = glob([
+        "*.h",
+        "*.cpp",
+    ]),
+    project_brief = "$(DESC)",
+    project_name = "$(NAME)",
+    project_number = "$(BUILD_EMBED_LABEL)",
+    toolchains = [":make_var_substitution"],
+)
