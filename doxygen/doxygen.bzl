@@ -1,8 +1,21 @@
 """Doxygen rule for Bazel."""
 
+def _expand_make_variables(string, ctx):
+    """Replace make variables in a string with their values.
+    
+    Args:
+        string: The string to expand.
+        ctx: The context object.
+    """
+    if "$(" in string:
+        for variable, value in ctx.var.items():
+            string = string.replace("$(%s)" % variable, value)
+    return string
+
 def _doxygen_impl(ctx):
     doxyfile = ctx.actions.declare_file("Doxyfile")
     outs = [ctx.actions.declare_directory(out) for out in ctx.attr.outs]
+    configurations = [_expand_make_variables(conf, ctx) for conf in ctx.attr.configurations]
 
     if len(outs) == 0:
         fail("At least one output folder must be specified")
@@ -14,7 +27,7 @@ def _doxygen_impl(ctx):
         substitutions = {
             "# {{INPUT}}": "INPUT = %s" % " ".join(input_dirs.keys()),
             "# {{DOT_PATH}}": ("DOT_PATH = %s" % ctx.executable.dot_executable.dirname) if ctx.executable.dot_executable else "",
-            "# {{ADDITIONAL PARAMETERS}}": "\n".join(ctx.attr.configurations),
+            "# {{ADDITIONAL PARAMETERS}}": "\n".join(configurations),
             "# {{OUTPUT DIRECTORY}}": "OUTPUT_DIRECTORY = %s" % doxyfile.dirname,
         },
     )
