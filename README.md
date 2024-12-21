@@ -150,7 +150,7 @@ doxygen(
         "GENERATE_HTML = YES",                      # that override the default ones
         "GENERATE_LATEX = NO",                      # from the Doxyfile
         "USE_MDFILE_AS_MAINPAGE = README.md",
-    ]
+    ],
     tags = ["manual"]  # Tags to add to the target.
                        # This way the target won't run unless explicitly called
 )
