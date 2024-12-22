@@ -138,19 +138,27 @@ Only the sources are required, the rest of the parameters are optional.
 
 load("@doxygen//:doxygen.bzl", "doxygen")
 
+NAME = "base"
+DESCRIPTION = "Example project for doxygen"
+
 doxygen(
     name = "doxygen",   # Name of the rule, can be anything
     srcs = glob([       # List of sources to document.
         "*.h",          # Usually includes the source files and the markdown files.
         "*.cpp",
     ]) + ["README.md"],
-    project_brief = "Example project for doxygen",  # Brief description of the project
-    project_name = "base",                          # Name of the project
-    configurations = [                              # Customizable configurations
-        "GENERATE_HTML = YES",                      # that override the default ones
-        "GENERATE_LATEX = NO",                      # from the Doxyfile
-        "USE_MDFILE_AS_MAINPAGE = README.md",
-    ],
+    project_brief = DESCRIPTION,            # Brief description of the project
+    project_name = NAME,                    # Name of the project
+    generate_html = True,                   # Whether to generate HTML output
+    generate_latex = False,                 # Whether to generate LaTeX output
+    use_mdfile_as_mainpage = "README.md",   # The main page of the documentation
+    # Equivalently, you can manually set the configurations 
+    # that will be appended to the Doxyfile in the form of a list of strings 
+    # configurations = [
+    #    "GENERATE_HTML = YES",
+    #    "GENERATE_LATEX = NO",
+    #    "USE_MDFILE_AS_MAINPAGE = README.md",
+    # ],
     tags = ["manual"]  # Tags to add to the target.
                        # This way the target won't run unless explicitly called
 )
@@ -209,7 +217,3 @@ Lastly, you may want to compress the documentation to share it with others:
 ```bash
 tar -czvf doxygen.tar.gz bazel-bin/<subpackage>/html
 ```
-
-## TODO
-
-- [ ] Add more easy-to-use common configuration for the Doxyfile
