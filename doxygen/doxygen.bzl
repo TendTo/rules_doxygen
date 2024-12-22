@@ -106,7 +106,7 @@ def doxygen(
         srcs,
         # Bazel specific attributes
         dot_executable = None,
-        configurations = [],
+        configurations = None,
         doxyfile_template = "@doxygen//:Doxyfile.template",
         doxygen_extra_args = [],
         outs = ["html"],
@@ -769,6 +769,8 @@ def doxygen(
 
         **kwargs: Additional arguments to pass to the rule (e.g. `visibility = ["//visibility:public"], tags = ["manual"]`)
     """
+    if configurations == None:
+        configurations = []
     _add_generic_configuration(configurations, "DOXYFILE_ENCODING", doxyfile_encoding)
     _add_generic_configuration(configurations, "PROJECT_NAME", project_name)
     _add_generic_configuration(configurations, "PROJECT_NUMBER", project_number)
