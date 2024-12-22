@@ -1,10 +1,16 @@
 load("@doxygen//:doxygen.bzl", "doxygen")
 load("//substitutions:make_var_substitution.bzl", "make_var_substitution")
+load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
+
+string_flag(
+    name = "build_version",
+    build_setting_default = "0.0.0",
+)
 
 make_var_substitution(
     name = "make_var_substitution",
     variables = {
-        "DESC": "Example project for doxygen using make vars substitutions",
+        "DESCRIPTION": "Example project for doxygen using make vars substitutions",
         "NAME": "substitutions",
     },
 )
@@ -15,8 +21,8 @@ doxygen(
         "*.h",
         "*.cpp",
     ]),
-    project_brief = "$(DESC)",
+    project_brief = "$(DESCRIPTION)",
     project_name = "$(NAME)",
-    project_number = "$(BUILD_EMBED_LABEL)",
+    project_number = "$(BUILD_VERSION)",
     toolchains = [":make_var_substitution"],
 )
