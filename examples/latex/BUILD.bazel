@@ -10,11 +10,9 @@ doxygen(
         "html",
         "latex",
     ],
-    configurations = [
-        "USE_MDFILE_AS_MAINPAGE = latex/README.md",
-        "GENERATE_HTML = YES",
-        "GENERATE_LATEX = YES",
-    ],
+    generate_html = True,
+    generate_latex = True,
     project_brief = "Example project for doxygen",
     project_name = "doxyfile_latex",
+    use_mdfile_as_mainpage = "latex/README.md",
 )
