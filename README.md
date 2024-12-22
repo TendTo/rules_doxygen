@@ -5,7 +5,7 @@
 
 This repository contains a [Starlark](https://github.com/bazelbuild/starlark) implementation of [Doxygen](https://www.doxygen.nl/) rules in [Bazel](https://bazel.build/).
 
-## Setup as a module dependency (bzlmod)
+## Setup as a module dependency (Bzlmod)
 
 Add the following to your _MODULE.bazel_:
 
@@ -77,7 +77,7 @@ Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_
 #### System-wide doxygen installation
 
 If you set the version to `0.0.0`, the doxygen executable will be assumed to be available from the PATH.
-No download will be performed and bazel will use the installed version of doxygen.
+No download will be performed and Bazel will use the installed version of doxygen.
 
 > [!Warning]  
 > Setting the version to `0.0.0` this will break the hermeticity of your build, as it will now depend on the environment.
@@ -150,7 +150,7 @@ doxygen(
         "GENERATE_HTML = YES",                      # that override the default ones
         "GENERATE_LATEX = NO",                      # from the Doxyfile
         "USE_MDFILE_AS_MAINPAGE = README.md",
-    ]
+    ],
     tags = ["manual"]  # Tags to add to the target.
                        # This way the target won't run unless explicitly called
 )
