@@ -6,9 +6,14 @@ doxygen(
         "*.h",
         "*.cpp",
     ]),
+    aliases = [
+        "licence=@par Licence:^^",
+        "verb{1}=@verbatim \\1 @endverbatim",
+    ],
     configurations = [
         "USE_MDFILE_AS_MAINPAGE = README.md",
-        "ALIASES                = \"licence=@par Licence:^^\"",
+        "MY_CUSTOM_CONFIG       = YES",
+        "ANOTHER_CUSTOM_CONFIG  = NO",
     ],
     project_brief = "Example project for doxygen",
     project_name = "custom",

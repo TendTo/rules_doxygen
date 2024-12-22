@@ -90,6 +90,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Module extension tag renamed from `version` to `configuration` **BREAKING CHANGE**
 - Updated documentation
 
+## [2.1.0]
+
+### Added 
+
+- Most of the `doxygen` parameters are now available in the `doxygen` extension rule
+
+### Fix
+
+- `doxygen` list parameters not properly escaping their values
+- Missing dependency on `skylib` for the documentation
+
 ## [NEXT.VERSION]
 
 [1.0.0]: https://github.com/TendTo/rules_doxygen/tree/1.0.0

@@ -7,7 +7,7 @@
 #pragma once
 
 /**
- * @brief Add two integers
+ * @brief Add two integers, @verb{a} and @verb{b}
  *
  * Who knows what the result will be?
  * @note This function is very complex. Use it with caution.
