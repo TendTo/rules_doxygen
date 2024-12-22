@@ -8,8 +8,8 @@ doxygen(
         "_static/*",
     ]),
     aliases = [
-        "licence=\"@par Licence:^^\"",
-        "constructor{1}=\"Construct a new \\1 object.^^\"",
+        "licence=@par Licence:^^",
+        "constructor{1}=Construct a new \\1 object.^^",
     ],
     disable_index = False,
     extract_private = True,
