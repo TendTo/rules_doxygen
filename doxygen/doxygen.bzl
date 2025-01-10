@@ -77,7 +77,7 @@ doxygen(
         "outs": attr.string_list(default = ["html"], allow_empty = False, doc = """The output folders to keep. If only the html outputs is of interest, the default value will do. Otherwise, a list of folders to keep is expected (e.g. `["html", "latex"]`)."""),
         "doxyfile_template": attr.label(
             allow_single_file = True,
-            default = Label("@doxygen//:Doxyfile.template"),
+            default = Label(":Doxyfile.template"),
             doc = """The template file to use to generate the Doxyfile. You can provide your own or use the default one. 
 The following substitutions are available: 
 - `# {{INPUT}}`: Subpackage directory in the sandbox.
@@ -97,7 +97,7 @@ The following substitutions are available:
             executable = True,
             cfg = "exec",
             allow_single_file = True,
-            default = Label("@doxygen//:executable"),
+            default = Label(":executable"),
             doc = "The doxygen executable to use. Must refer to an executable file.",
         ),
     },
@@ -120,7 +120,7 @@ def doxygen(
         # Bazel specific attributes
         dot_executable = None,
         configurations = None,
-        doxyfile_template = "@doxygen//:Doxyfile.template",
+        doxyfile_template = None,
         doxygen_extra_args = [],
         outs = ["html"],
         # Doxygen specific attributes
@@ -1084,12 +1084,14 @@ def doxygen(
     _add_generic_configuration(configurations, "MSCGEN_TOOL", mscgen_tool)
     _add_generic_configuration(configurations, "MSCFILE_DIRS", mscfile_dirs)
 
+    if doxyfile_template:
+        kwargs["doxyfile_template"] = doxyfile_template 
+
     _doxygen(
         name = name,
         srcs = srcs,
         outs = outs,
         configurations = configurations,
-        doxyfile_template = doxyfile_template,
         doxygen_extra_args = doxygen_extra_args,
         dot_executable = dot_executable,
         **kwargs
