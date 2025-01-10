@@ -1,0 +1,36 @@
+load("@doxygen//:doxygen.bzl", "doxygen")
+load("//substitutions:make_var_substitution.bzl", "make_var_substitution")
+load("@bazel_skylib//rules:common_settings.bzl", "string_flag")
+
+genrule(
+    name = "doxyfile_template",
+    srcs = ["Doxyfile.template"],
+    outs = ["NewDoxyfile"],
+    cmd = "sed s/{{PROJECT_NUMBER}}/$$(grep -oP '(?<=BUILD_EMBED_LABEL ).+' bazel-out/stable-status.txt)/ $(SRCS) > $@",
+    cmd_ps = "Get-content $(SRCS) | ForEach-Object { $$_ -replace '{{PROJECT_NUMBER}}', (Select-String -Pattern '(?<=BUILD_EMBED_LABEL +)(.+)' bazel-out/stable-status.txt -AllMatches | Select-Object -Expand Matches | Select-Object -Expand Value) } > $@",
+    stamp = -1,
+)
+
+string_flag(
+    name = "build_description",
+    build_setting_default = "stamp fallback",
+)
+
+make_var_substitution(
+    name = "make_var_substitution",
+    variables = {
+        "NAME": "substitutions",
+    },
+)
+
+doxygen(
+    name = "doxygen",
+    srcs = glob([
+        "*.h",
+        "*.cpp",
+    ]),
+    doxyfile_template = ":doxyfile_template",
+    project_brief = "$(BUILD_DESCRIPTION)",
+    project_name = "$(NAME)",
+    toolchains = [":make_var_substitution"],
+)

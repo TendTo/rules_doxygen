@@ -16,3 +16,4 @@ bcr_test_module:
         - "//custom:doxygen"
         - "//awesome:doxygen"
         - "//kwargs:doxygen"
+        - "//substitutions:doxygen"
