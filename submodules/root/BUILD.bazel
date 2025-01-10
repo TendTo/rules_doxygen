@@ -1,0 +1,8 @@
+load("@doxygen//:doxygen.bzl", "doxygen")
+
+doxygen(
+    name = "doxygen",
+    srcs = glob(["*"]),
+    project_brief = "Root project for doxygen",
+    project_name = "root",
+)
