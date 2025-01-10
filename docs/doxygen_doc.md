@@ -122,8 +122,8 @@ doxygen(
 | <a id="doxygen-name"></a>name |  A name for the target.   |  none |
 | <a id="doxygen-srcs"></a>srcs |  A list of source files to generate documentation for.   |  none |
 | <a id="doxygen-dot_executable"></a>dot_executable |  Label of the doxygen executable. Make sure it is also added to the `srcs` of the macro   |  `None` |
-| <a id="doxygen-configurations"></a>configurations |  A list of additional configuration parameters to pass to Doxygen.   |  `[]` |
-| <a id="doxygen-doxyfile_template"></a>doxyfile_template |  The template file to use to generate the Doxyfile. The following substitutions are available:<br> - `# {{INPUT}}`: Subpackage directory in the sandbox.<br> - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.<br> - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.   |  `"@doxygen//:Doxyfile.template"` |
+| <a id="doxygen-configurations"></a>configurations |  A list of additional configuration parameters to pass to Doxygen.   |  `None` |
+| <a id="doxygen-doxyfile_template"></a>doxyfile_template |  The template file to use to generate the Doxyfile. The following substitutions are available:<br> - `# {{INPUT}}`: Subpackage directory in the sandbox.<br> - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.<br> - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.   |  `None` |
 | <a id="doxygen-doxygen_extra_args"></a>doxygen_extra_args |  Extra arguments to pass to the doxygen executable.   |  `[]` |
 | <a id="doxygen-outs"></a>outs |  The output folders bazel will keep. If only the html outputs is of interest, the default value will do. otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).   |  `["html"]` |
 | <a id="doxygen-doxyfile_encoding"></a>doxyfile_encoding |  This tag specifies the encoding used for all characters in the configuration file that follow.   |  `None` |

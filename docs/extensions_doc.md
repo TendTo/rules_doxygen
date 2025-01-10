@@ -75,6 +75,7 @@ doxygen_repository(
 <pre>
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 doxygen_extension.configuration(<a href="#doxygen_extension.configuration-executable">executable</a>, <a href="#doxygen_extension.configuration-platform">platform</a>, <a href="#doxygen_extension.configuration-sha256">sha256</a>, <a href="#doxygen_extension.configuration-version">version</a>)
+doxygen_extension.repository()
 </pre>
 
 Module extension for declaring the doxygen configurations to use.
@@ -233,5 +234,14 @@ use_repo(doxygen_extension, "doxygen")
 | <a id="doxygen_extension.configuration-platform"></a>platform |  The target platform for the doxygen binary. Available options are (windows, mac, mac-arm, linux, linux-arm). If not specified, it will select the platform it is currently running on.   | String | optional |  `""`  |
 | <a id="doxygen_extension.configuration-sha256"></a>sha256 |  The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used.   | String | optional |  `""`  |
 | <a id="doxygen_extension.configuration-version"></a>version |  The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH. Mutually exclusive with `executable`.   | String | optional |  `""`  |
+
+<a id="doxygen_extension.repository"></a>
+
+### repository
+
+**Attributes**
+
+| Name  | Description | Type | Mandatory | Default |
+| :------------- | :------------- | :------------- | :------------- | :------------- |
 
 
