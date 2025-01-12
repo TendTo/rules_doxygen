@@ -10,12 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Most of the `doxygen` parameters are now available in the `doxygen` extension rule
-- Support for make substitutions in the `doxygen` extension rule
-- `repository` tag in the `doxygen` extension rule to avoid conflicts with other modules when used in a submodule
+- Support for make substitutions in the `doxygen` extension rule [#11](https://github.com/TendTo/rules_doxygen/issues/11) (thanks to @hofbi)
+- `repository` tag in the `doxygen` extension rule to avoid conflicts with other modules when used in a submodule [#15](https://github.com/TendTo/rules_doxygen/issues/15) (thanks to @blaizard)
 
 ### Fix
 
-- `doxygen` list parameters not properly escaping their values
+- `doxygen` list parameters not properly escaping their values [#12](https://github.com/TendTo/rules_doxygen/issues/12) (thanks to @kaycebasques)
 - Missing dependency on `skylib` for the documentation
 
 ## [2.0.0]
