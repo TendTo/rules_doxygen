@@ -2,7 +2,7 @@ bcr_test_module:
   module_path: "examples"
   matrix:
     platform: ["fedora40", "ubuntu2204", "windows", "macos"]
-    bazel: [7.x]
+    bazel: [7.x, 8.x]
   tasks:
     run_tests:
       name: "Build example modules"
