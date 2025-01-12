@@ -169,3 +169,24 @@ jobs:
       - name: Check doxygen version in produced index.html
         run: grep 'Doxygen 1.10.0' examples/bazel-bin/${{ matrix.subdir }}/html/index.html
         shell: bash
+
+  submodules:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        subdir: [root, submodule1, submodule2]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build submodules/${{ matrix.subdir }}
+        run: bazel build //:doxygen
+        working-directory: submodules/${{ matrix.subdir }}
+      - name: Check output
+        uses: andstor/file-existence-action@v3
+        with:
+          files: submodules/${{ matrix.subdir }}/bazel-bin/html/index.html
+          fail: true
+      - name: Check doxygen version in produced index.html
+        run: grep 'Doxygen 1.12.0' submodules/${{ matrix.subdir }}/bazel-bin/html/index.html
+        shell: bash

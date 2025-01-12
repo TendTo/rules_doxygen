@@ -1,0 +1,11 @@
+module(name = "submodule1")
+
+bazel_dep(name = "rules_doxygen", version = "2.0.0")
+local_path_override(
+    module_name = "rules_doxygen",
+    path = "../../",
+)
+
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+doxygen_extension.repository(name = "submodule1_doxygen")
+use_repo(doxygen_extension, "submodule1_doxygen")

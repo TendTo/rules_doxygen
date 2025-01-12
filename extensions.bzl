@@ -228,10 +228,18 @@ def _doxygen_extension_impl(ctx):
         ctx: a [module context](https://bazel.build/rules/lib/builtins/module_ctx) object containing the module's attributes
     """
     for mod in ctx.modules:
+        name = ""
         platforms = []
         versions = []
         sha256s = []
         executables = []
+
+        for attr in mod.tags.repository:
+            if attr.name == "":
+                fail("The name of the repository cannot be empty")
+            if name != "":
+                fail("The name of the repository was already specified: '%s'. Cannot be overridden with '%s'" % (name, attr.name))
+            name = attr.name
 
         default_configurations = {
             "windows": struct(version = "1.12.0", sha256 = "07f1c92cbbb32816689c725539c0951f92c6371d3d7f66dfa3192cbe88dd3138", executable = ""),
@@ -266,23 +274,26 @@ def _doxygen_extension_impl(ctx):
                 executables.append(default_configurations[platform].executable)
 
         doxygen_repository(
-            name = "doxygen",
+            name = name if name != "" else "doxygen",
             versions = versions,
             sha256s = sha256s,
             platforms = platforms,
             executables = executables,
         )
 
-_doxygen_configuration = tag_class(attrs = {
+_doxygen_configuration_tag = tag_class(attrs = {
     "version": attr.string(doc = "The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH. Mutually exclusive with `executable`."),
     "sha256": attr.string(doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used."),
     "platform": attr.string(doc = "The target platform for the doxygen binary. Available options are (windows, mac, mac-arm, linux, linux-arm). If not specified, it will select the platform it is currently running on."),
     "executable": attr.label(doc = "The doxygen executable to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`."),
 })
+_doxygen_repository_tag = tag_class(attrs = {
+    "name": attr.string(doc = "The name of the repository the extension will create. Useful if you don't use 'rules_doxygen' as a dev_dependency, since it will avoid name collision for module depending on yours. Must be the same for all configurations. Defaults to 'doxygen'.", mandatory = True),
+})
 
 doxygen_extension = module_extension(
     implementation = _doxygen_extension_impl,
-    tag_classes = {"configuration": _doxygen_configuration},
+    tag_classes = {"configuration": _doxygen_configuration_tag, "repository": _doxygen_repository_tag},
     doc = """
 Module extension for declaring the doxygen configurations to use.
 

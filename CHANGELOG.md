@@ -96,6 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Most of the `doxygen` parameters are now available in the `doxygen` extension rule
 - Support for make substitutions in the `doxygen` extension rule
+- `repository` tag in the `doxygen` extension rule to avoid conflicts with other modules
 
 ### Fix
 

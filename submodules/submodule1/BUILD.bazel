@@ -1,0 +1,8 @@
+load("@submodule1_doxygen//:doxygen.bzl", "doxygen")
+
+doxygen(
+    name = "doxygen",
+    srcs = glob(["*"]),
+    project_brief = "Submodule 1 project for doxygen",
+    project_name = "submodule1",
+)
