@@ -138,7 +138,7 @@ doxygen(
     ]),
     project_brief = "$(DESCRIPTION)", # => "no stamp" or "//substitutions:build_description" if the build is stamped
     project_name = "$(NAME)", # => "substitutions"
-    doxyfile = ":doxyfile_template",
+    doxyfile_template = ":doxyfile_template",
     toolchains = [":make_var_substitution"],
 )
 ```
