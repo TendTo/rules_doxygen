@@ -242,11 +242,11 @@ def _doxygen_extension_impl(ctx):
             name = attr.name
 
         default_configurations = {
-            "windows": struct(version = "1.12.0", sha256 = "07f1c92cbbb32816689c725539c0951f92c6371d3d7f66dfa3192cbe88dd3138", executable = ""),
-            "mac": struct(version = "1.12.0", sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001", executable = ""),
-            "mac-arm": struct(version = "1.12.0", sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001", executable = ""),
-            "linux": struct(version = "1.12.0", sha256 = "3c42c3f3fb206732b503862d9c9c11978920a8214f223a3950bbf2520be5f647", executable = ""),
-            "linux-arm": struct(version = "1.12.0", sha256 = "3c42c3f3fb206732b503862d9c9c11978920a8214f223a3950bbf2520be5f647", executable = ""),
+            "windows": struct(version = "1.13.2", sha256 = "dedbcf1d05911afc003989d33194ab95539e2ef4535cc00143b5917c22614406", executable = ""),
+            "mac": struct(version = "1.13.2", sha256 = "dc981a4212875e8c6b81727eb43bb634167df0d4bc1681fb9053cc850e918acf", executable = ""),
+            "mac-arm": struct(version = "1.13.2", sha256 = "dc981a4212875e8c6b81727eb43bb634167df0d4bc1681fb9053cc850e918acf", executable = ""),
+            "linux": struct(version = "1.13.2", sha256 = "f2c0a349403bc5b5ade3f501301e32b49ea31b3182666954bc398452fbc0dd1c", executable = ""),
+            "linux-arm": struct(version = "1.13.2", sha256 = "f2c0a349403bc5b5ade3f501301e32b49ea31b3182666954bc398452fbc0dd1c", executable = ""),
         }
 
         # Otherwise, add all the configurations (version and sha256) for each platform
@@ -301,7 +301,7 @@ The resulting repository will have the following targets:
 - `@doxygen//:doxygen.bzl`, containing the doxygen macro used to generate the documentation.
 - `@doxygen//:Doxyfile.template`, default Doxyfile template used to generate the Doxyfile.
 
-The extension will create a default configuration for all platforms with the version `1.12.0` of Doxygen.
+The extension will create a default configuration for all platforms with the version `1.13.2` of Doxygen.
 You can override this value with a custom one for each supported platform, i.e. _windows_, _mac_, _mac-arm_, _linux_ and _linux-arm_.
 
 ```bzl

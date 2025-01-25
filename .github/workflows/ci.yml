@@ -25,7 +25,7 @@ jobs:
           files: "examples/bazel-bin/${{ matrix.subdir }}/html/index.html"
           fail: true
       - name: Check doxygen version in produced index.html
-        run: grep 'Doxygen 1.12.0' examples/bazel-bin/${{ matrix.subdir }}/html/index.html
+        run: grep 'Doxygen 1.13.2' examples/bazel-bin/${{ matrix.subdir }}/html/index.html
         shell: bash
 
   tests-system-installation:

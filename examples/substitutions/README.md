@@ -29,7 +29,7 @@ We are reading variables from three sources:
 ### Make variables
 
 For the first two kind of substitution we need to define a simple rule that will apply the make variable substitutions.
-Let's say we want to pass a version number to the doxygen rule from a command line flag, but only if the build is stamped.
+Let's say we want to pass a description to the doxygen rule from a command line flag, but only if the build is stamped.
 So, first we use `skylib` to define a string flag.
 
 ```bzl
@@ -67,7 +67,7 @@ def _make_var_substitution_impl(ctx):
     if stamp:  # If the build is stamped, use the value from --//substitutions:build_description as the build version.
         vars["BUILD_DESCRIPTION"] = ctx.attr._build_description[BuildSettingInfo].value
     else:  # Otherwise use the hardcoded value.
-        vars["BUILD_DESCRIPTION"] = "0.0.0"
+        vars["BUILD_DESCRIPTION"] = "no stamp"
     return [platform_common.TemplateVariableInfo(vars)]
 
 make_var_substitution = rule(

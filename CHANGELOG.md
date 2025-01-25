@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Moved the `submodules` example to the `examples` directory
+- Updated documentation
+- Default doxygen version is now `1.13.2`
 
 ## [2.1.0]
 
@@ -108,8 +109,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Remove superfluous `\` before the `\n` in the `doxygen` configurations list formatting
-
-## [NEXT.VERSION]
 
 [1.0.0]: https://github.com/TendTo/rules_doxygen/tree/1.0.0
 [1.1.0]: https://github.com/TendTo/rules_doxygen/compare/1.0.0...1.1.0

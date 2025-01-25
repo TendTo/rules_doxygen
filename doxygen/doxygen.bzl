@@ -162,6 +162,7 @@ def doxygen(
         toc_include_headings = None,
         markdown_id_style = None,
         autolink_support = None,
+        autolink_ignore_words = None,
         builtin_stl_support = None,
         cpp_cli_support = None,
         sip_support = None,
@@ -186,6 +187,7 @@ def doxygen(
         resolve_unnamed_params = None,
         hide_undoc_members = None,
         hide_undoc_classes = None,
+        hide_undoc_namespaces = None,
         hide_friend_compounds = None,
         hide_in_body_docs = None,
         internal_docs = None,
@@ -223,6 +225,7 @@ def doxygen(
         warn_if_incomplete_doc = None,
         warn_no_paramdoc = None,
         warn_if_undoc_enum_val = None,
+        warn_layout_file = None,
         warn_as_error = None,
         warn_format = None,
         warn_line_format = None,
@@ -245,6 +248,7 @@ def doxygen(
         filter_source_files = None,
         filter_source_patterns = None,
         use_mdfile_as_mainpage = None,
+        implicit_dir_docs = None,
         fortran_comment_after = None,
         source_browser = None,
         inline_sources = None,
@@ -417,6 +421,7 @@ def doxygen(
         plantuml_jar_path = None,
         plantuml_cfg_file = None,
         plantuml_include_path = None,
+        plantumlfile_dirs = None,
         dot_graph_max_nodes = None,
         max_dot_graph_depth = None,
         dot_multi_targets = None,
@@ -517,6 +522,7 @@ def doxygen(
         toc_include_headings: When the `toc_include_headings` tag is set to a non-zero value, all headings up to that level are automatically included in the table of contents, even if they do not have an id attribute.
         markdown_id_style: The `markdown_id_style` tag can be used to specify the algorithm used to generate identifiers for the Markdown headings.
         autolink_support: When enabled Doxygen tries to link words that correspond to documented classes, or namespaces to their corresponding documentation.
+        autolink_ignore_words: This tag specifies a list of words that, when matching the start of a word in the documentation, will suppress auto links generation, if it is enabled via autolink_support.
         builtin_stl_support: If you use STL classes (i.e. std::string, std::vector, etc.) but do not want to include (a tag file for) the STL sources as input, then you should set this tag to `True` in order to let Doxygen match functions declarations and definitions whose arguments contain STL classes (e.g. func(std::string); versus func(std::string) {}).
         cpp_cli_support: If you use Microsoft's C++/CLI language, you should set this option to `True` to enable parsing support.
         sip_support: Set the `sip_support` tag to `True` if your project consists of sip (see: https://www.riverbankcomputing.com/software) sources only.
@@ -541,6 +547,7 @@ def doxygen(
         resolve_unnamed_params: If this flag is set to `True`, the name of an unnamed parameter in a declaration will be determined by the corresponding definition.
         hide_undoc_members: If the `hide_undoc_members` tag is set to `True`, Doxygen will hide all undocumented members inside documented classes or files.
         hide_undoc_classes: If the `hide_undoc_classes` tag is set to `True`, Doxygen will hide all undocumented classes that are normally visible in the class hierarchy.
+        hide_undoc_namespaces: If the hide_undoc_namespaces tag is set to YES, Doxygen will hide all undocumented namespaces that are normally visible in the namespace hierarchy.
         hide_friend_compounds: If the `hide_friend_compounds` tag is set to `True`, Doxygen will hide all friend declarations.
         hide_in_body_docs: If the `hide_in_body_docs` tag is set to `True`, Doxygen will hide any documentation blocks found inside the body of a function.
         internal_docs: The `internal_docs` tag determines if documentation that is typed after a \\internal command is included.
@@ -578,6 +585,7 @@ def doxygen(
         warn_if_incomplete_doc: If `warn_if_incomplete_doc` is set to `True`, Doxygen will warn about incomplete function parameter documentation.
         warn_no_paramdoc: This `warn_no_paramdoc` option can be enabled to get warnings for functions that are documented, but have no documentation for their parameters or return value.
         warn_if_undoc_enum_val: If `warn_if_undoc_enum_val` option is set to `True`, Doxygen will warn about undocumented enumeration values.
+        warn_layout_file: If warn_layout_file option is set to `True`, Doxygen will warn about issues found while parsing the user defined layout file, such as missing or wrong elements
         warn_as_error: If the `warn_as_error` tag is set to `True` then Doxygen will immediately stop when a warning is encountered.
         warn_format: The `warn_format` tag determines the format of the warning messages that Doxygen can produce.
         warn_line_format: In the $text part of the `warn_format` command it is possible that a reference to a more specific place is given.
@@ -600,6 +608,7 @@ def doxygen(
         filter_source_files: If the `filter_source_files` tag is set to `True`, the input filter (if set using `input_filter`) will also be used to filter the input files that are used for producing the source files to browse (i.e. when `source_browser` is set to `True`).
         filter_source_patterns: The `filter_source_patterns` tag can be used to specify source filters per file pattern.
         use_mdfile_as_mainpage: If the `use_mdfile_as_mainpage` tag refers to the name of a markdown file that is part of the input, its contents will be placed on the main page (index.html).
+        implicit_dir_docs: If the implicit_dir_docs tag is set to `True`, any README.md file found in subdirectories of the project's root, is used as the documentation for that subdirectory, except when the README.md starts with a \dir, \page or \mainpage command.
         fortran_comment_after: The Fortran standard specifies that for fixed formatted Fortran code all characters from position 72 are to be considered as comment.
         source_browser: If the `source_browser` tag is set to `True` then a list of source files will be generated.
         inline_sources: Setting the `inline_sources` tag to `True` will include the body of functions, multi-line macros, enums or list initialized variables directly into the documentation.
@@ -772,6 +781,7 @@ def doxygen(
         plantuml_jar_path: When using PlantUML, the `plantuml_jar_path` tag should be used to specify the path where java can find the plantuml.jar file or to the filename of jar file to be used.
         plantuml_cfg_file: When using PlantUML, the `plantuml_cfg_file` tag can be used to specify a configuration file for PlantUML.
         plantuml_include_path: When using PlantUML, the specified paths are searched for files specified by the !include statement in a PlantUML block.
+        plantumlfile_dirs: The plantumlfile_dirs tag can be used to specify one or more directories that contain PlantUml files that are included in the documentation (see the \plantumlfile command).
         dot_graph_max_nodes: The `dot_graph_max_nodes` tag can be used to set the maximum number of nodes that will be shown in the graph.
         max_dot_graph_depth: The `max_dot_graph_depth` tag can be used to set the maximum depth of the graphs generated by dot.
         dot_multi_targets: Set the `dot_multi_targets` tag to `True` to allow dot to generate multiple output files in one run (i.e. multiple -o and -T options on the command line).
@@ -822,6 +832,7 @@ def doxygen(
     _add_generic_configuration(configurations, "TOC_INCLUDE_HEADINGS", toc_include_headings)
     _add_generic_configuration(configurations, "MARKDOWN_ID_STYLE", markdown_id_style)
     _add_generic_configuration(configurations, "AUTOLINK_SUPPORT", autolink_support)
+    _add_generic_configuration(configurations, "AUTOLINK_IGNORE_WORDS", autolink_ignore_words)
     _add_generic_configuration(configurations, "BUILTIN_STL_SUPPORT", builtin_stl_support)
     _add_generic_configuration(configurations, "CPP_CLI_SUPPORT", cpp_cli_support)
     _add_generic_configuration(configurations, "SIP_SUPPORT", sip_support)
@@ -846,6 +857,7 @@ def doxygen(
     _add_generic_configuration(configurations, "RESOLVE_UNNAMED_PARAMS", resolve_unnamed_params)
     _add_generic_configuration(configurations, "HIDE_UNDOC_MEMBERS", hide_undoc_members)
     _add_generic_configuration(configurations, "HIDE_UNDOC_CLASSES", hide_undoc_classes)
+    _add_generic_configuration(configurations, "HIDE_UNDOC_NAMESPACES", hide_undoc_namespaces)
     _add_generic_configuration(configurations, "HIDE_FRIEND_COMPOUNDS", hide_friend_compounds)
     _add_generic_configuration(configurations, "HIDE_IN_BODY_DOCS", hide_in_body_docs)
     _add_generic_configuration(configurations, "INTERNAL_DOCS", internal_docs)
@@ -883,6 +895,7 @@ def doxygen(
     _add_generic_configuration(configurations, "WARN_IF_INCOMPLETE_DOC", warn_if_incomplete_doc)
     _add_generic_configuration(configurations, "WARN_NO_PARAMDOC", warn_no_paramdoc)
     _add_generic_configuration(configurations, "WARN_IF_UNDOC_ENUM_VAL", warn_if_undoc_enum_val)
+    _add_generic_configuration(configurations, "WARN_LAYOUT_FILE", warn_layout_file)
     _add_generic_configuration(configurations, "WARN_AS_ERROR", warn_as_error)
     _add_generic_configuration(configurations, "WARN_FORMAT", warn_format)
     _add_generic_configuration(configurations, "WARN_LINE_FORMAT", warn_line_format)
@@ -905,6 +918,7 @@ def doxygen(
     _add_generic_configuration(configurations, "FILTER_SOURCE_FILES", filter_source_files)
     _add_generic_configuration(configurations, "FILTER_SOURCE_PATTERNS", filter_source_patterns)
     _add_generic_configuration(configurations, "USE_MDFILE_AS_MAINPAGE", use_mdfile_as_mainpage)
+    _add_generic_configuration(configurations, "IMPLICIT_DIR_DOCS", implicit_dir_docs)
     _add_generic_configuration(configurations, "FORTRAN_COMMENT_AFTER", fortran_comment_after)
     _add_generic_configuration(configurations, "SOURCE_BROWSER", source_browser)
     _add_generic_configuration(configurations, "INLINE_SOURCES", inline_sources)
@@ -1076,6 +1090,7 @@ def doxygen(
     _add_generic_configuration(configurations, "PLANTUML_JAR_PATH", plantuml_jar_path)
     _add_generic_configuration(configurations, "PLANTUML_CFG_FILE", plantuml_cfg_file)
     _add_generic_configuration(configurations, "PLANTUML_INCLUDE_PATH", plantuml_include_path)
+    _add_generic_configuration(configurations, "PLANTUMLFILE_DIRS", plantumlfile_dirs)
     _add_generic_configuration(configurations, "DOT_GRAPH_MAX_NODES", dot_graph_max_nodes)
     _add_generic_configuration(configurations, "MAX_DOT_GRAPH_DEPTH", max_dot_graph_depth)
     _add_generic_configuration(configurations, "DOT_MULTI_TARGETS", dot_multi_targets)
