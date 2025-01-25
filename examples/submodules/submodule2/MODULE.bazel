@@ -3,7 +3,7 @@ module(name = "submodule2")
 bazel_dep(name = "rules_doxygen", version = "2.1.0")
 local_path_override(
     module_name = "rules_doxygen",
-    path = "../../",
+    path = "../../../",
 )
 
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")

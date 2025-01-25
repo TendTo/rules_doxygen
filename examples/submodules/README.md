@@ -3,6 +3,12 @@
 This repository simulates a situation where a root module depends on `rules_doxygen` as well as other two modules, `submodule1` and `submodule2`, which also depend on `rules_doxygen`.
 The goal is to make sure there are no conflicts between the different versions of `rules_doxygen` used by the root module and the submodules.
 
+To try this example, move to either `submodule1`, `submodule2` or `root` and run the following command:
+
+```bash
+bazel build //:doxygen
+```
+
 ## Using `dev_dependency`
 
 Since `rules_doxygen` is usually juts a development dependency, it is recommended to set the `dev_dependency` parameter to `True` when declaring the dependency on `rules_doxygen` in the `MODULE.bazel` file of any module.
