@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  DEFAULT_DOXYGEN_VERSION: "1.13.2"
+
 jobs:
   tests:
     strategy:
@@ -25,7 +28,7 @@ jobs:
           files: "examples/bazel-bin/${{ matrix.subdir }}/html/index.html"
           fail: true
       - name: Check doxygen version in produced index.html
-        run: grep 'Doxygen 1.13.2' examples/bazel-bin/${{ matrix.subdir }}/html/index.html
+        run: grep "Doxygen $DEFAULT_DOXYGEN_VERSION" examples/bazel-bin/${{ matrix.subdir }}/html/index.html
         shell: bash
 
   tests-system-installation:
@@ -79,7 +82,7 @@ jobs:
         uses: richardrigutins/replace-in-files@v2
         with:
           search-text: '# doxygen_extension.configuration(version = "1.12.0", sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001", platform = "mac")'
-          replacement-text: doxygen_extension.configuration(version = "1.12.0", sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001", platform = "mac")
+          replacement-text: doxygen_extension.configuration(version = "1.12.0", sha256 = "6ace7dde967d41f4e293d034a67eb2c7edd61318491ee3131112173a77344001", platform = "mac-arm")
           files: examples/MODULE.bazel
       - name: Enable use linux doxygen by decommenting the module extension line
         uses: richardrigutins/replace-in-files@v2
@@ -188,5 +191,5 @@ jobs:
           files: examples/submodules/${{ matrix.subdir }}/bazel-bin/html/index.html
           fail: true
       - name: Check doxygen version in produced index.html
-        run: grep 'Doxygen 1.12.0' examples/submodules/${{ matrix.subdir }}/bazel-bin/html/index.html
+        run: grep "Doxygen $DEFAULT_DOXYGEN_VERSION" examples/submodules/${{ matrix.subdir }}/bazel-bin/html/index.html
         shell: bash
