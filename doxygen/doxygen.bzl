@@ -14,7 +14,14 @@ def _expand_make_variables(string, ctx):
 
 def _doxygen_impl(ctx):
     doxyfile = ctx.actions.declare_file("Doxyfile")
-    outs = [ctx.actions.declare_directory(out) for out in ctx.attr.outs]
+
+    output_group_info = {}
+    outs = []
+    for out in ctx.attr.outs:
+        output_dir = ctx.actions.declare_directory(out)
+        outs += [output_dir]
+        output_group_info |= {out: depset([output_dir])}
+
     configurations = [_expand_make_variables(conf, ctx) for conf in ctx.attr.configurations]
 
     if len(outs) == 0:
@@ -39,7 +46,11 @@ def _doxygen_impl(ctx):
         progress_message = "Running doxygen",
         executable = ctx.executable._executable,
     )
-    return [DefaultInfo(files = depset(outs))]
+
+    return [
+        DefaultInfo(files = depset(outs)),
+        OutputGroupInfo(**output_group_info),
+    ]
 
 _doxygen = rule(
     doc = """Run the doxygen binary to generate the documentation.
