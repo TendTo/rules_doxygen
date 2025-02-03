@@ -14,7 +14,14 @@ def _expand_make_variables(string, ctx):
 
 def _doxygen_impl(ctx):
     doxyfile = ctx.actions.declare_file("Doxyfile")
-    outs = [ctx.actions.declare_directory(out) for out in ctx.attr.outs]
+
+    output_group_info = {}
+    outs = []
+    for out in ctx.attr.outs:
+        output_dir = ctx.actions.declare_directory(out)
+        outs += [output_dir]
+        output_group_info |= {out: depset([output_dir])}
+
     configurations = [_expand_make_variables(conf, ctx) for conf in ctx.attr.configurations]
 
     if len(outs) == 0:
@@ -39,7 +46,11 @@ def _doxygen_impl(ctx):
         progress_message = "Running doxygen",
         executable = ctx.executable._executable,
     )
-    return [DefaultInfo(files = depset(outs))]
+
+    return [
+        DefaultInfo(files = depset(outs)),
+        OutputGroupInfo(**output_group_info),
+    ]
 
 _doxygen = rule(
     doc = """Run the doxygen binary to generate the documentation.
@@ -483,6 +494,7 @@ def doxygen(
         doxygen_extra_args: Extra arguments to pass to the doxygen executable.
         outs: The output folders bazel will keep. If only the html outputs is of interest, the default value will do.
              otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).
+             Note that the rule will also generate an output group for each folder in the outs list having the same name.
 
         doxyfile_encoding: This tag specifies the encoding used for all characters in the configuration file that follow.
         project_name: The `project_name` tag is a single word (or a sequence of words surrounded by double-quotes, unless you are using Doxywizard) that should identify the project for which the documentation is generated.
