@@ -494,6 +494,7 @@ def doxygen(
         doxygen_extra_args: Extra arguments to pass to the doxygen executable.
         outs: The output folders bazel will keep. If only the html outputs is of interest, the default value will do.
              otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).
+             Note that the rule will also generate an output group for each folder in the outs list having the same name.
 
         doxyfile_encoding: This tag specifies the encoding used for all characters in the configuration file that follow.
         project_name: The `project_name` tag is a single word (or a sequence of words surrounded by double-quotes, unless you are using Doxywizard) that should identify the project for which the documentation is generated.
