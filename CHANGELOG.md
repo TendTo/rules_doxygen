@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.2.0]
 
+### Added
+
+- OutputGroup support in the `doxygen` rule [#20](https://github.com/TendTo/rules_doxygen/pull/20) (thanks to @kaycebasques)
+
 ### Changed
 
 - Updated documentation
