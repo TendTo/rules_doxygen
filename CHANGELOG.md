@@ -29,6 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `doxygen` list parameters not properly escaping their values [#12](https://github.com/TendTo/rules_doxygen/issues/12) (thanks to @kaycebasques)
 - Missing dependency on `skylib` for the documentation
 
+### Changed
+
+- Updated documentation (thanks to @Vertexwahn)
+
 ## [2.0.0]
 
 ### Added
@@ -123,4 +127,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [1.3.0]: https://github.com/TendTo/rules_doxygen/compare/1.2.0...1.3.0
 [2.0.0]: https://github.com/TendTo/rules_doxygen/compare/1.3.0...2.0.0
 [2.1.0]: https://github.com/TendTo/rules_doxygen/compare/2.0.0...2.1.0
+[2.2.0]: https://github.com/TendTo/rules_doxygen/compare/2.1.0...2.2.0
 [NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/2.1.0...HEAD
