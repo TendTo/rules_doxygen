@@ -19,7 +19,7 @@ def _doxygen_impl(ctx):
     outs = []
     for out in ctx.attr.outs:
         output_dir = ctx.actions.declare_directory(out)
-        outs += [output_dir]
+        outs.append(output_dir)
         output_group_info |= {out: depset([output_dir])}
 
     configurations = [_expand_make_variables(conf, ctx) for conf in ctx.attr.configurations]
@@ -1078,6 +1078,7 @@ def doxygen(
     _add_generic_configuration(configurations, "DOT_EDGE_ATTR", dot_edge_attr)
     _add_generic_configuration(configurations, "DOT_NODE_ATTR", dot_node_attr)
     _add_generic_configuration(configurations, "DOT_FONTPATH", dot_fontpath)
+    _add_generic_configuration(configurations, "DOT_TRANSPARENT", dot_transparent)
     _add_generic_configuration(configurations, "CLASS_GRAPH", class_graph)
     _add_generic_configuration(configurations, "COLLABORATION_GRAPH", collaboration_graph)
     _add_generic_configuration(configurations, "GROUP_GRAPHS", group_graphs)
