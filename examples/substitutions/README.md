@@ -68,11 +68,15 @@ def _make_var_substitution_impl(ctx):
         vars["BUILD_DESCRIPTION"] = ctx.attr._build_description[BuildSettingInfo].value
     else:  # Otherwise use the hardcoded value.
         vars["BUILD_DESCRIPTION"] = "no stamp"
+    # Add the path of the label files to the variables.
+    for key, value in ctx.attr.locations.items():
+        vars[key] = '"%s"' % '" "'.join([file.path for file in (value[DefaultInfo].files.to_list())])
     return [platform_common.TemplateVariableInfo(vars)]
 
 make_var_substitution = rule(
     implementation = _make_var_substitution_impl,
     attrs = dict({
+        "locations": attr.string_keyed_label_dict(),
         "variables": attr.string_dict(),
         "_build_description": attr.label(default = "//substitutions:build_description"),
     }, **STAMP_ATTRS),
@@ -103,6 +107,23 @@ genrule(
 )
 ```
 
+### Output files
+
+It is also possible to use files produced by other rules as input files for the doxygen rule.
+For example, we can use a `genrule` to create an `header.html` file that will be used as the header for the doxygen documentation.
+
+```bzl
+# BUILD.bazel
+genrule(
+    name = "header",
+    srcs = ["header.html"],
+    outs = ["header.html"],
+    cmd = "echo '<h1>My Header</h1>' > $@",
+)
+```
+
+We need to include the genrule in the `locations` attribute of a `make_var_substitution` rule, as well as including it in the `srcs` attribute of the doxygen rule and specifying the location substitution in the `doxygen` rule.
+
 ### Final result
 
 ```bzl
@@ -110,6 +131,14 @@ genrule(
 
 load("@doxygen//:doxygen.bzl", "doxygen")
 load("//substitutions:make_var_substitution.bzl", "make_var_substitution")
+
+# Use a shell script to create a header file
+genrule(
+    name = "header",
+    srcs = ["header.html"],
+    outs = ["header.html"],
+    cmd = "echo '<h1>My Header</h1>' > $@",
+)
 
 # Use a shell script to read the version from the stable-status.txt file
 # It will replace the pattern {{PROJECT_NUMBER}} in the Doxyfile.template file
@@ -128,6 +157,9 @@ make_var_substitution(
     variables = {
         "NAME": "substitutions",
     },
+    locations = {
+        "HEADER": ":header",
+    },
 )
 
 doxygen(
@@ -135,10 +167,11 @@ doxygen(
     srcs = glob([
         "*.h",
         "*.cpp",
-    ]),
-    project_brief = "$(DESCRIPTION)", # => "no stamp" or "//substitutions:build_description" if the build is stamped
+    ]) + [":header"], # We need to indicate all the rules this doxygen rule depends on
+    project_brief = "$(BUILD_DESCRIPTION)", # => "no stamp" or "//substitutions:build_description" if the build is stamped
     project_name = "$(NAME)", # => "substitutions"
     doxyfile_template = ":doxyfile_template",
+    html_header = "$(HEADER)", # => "header.html"
     toolchains = [":make_var_substitution"],
 )
 ```
