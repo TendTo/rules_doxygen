@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.2]
+
+### Fix
+
+- Remove dependency on `@bazel_tools//tools/build_defs/repo` to support Bazel 7.0.0 [#22](https://github.com/TendTo/rules_doxygen/issues/22)
+- Remove unnecessary `get_auth`
+
+### Changed
+
+- Updated documentation and added example with the output substitution
+
 ## [2.2.1]
 
 ### Fix
