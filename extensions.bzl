@@ -320,11 +320,11 @@ def _doxygen_extension_impl(ctx):
 _doxygen_configuration_tag = tag_class(attrs = {
     "version": attr.string(doc = "The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH. Mutually exclusive with `executable`."),
     "sha256": attr.string(doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used."),
-    "platform": attr.string(doc = "The target platform for the doxygen binary. Available options are (windows, mac, mac-arm, linux, linux-arm). If not specified, it will select the platform it is currently running on."),
-    "executable": attr.label(doc = "The doxygen executable to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`."),
+    "platform": attr.string(doc = "The platform this configuration applies to. Available options are (windows, mac, mac-arm, linux, linux-arm). If not specified, the configuration will apply to the platform it is currently running on."),
+    "executable": attr.label(doc = "Target pointing to the doxygen executable to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`."),
 })
 _doxygen_repository_tag = tag_class(attrs = {
-    "name": attr.string(doc = "The name of the repository the extension will create. Useful if you don't use 'rules_doxygen' as a dev_dependency, since it will avoid name collision for module depending on yours. Must be the same for all configurations. Defaults to 'doxygen'.", mandatory = True),
+    "name": attr.string(doc = "The name of the repository the extension will create. Useful if you don't use 'rules_doxygen' as a dev_dependency, since it will avoid name collision for module depending on yours. Can only be specified once. Defaults to 'doxygen'.", mandatory = True),
 })
 
 doxygen_extension = module_extension(
