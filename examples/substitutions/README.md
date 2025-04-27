@@ -83,6 +83,10 @@ make_var_substitution = rule(
 )
 ```
 
+> [!IMPORTANT]  
+> The `string_keyed_label_dict` attribute is not available in bazel 7.0.0.
+> As an alternative, you can use two lists, one for the keys (strings) and one for the values (labels).
+
 Finally, the substitution rule can be used as a toolchain in the doxygen rule.
 
 All configurations using the make variable syntax will be replaced with the values defined in the make_var_substitution rule.

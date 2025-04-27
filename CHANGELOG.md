@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.2]
+
+### Added
+
+- CI tests for both Bazel 7 and 8
+
+### Fix
+
+- Remove dependency on `@bazel_tools//tools/build_defs/repo` to support Bazel 7.0.0 [#22](https://github.com/TendTo/rules_doxygen/issues/22) (thanks to @filmil)
+- Remove unnecessary `get_auth`
+
+### Changed
+
+- Made documentation clearer
+
 ## [2.2.1]
 
 ### Fix
@@ -73,7 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Support for system-wide doxygen installation. This allows the rule to run on mac os, but loses hermeticity. Can be enabled by using doxygen version `0.0.0`.
-- Testes for the new feature in the CI pipeline
+- Tests for the new feature in the CI pipeline
 - Local repository rule for doxygen
 
 ### Changed

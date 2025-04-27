@@ -1,7 +1,46 @@
 """Repository rule for downloading the correct version of doxygen using module extensions."""
 
-load("@bazel_tools//tools/build_defs/repo:cache.bzl", "get_default_canonical_id")
-load("@bazel_tools//tools/build_defs/repo:utils.bzl", "get_auth")
+def get_default_canonical_id(repository_ctx, urls):
+    """Returns the default canonical id to use for downloads.
+
+    Copied from [@bazel_tools//tools/build_defs/repo:cache.bzl](https://github.com/bazelbuild/bazel/blob/dbb05116a07429ec3524bcf7252cedbb11269bea/tools/build_defs/repo/cache.bzl)
+    to avoid a dependency on the whole `@bazel_tools` package, since its visibility changed from private to public between Bazel 7.0.0 and 8.0.0.
+
+    Returns `""` (empty string) when Bazel is run with
+    `--repo_env=BAZEL_HTTP_RULES_URLS_AS_DEFAULT_CANONICAL_ID=0`.
+
+    e.g.
+    ```python
+    load("@bazel_tools//tools/build_defs/repo:cache.bzl", "get_default_canonical_id")
+    # ...
+        repository_ctx.download_and_extract(
+            url = urls,
+            integrity = integrity
+            canonical_id = get_default_canonical_id(repository_ctx, urls),
+        ),
+    ```
+
+    Args:
+      repository_ctx: The repository context of the repository rule calling this utility
+        function.
+      urls: A list of URLs matching what is passed to `repository_ctx.download` and
+        `repository_ctx.download_and_extract`.
+
+    Returns:
+        The canonical ID to use for the download, or an empty string if
+        `BAZEL_HTTP_RULES_URLS_AS_DEFAULT_CANONICAL_ID` is set to `0`.
+    """
+    DEFAULT_CANONICAL_ID_ENV = "BAZEL_HTTP_RULES_URLS_AS_DEFAULT_CANONICAL_ID"
+    if repository_ctx.os.environ.get(DEFAULT_CANONICAL_ID_ENV) == "0":
+        return ""
+
+    # Do not sort URLs to prevent the following scenario:
+    # 1. http_archive with urls = [B, A] created.
+    # 2. Successful fetch from B results in canonical ID "A B".
+    # 3. Order of urls is flipped to [A, B].
+    # 4. Fetch would reuse cache entry for "A B", even though A may be broken (it has never been
+    #    fetched before).
+    return " ".join(urls)
 
 def _get_current_platform(ctx):
     """
@@ -91,7 +130,6 @@ def _doxygen_repository(ctx):
                 sha256 = sha256,
                 type = "zip",
                 canonical_id = get_default_canonical_id(ctx, [url]),
-                auth = get_auth(ctx, [url]),
             )
 
             # Copy the doxygen executable (and dll) to the repository
@@ -107,7 +145,6 @@ def _doxygen_repository(ctx):
                 output = download_output,
                 sha256 = sha256,
                 canonical_id = get_default_canonical_id(ctx, [url]),
-                auth = get_auth(ctx, [url]),
             )
 
             # Mount the dmg file
@@ -128,7 +165,6 @@ def _doxygen_repository(ctx):
                 sha256 = sha256,
                 type = "tar.gz",
                 canonical_id = get_default_canonical_id(ctx, [url]),
-                auth = get_auth(ctx, [url]),
                 stripPrefix = "doxygen-%s" % doxygen_version,
             )
 
@@ -284,11 +320,11 @@ def _doxygen_extension_impl(ctx):
 _doxygen_configuration_tag = tag_class(attrs = {
     "version": attr.string(doc = "The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH. Mutually exclusive with `executable`."),
     "sha256": attr.string(doc = "The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used."),
-    "platform": attr.string(doc = "The target platform for the doxygen binary. Available options are (windows, mac, mac-arm, linux, linux-arm). If not specified, it will select the platform it is currently running on."),
-    "executable": attr.label(doc = "The doxygen executable to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`."),
+    "platform": attr.string(doc = "The platform this configuration applies to. Available options are (windows, mac, mac-arm, linux, linux-arm). If not specified, the configuration will apply to the platform it is currently running on."),
+    "executable": attr.label(doc = "Target pointing to the doxygen executable to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`."),
 })
 _doxygen_repository_tag = tag_class(attrs = {
-    "name": attr.string(doc = "The name of the repository the extension will create. Useful if you don't use 'rules_doxygen' as a dev_dependency, since it will avoid name collision for module depending on yours. Must be the same for all configurations. Defaults to 'doxygen'.", mandatory = True),
+    "name": attr.string(doc = "The name of the repository the extension will create. Useful if you don't use 'rules_doxygen' as a dev_dependency, since it will avoid name collision for module depending on yours. Can only be specified once. Defaults to 'doxygen'.", mandatory = True),
 })
 
 doxygen_extension = module_extension(

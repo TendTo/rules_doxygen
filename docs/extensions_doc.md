@@ -2,6 +2,50 @@
 
 Repository rule for downloading the correct version of doxygen using module extensions.
 
+<a id="get_default_canonical_id"></a>
+
+## get_default_canonical_id
+
+<pre>
+load("@rules_doxygen//:extensions.bzl", "get_default_canonical_id")
+
+get_default_canonical_id(<a href="#get_default_canonical_id-repository_ctx">repository_ctx</a>, <a href="#get_default_canonical_id-urls">urls</a>)
+</pre>
+
+Returns the default canonical id to use for downloads.
+
+Copied from [@bazel_tools//tools/build_defs/repo:cache.bzl](https://github.com/bazelbuild/bazel/blob/dbb05116a07429ec3524bcf7252cedbb11269bea/tools/build_defs/repo/cache.bzl)
+to avoid a dependency on the whole `@bazel_tools` package, since its visibility changed from private to public between Bazel 7.0.0 and 8.0.0.
+
+Returns `""` (empty string) when Bazel is run with
+`--repo_env=BAZEL_HTTP_RULES_URLS_AS_DEFAULT_CANONICAL_ID=0`.
+
+e.g.
+```python
+load("@bazel_tools//tools/build_defs/repo:cache.bzl", "get_default_canonical_id")
+# ...
+    repository_ctx.download_and_extract(
+        url = urls,
+        integrity = integrity
+        canonical_id = get_default_canonical_id(repository_ctx, urls),
+    ),
+```
+
+
+**PARAMETERS**
+
+
+| Name  | Description | Default Value |
+| :------------- | :------------- | :------------- |
+| <a id="get_default_canonical_id-repository_ctx"></a>repository_ctx |  The repository context of the repository rule calling this utility function.   |  none |
+| <a id="get_default_canonical_id-urls"></a>urls |  A list of URLs matching what is passed to `repository_ctx.download` and `repository_ctx.download_and_extract`.   |  none |
+
+**RETURNS**
+
+The canonical ID to use for the download, or an empty string if
+  `BAZEL_HTTP_RULES_URLS_AS_DEFAULT_CANONICAL_ID` is set to `0`.
+
+
 <a id="doxygen_repository"></a>
 
 ## doxygen_repository
@@ -75,7 +119,7 @@ doxygen_repository(
 <pre>
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 doxygen_extension.configuration(<a href="#doxygen_extension.configuration-executable">executable</a>, <a href="#doxygen_extension.configuration-platform">platform</a>, <a href="#doxygen_extension.configuration-sha256">sha256</a>, <a href="#doxygen_extension.configuration-version">version</a>)
-doxygen_extension.repository()
+doxygen_extension.repository(<a href="#doxygen_extension.repository-name">name</a>)
 </pre>
 
 Module extension for declaring the doxygen configurations to use.
@@ -84,7 +128,7 @@ The resulting repository will have the following targets:
 - `@doxygen//:doxygen.bzl`, containing the doxygen macro used to generate the documentation.
 - `@doxygen//:Doxyfile.template`, default Doxyfile template used to generate the Doxyfile.
 
-The extension will create a default configuration for all platforms with the version `1.12.0` of Doxygen.
+The extension will create a default configuration for all platforms with the version `1.13.2` of Doxygen.
 You can override this value with a custom one for each supported platform, i.e. _windows_, _mac_, _mac-arm_, _linux_ and _linux-arm_.
 
 ```bzl
@@ -230,8 +274,8 @@ use_repo(doxygen_extension, "doxygen")
 
 | Name  | Description | Type | Mandatory | Default |
 | :------------- | :------------- | :------------- | :------------- | :------------- |
-| <a id="doxygen_extension.configuration-executable"></a>executable |  The doxygen executable to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `None`  |
-| <a id="doxygen_extension.configuration-platform"></a>platform |  The target platform for the doxygen binary. Available options are (windows, mac, mac-arm, linux, linux-arm). If not specified, it will select the platform it is currently running on.   | String | optional |  `""`  |
+| <a id="doxygen_extension.configuration-executable"></a>executable |  Target pointing to the doxygen executable to use. If set, no download will take place and the provided doxygen executable will be used. Mutually exclusive with `version`.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `None`  |
+| <a id="doxygen_extension.configuration-platform"></a>platform |  The platform this configuration applies to. Available options are (windows, mac, mac-arm, linux, linux-arm). If not specified, the configuration will apply to the platform it is currently running on.   | String | optional |  `""`  |
 | <a id="doxygen_extension.configuration-sha256"></a>sha256 |  The sha256 hash of the doxygen archive. If not specified, an all-zero hash will be used.   | String | optional |  `""`  |
 | <a id="doxygen_extension.configuration-version"></a>version |  The version of doxygen to use. If set to `0.0.0`, the doxygen executable will be assumed to be available from the PATH. Mutually exclusive with `executable`.   | String | optional |  `""`  |
 
@@ -243,5 +287,6 @@ use_repo(doxygen_extension, "doxygen")
 
 | Name  | Description | Type | Mandatory | Default |
 | :------------- | :------------- | :------------- | :------------- | :------------- |
+| <a id="doxygen_extension.repository-name"></a>name |  The name of the repository the extension will create. Useful if you don't use 'rules_doxygen' as a dev_dependency, since it will avoid name collision for module depending on yours. Can only be specified once. Defaults to 'doxygen'.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
 
 
