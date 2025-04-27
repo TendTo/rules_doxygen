@@ -14,11 +14,26 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        subdir: [base, kwargs, doxyfile, latex, nested, custom, awesome, substitutions]
+        bazel: [7.0.0, 8.0.0]
+        subdir:
+          [
+            base,
+            kwargs,
+            doxyfile,
+            latex,
+            nested,
+            custom,
+            awesome,
+            substitutions,
+          ]
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
+      - name: Create .bazelversion file
+        working-directory: examples
+        run: echo "${{ matrix.bazel }}" > .bazelversion
+        shell: bash
       - name: Build ${{ matrix.subdir }}
         run: bazel build //${{ matrix.subdir }}:doxygen
         working-directory: examples
@@ -35,7 +50,17 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        subdir: [base, kwargs, doxyfile, latex, nested, custom, awesome, substitutions]
+        subdir:
+          [
+            base,
+            kwargs,
+            doxyfile,
+            latex,
+            nested,
+            custom,
+            awesome,
+            substitutions,
+          ]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -66,10 +91,15 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        bazel: [7.0.0, 8.0.0]
         subdir: [base]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: Create .bazelversion file
+        working-directory: examples
+        run: echo "${{ matrix.bazel }}" > .bazelversion
+        shell: bash
       - name: Install doxygen
         uses: ssciwr/doxygen-install@v1
       - name: Enable use of windows doxygen by decommenting the module extension line
@@ -115,10 +145,15 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        bazel: [7.0.0, 8.0.0]
         subdir: [base]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - name: Create .bazelversion file
+        working-directory: examples
+        run: echo "${{ matrix.bazel }}" > .bazelversion
+        shell: bash
       - name: Install doxygen
         uses: ssciwr/doxygen-install@v1
         with:
@@ -177,11 +212,16 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        bazel: [7.0.0, 8.0.0]
         subdir: [root, submodule1, submodule2]
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
+      - name: Create .bazelversion file
+        working-directory: examples
+        run: echo "${{ matrix.bazel }}" > .bazelversion
+        shell: bash
       - name: Build submodules/${{ matrix.subdir }}
         run: bazel build //:doxygen
         working-directory: examples/submodules/${{ matrix.subdir }}
