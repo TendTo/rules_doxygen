@@ -26,6 +26,10 @@ jobs:
             awesome,
             substitutions,
           ]
+        exclude:
+          # In substitution example we use `string_keyed_label_dict`, which is not supported in bazel 7.0.0
+          - bazel: 7.0.0
+            subdir: substitutions
     runs-on: ${{ matrix.os }}
 
     steps:
