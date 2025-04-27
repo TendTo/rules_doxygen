@@ -1,6 +1,6 @@
 # Doxygen rules for Bazel
 
-[![Bazel Central Repository](https://img.shields.io/badge/BCR-2.2.1-%230C713A?logo=bazel)](https://registry.bazel.build/modules/rules_doxygen)
+[![Bazel Central Repository](https://img.shields.io/badge/BCR-2.2.2-%230C713A?logo=bazel)](https://registry.bazel.build/modules/rules_doxygen)
 [![CI](https://github.com/TendTo/rules_doxygen/actions/workflows/ci.yml/badge.svg)](https://github.com/TendTo/rules_doxygen/actions/workflows/ci.yml)
 
 This repository contains a [Starlark](https://github.com/bazelbuild/starlark) implementation of [Doxygen](https://www.doxygen.nl/) rules in [Bazel](https://bazel.build/).
@@ -12,7 +12,7 @@ Add the following to your _MODULE.bazel_:
 ```bzl
 # MODULE.bazel file
 
-bazel_dep(name = "rules_doxygen", version = "2.2.1", dev_dependency = True)
+bazel_dep(name = "rules_doxygen", version = "2.2.2", dev_dependency = True)
 ```
 
 If you don't want to depend on the [Bazel package registry](https://bazel.build/external/bazelbuild/rules_pkg) or need a not-yet-published version of this module, you can use a `git_override` by adding the following lines below `bazel_dep` in your _MODULE.bazel_ file:
@@ -20,13 +20,16 @@ If you don't want to depend on the [Bazel package registry](https://bazel.build/
 ```bzl
 # MODULE.bazel file
 
-bazel_dep(name = "rules_doxygen", version = "2.2.1", dev_dependency = True)
+bazel_dep(name = "rules_doxygen", version = "2.2.2", dev_dependency = True)
 git_override(
     module_name = "rules_doxygen",
     commit = "aacc1c856c350a89a0fa9c43b9318a248d5f1781", # Commit hash you want to use
     remote = "https://github.com/TendTo/rules_doxygen.git",
 )
 ```
+
+> [!Note]  
+> Only [Bazel 7](https://blog.bazel.build/2023/12/11/bazel-7-release.html) and above are supported.
 
 ### Doxygen version selection
 
@@ -152,8 +155,8 @@ doxygen(
     generate_html = True,                   # Whether to generate HTML output
     generate_latex = False,                 # Whether to generate LaTeX output
     use_mdfile_as_mainpage = "README.md",   # The main page of the documentation
-    # Equivalently, you can manually set the configurations 
-    # that will be appended to the Doxyfile in the form of a list of strings 
+    # Equivalently, you can manually set the configurations
+    # that will be appended to the Doxyfile in the form of a list of strings
     # configurations = [
     #    "GENERATE_HTML = YES",
     #    "GENERATE_LATEX = NO",
