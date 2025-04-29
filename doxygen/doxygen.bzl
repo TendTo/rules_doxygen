@@ -2,7 +2,7 @@
 
 def _expand_make_variables(string, ctx):
     """Replace make variables in a string with their values.
-    
+
     Args:
         string: The string to expand.
         ctx: The context object.
@@ -44,7 +44,7 @@ def _doxygen_impl(ctx):
         outputs = outs,
         arguments = [doxyfile.path] + ctx.attr.doxygen_extra_args,
         progress_message = "Running doxygen",
-        executable = ctx.executable._executable,
+        executable = ctx.executable.executable,
     )
 
     return [
@@ -104,7 +104,7 @@ The following substitutions are available:
             doc = "The dot executable to use. Must refer to an executable file.",
         ),
         "doxygen_extra_args": attr.string_list(default = [], doc = "Extra arguments to pass to the doxygen executable."),
-        "_executable": attr.label(
+        "executable": attr.label(
             executable = True,
             cfg = "exec",
             allow_single_file = True,
@@ -1113,7 +1113,7 @@ def doxygen(
     _add_generic_configuration(configurations, "MSCFILE_DIRS", mscfile_dirs)
 
     if doxyfile_template:
-        kwargs["doxyfile_template"] = doxyfile_template 
+        kwargs["doxyfile_template"] = doxyfile_template
 
     _doxygen(
         name = name,

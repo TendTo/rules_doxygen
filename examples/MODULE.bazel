@@ -9,6 +9,43 @@ local_path_override(
 bazel_dep(name = "aspect_bazel_lib", version = "2.10.0")
 bazel_dep(name = "bazel_skylib", version = "1.7.1")
 bazel_dep(name = "rules_foreign_cc", version = "0.14.0")
+bazel_dep(name = "libconfig", version = "1.7.3")
+bazel_dep(name = "rules_flex", version = "0.4")
+bazel_dep(name = "rules_bison", version = "0.4")
+
+github_archive = use_repo_rule("//:git_archive.bzl", "github_archive")
+
+github_archive(
+    name = "doxygen_source",
+    build_file = "//:doxygen_source.BUILD.bazel",
+    commit = "200cec9b87fa544f39deeb96966568985f40aea8",
+    repository = "doxygen/doxygen",
+    sha256 = "6aa71da24aa7b8fc8f9eba5a6651b1fb47c569c68d3e226b011d39a15087c2fb",
+)
+
+bison = use_extension(
+    "@rules_bison//bison/extensions:bison_repository_ext.bzl",
+    "bison_repository_ext",
+)
+bison.repository(
+    name = "bison",
+    version = "3.3.2",
+    extra_copts = ["-O3"],
+)
+use_repo(bison, "bison")
+register_toolchains("@bison//:toolchain")
+
+flex = use_extension(
+    "@rules_flex//flex/extensions:flex_repository_ext.bzl",
+    "flex_repository_ext",
+)
+flex.repository(
+    name = "flex",
+    version = "2.6.4",
+    extra_copts = ["-O3"],
+)
+use_repo(flex, "flex")
+register_toolchains("@flex//:toolchain")
 
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 

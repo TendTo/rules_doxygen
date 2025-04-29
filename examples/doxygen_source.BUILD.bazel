@@ -1,0 +1,35 @@
+load("@rules_foreign_cc//foreign_cc:defs.bzl", "cmake")
+
+filegroup(
+    name = "all_srcs",
+    srcs = glob(["**"]),
+    visibility = ["//visibility:public"],
+)
+
+cmake(
+    name = "doxygen",
+    lib_source = ":all_srcs",
+    out_binaries = ["doxygen"],
+    visibility = ["//visibility:public"],
+    env = {
+        "FLEX": "$$EXT_BUILD_DEPS/flex/bin/flex/bin",
+    },
+    build_data = [
+        "@rules_flex//flex:current_flex_toolchain",
+        "@rules_bison//bison:current_bison_toolchain",
+    ],
+)
+
+genrule(
+    name = "doxygen_binary",
+    srcs = [":doxygen"],
+    outs = ["doxygen_bin"],
+    cmd = "cp $$1 $@",
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "doxygen_source",
+    srcs = [":doxygen_binary"],
+    visibility = ["//visibility:public"],
+)
