@@ -1,0 +1,51 @@
+load("@doxygen//:doxygen.bzl", "doxygen")
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "add",
+    srcs = ["add.cpp"],
+    hdrs = ["add.h"],
+)
+
+cc_library(
+    name = "sub",
+    srcs = ["sub.cpp"],
+    hdrs = ["sub.h"],
+)
+
+cc_library(
+    name = "lib",
+    hdrs = ["lib.h"],
+    deps = [
+        ":add",
+        ":sub",
+    ],
+)
+
+cc_library(
+    name = "main",
+    srcs = ["main.cpp"],
+    deps = [":lib"],
+)
+
+genrule(
+    name = "section",
+    outs = ["Section.md"],
+    cmd = """
+        echo "# Section " > $@
+        echo "This is some amazing documentation with section!!  " >> $@
+        echo "Incredible." >> $@
+    """,
+)
+
+doxygen(
+    name = "doxygen",
+    srcs = [
+        "README.md",  # file
+        ":section",  # genrule
+    ],
+    project_brief = "Example project for doxygen",
+    project_name = "dependencies",
+    use_mdfile_as_mainpage = "dependencies/README.md",
+    deps = [":main"],  # cc_library
+)

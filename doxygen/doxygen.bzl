@@ -2,7 +2,7 @@
 
 def _expand_make_variables(string, ctx):
     """Replace make variables in a string with their values.
-    
+
     Args:
         string: The string to expand.
         ctx: The context object.
@@ -11,6 +11,45 @@ def _expand_make_variables(string, ctx):
         for variable, value in ctx.var.items():
             string = string.replace("$(%s)" % variable, value)
     return string
+
+TransitiveSourcesInfo = provider(
+    "A provider to collect source files transitively from the target and its dependencies",
+    fields = {"srcs": "depset of source files collected from the target and its dependencies"},
+)
+
+def _collect_files_aspect_impl(_, ctx):
+    """Collect transitive source files from dependencies.
+
+    Args:
+        _: target context. Not used in this aspect
+        ctx: aspect context
+
+    Returns:
+         TransitiveSourcesInfo with a depset of transitive sources
+    """
+    direct_files = []
+    srcs = ctx.rule.attr.srcs if hasattr(ctx.rule.attr, "srcs") else []
+    hdrs = ctx.rule.attr.hdrs if hasattr(ctx.rule.attr, "hdrs") else []
+    data = ctx.rule.attr.data if hasattr(ctx.rule.attr, "data") else []
+    for src in srcs + hdrs + data:
+        if hasattr(src, "files"):
+            direct_files.extend(src.files.to_list())
+
+    # Collect transitive files from dependencies
+    transitive_files = []
+    for dep in ctx.rule.attr.deps if hasattr(ctx.rule.attr, "deps") else []:
+        if TransitiveSourcesInfo in dep:
+            transitive_files.append(dep[TransitiveSourcesInfo].srcs)
+
+    return [TransitiveSourcesInfo(
+        srcs = depset(direct = direct_files, transitive = transitive_files),
+    )]
+
+collect_files_aspect = aspect(
+    implementation = _collect_files_aspect_impl,
+    attr_aspects = ["deps"],  # recursively apply on deps
+    doc = "When applied to a target, this aspect collects the source files from the target and its dependencies, and makes them available in the TransitiveSourcesInfo provider.",
+)
 
 def _doxygen_impl(ctx):
     doxyfile = ctx.actions.declare_file("Doxyfile")
@@ -27,7 +66,8 @@ def _doxygen_impl(ctx):
     if len(outs) == 0:
         fail("At least one output folder must be specified")
 
-    input_dirs = {(file.dirname or "."): None for file in ctx.files.srcs}
+    deps = depset(transitive = [dep[TransitiveSourcesInfo].srcs for dep in ctx.attr.deps]).to_list()
+    input_dirs = {(file.dirname or "."): None for file in ctx.files.srcs + deps}
     ctx.actions.expand_template(
         template = ctx.file.doxyfile_template,
         output = doxyfile,
@@ -40,7 +80,7 @@ def _doxygen_impl(ctx):
     )
 
     ctx.actions.run(
-        inputs = ctx.files.srcs + [doxyfile],
+        inputs = ctx.files.srcs + deps + [doxyfile],
         outputs = outs,
         arguments = [doxyfile.path] + ctx.attr.doxygen_extra_args,
         progress_message = "Running doxygen",
@@ -59,14 +99,14 @@ It is advised to use the `doxygen` macro instead of this rule directly.
 
 ### Example
 
-```starlark
+```bzl
 # MODULE.bazel file
 bazel_dep(name = "rules_doxygen", dev_dependency = True)
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 use_repo(doxygen_extension, "doxygen")
 ```
 
-```starlark
+```bzl
 # BUILD.bazel file
 load("@doxygen//:doxygen.bzl", "doxygen")
 
@@ -83,14 +123,15 @@ doxygen(
 """,
     implementation = _doxygen_impl,
     attrs = {
-        "srcs": attr.label_list(allow_files = True, doc = "The source files to generate documentation for. Can include header files, source files, and any other file Doxygen can parse."),
+        "srcs": attr.label_list(allow_files = True, doc = "List of source files to generate documentation for. Can include any file that Doxygen can parse, as well as targets that return a DefaultInfo provider (usually genrules). Since we are only considering the outputs files and not the sources, these targets **will** be built if necessary."),
+        "deps": attr.label_list(aspects = [collect_files_aspect], doc = "List of dependencies targets whose files present in the 'src', 'hdrs' and 'data' attributes will be collected to generate the documentation. Transitive dependencies are also taken into account. Since we are only considering the source files and not the outputs, these targets **will not** be built"),
         "configurations": attr.string_list(doc = "Additional configuration parameters to append to the Doxyfile. For example, to set the project name, use `PROJECT_NAME = example`."),
-        "outs": attr.string_list(default = ["html"], allow_empty = False, doc = """The output folders to keep. If only the html outputs is of interest, the default value will do. Otherwise, a list of folders to keep is expected (e.g. `["html", "latex"]`)."""),
+        "outs": attr.string_list(default = ["html"], allow_empty = False, doc = """Output folders to keep. If only the html outputs is of interest, the default value will do. Otherwise, a list of folders to keep is expected (e.g. `["html", "latex"]`)."""),
         "doxyfile_template": attr.label(
             allow_single_file = True,
             default = Label(":Doxyfile.template"),
-            doc = """The template file to use to generate the Doxyfile. You can provide your own or use the default one. 
-The following substitutions are available: 
+            doc = """Template file to use to generate the Doxyfile. You can provide your own or use the default one.
+The following substitutions are available:
 - `# {{INPUT}}`: Subpackage directory in the sandbox.
 - `# {{DOT_PATH}}`: Indicate to doxygen the location of the `dot_executable`
 - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.
@@ -101,7 +142,7 @@ The following substitutions are available:
             executable = True,
             cfg = "exec",
             allow_single_file = True,
-            doc = "The dot executable to use. Must refer to an executable file.",
+            doc = "dot executable to use. Must refer to an executable file.",
         ),
         "doxygen_extra_args": attr.string_list(default = [], doc = "Extra arguments to pass to the doxygen executable."),
         "_executable": attr.label(
@@ -109,7 +150,7 @@ The following substitutions are available:
             cfg = "exec",
             allow_single_file = True,
             default = Label(":executable"),
-            doc = "The doxygen executable to use. Must refer to an executable file.",
+            doc = "doxygen executable to use. Must refer to an executable file.",
         ),
     },
 )
@@ -127,7 +168,8 @@ def _add_generic_configuration(configurations, name, value):
 
 def doxygen(
         name,
-        srcs,
+        srcs = [],
+        deps = [],
         # Bazel specific attributes
         dot_executable = None,
         configurations = None,
@@ -452,25 +494,40 @@ def doxygen(
     - list: the value of the attribute is a string with the elements separated by spaces and enclosed in double quotes
     - str: the value of the attribute is will be set to the string, unchanged. You may need to provide proper quoting if the value contains spaces
 
+    For the complete list of Doxygen configuration options, please refer to the [Doxygen documentation](https://www.doxygen.nl/manual/config.html).
+
     ### Example
 
-    ```starlark
+    ```bzl
     # MODULE.bazel file
     bazel_dep(name = "rules_doxygen", dev_dependency = True)
     doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
     use_repo(doxygen_extension, "doxygen")
     ```
 
-    ```starlark
+    ```bzl
     # BUILD.bazel file
     load("@doxygen//:doxygen.bzl", "doxygen")
+    load("@rules_cc//cc:defs.bzl", "cc_library")
+
+    cc_library(
+        name = "lib",
+        srcs = ["add.cpp", "sub.cpp"],
+        hdrs = ["add.h", "sub.h"],
+    )
+
+    cc_library(
+        name = "main",
+        srcs = ["main.cpp"],
+        deps = [":lib"],
+    )
 
     doxygen(
         name = "doxygen",
         srcs = glob([
-            "*.h",
-            "*.cpp",
+            "*.md",
         ]),
+        deps = [":main"]
         aliases = [
             "licence=@par Licence:^^",
             "verb{1}=@verbatim \\\\1 @endverbatim",
@@ -482,17 +539,22 @@ def doxygen(
     ```
 
     Args:
-        name: A name for the target.
-        srcs: A list of source files to generate documentation for.
+        name: Name for the target.
+        srcs: List of source files to generate documentation for.
+            Can include any file that Doxygen can parse, as well as targets that return a DefaultInfo provider (usually genrules).
+            Since we are only considering the outputs files and not the sources, these targets **will** be built if necessary.
+        deps: List of dependencies targets whose files present in the 'src', 'hdrs' and 'data' attributes will be collected to generate the documentation.
+            Transitive dependencies are also taken into account.
+            Since we are only considering the source files and not the outputs, these targets **will not** be built.
         dot_executable: Label of the doxygen executable. Make sure it is also added to the `srcs` of the macro
-        configurations: A list of additional configuration parameters to pass to Doxygen.
+        configurations: List of additional configuration parameters to pass to Doxygen.
         doxyfile_template: The template file to use to generate the Doxyfile.
             The following substitutions are available:<br>
             - `# {{INPUT}}`: Subpackage directory in the sandbox.<br>
             - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.<br>
             - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.
         doxygen_extra_args: Extra arguments to pass to the doxygen executable.
-        outs: The output folders bazel will keep. If only the html outputs is of interest, the default value will do.
+        outs: Output folders bazel will keep. If only the html outputs is of interest, the default value will do.
              otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).
              Note that the rule will also generate an output group for each folder in the outs list having the same name.
 
@@ -1113,11 +1175,12 @@ def doxygen(
     _add_generic_configuration(configurations, "MSCFILE_DIRS", mscfile_dirs)
 
     if doxyfile_template:
-        kwargs["doxyfile_template"] = doxyfile_template 
+        kwargs["doxyfile_template"] = doxyfile_template
 
     _doxygen(
         name = name,
         srcs = srcs,
+        deps = deps,
         outs = outs,
         configurations = configurations,
         doxygen_extra_args = doxygen_extra_args,

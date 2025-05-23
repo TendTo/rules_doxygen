@@ -2,6 +2,25 @@
 
 Doxygen rule for Bazel.
 
+<a id="TransitiveSourcesInfo"></a>
+
+## TransitiveSourcesInfo
+
+<pre>
+load("@rules_doxygen//doxygen:doxygen.bzl", "TransitiveSourcesInfo")
+
+TransitiveSourcesInfo(<a href="#TransitiveSourcesInfo-srcs">srcs</a>)
+</pre>
+
+A provider to collect source files transitively from the target and its dependencies
+
+**FIELDS**
+
+| Name  | Description |
+| :------------- | :------------- |
+| <a id="TransitiveSourcesInfo-srcs"></a>srcs |  depset of source files collected from the target and its dependencies    |
+
+
 <a id="doxygen"></a>
 
 ## doxygen
@@ -9,22 +28,23 @@ Doxygen rule for Bazel.
 <pre>
 load("@doxygen//:doxygen.bzl", "doxygen")
 
-doxygen(<a href="#doxygen-name">name</a>, <a href="#doxygen-srcs">srcs</a>, <a href="#doxygen-dot_executable">dot_executable</a>, <a href="#doxygen-configurations">configurations</a>, <a href="#doxygen-doxyfile_template">doxyfile_template</a>, <a href="#doxygen-doxygen_extra_args">doxygen_extra_args</a>, <a href="#doxygen-outs">outs</a>,
-        <a href="#doxygen-doxyfile_encoding">doxyfile_encoding</a>, <a href="#doxygen-project_name">project_name</a>, <a href="#doxygen-project_number">project_number</a>, <a href="#doxygen-project_brief">project_brief</a>, <a href="#doxygen-project_logo">project_logo</a>, <a href="#doxygen-project_icon">project_icon</a>,
-        <a href="#doxygen-create_subdirs">create_subdirs</a>, <a href="#doxygen-create_subdirs_level">create_subdirs_level</a>, <a href="#doxygen-allow_unicode_names">allow_unicode_names</a>, <a href="#doxygen-output_language">output_language</a>, <a href="#doxygen-brief_member_desc">brief_member_desc</a>,
-        <a href="#doxygen-repeat_brief">repeat_brief</a>, <a href="#doxygen-abbreviate_brief">abbreviate_brief</a>, <a href="#doxygen-always_detailed_sec">always_detailed_sec</a>, <a href="#doxygen-inline_inherited_memb">inline_inherited_memb</a>, <a href="#doxygen-full_path_names">full_path_names</a>,
-        <a href="#doxygen-strip_from_path">strip_from_path</a>, <a href="#doxygen-strip_from_inc_path">strip_from_inc_path</a>, <a href="#doxygen-short_names">short_names</a>, <a href="#doxygen-javadoc_autobrief">javadoc_autobrief</a>, <a href="#doxygen-javadoc_banner">javadoc_banner</a>,
-        <a href="#doxygen-qt_autobrief">qt_autobrief</a>, <a href="#doxygen-multiline_cpp_is_brief">multiline_cpp_is_brief</a>, <a href="#doxygen-python_docstring">python_docstring</a>, <a href="#doxygen-inherit_docs">inherit_docs</a>, <a href="#doxygen-separate_member_pages">separate_member_pages</a>,
-        <a href="#doxygen-tab_size">tab_size</a>, <a href="#doxygen-aliases">aliases</a>, <a href="#doxygen-optimize_output_for_c">optimize_output_for_c</a>, <a href="#doxygen-optimize_output_java">optimize_output_java</a>, <a href="#doxygen-optimize_for_fortran">optimize_for_fortran</a>,
-        <a href="#doxygen-optimize_output_vhdl">optimize_output_vhdl</a>, <a href="#doxygen-optimize_output_slice">optimize_output_slice</a>, <a href="#doxygen-extension_mapping">extension_mapping</a>, <a href="#doxygen-markdown_support">markdown_support</a>,
-        <a href="#doxygen-toc_include_headings">toc_include_headings</a>, <a href="#doxygen-markdown_id_style">markdown_id_style</a>, <a href="#doxygen-autolink_support">autolink_support</a>, <a href="#doxygen-autolink_ignore_words">autolink_ignore_words</a>,
-        <a href="#doxygen-builtin_stl_support">builtin_stl_support</a>, <a href="#doxygen-cpp_cli_support">cpp_cli_support</a>, <a href="#doxygen-sip_support">sip_support</a>, <a href="#doxygen-idl_property_support">idl_property_support</a>, <a href="#doxygen-distribute_group_doc">distribute_group_doc</a>,
-        <a href="#doxygen-group_nested_compounds">group_nested_compounds</a>, <a href="#doxygen-subgrouping">subgrouping</a>, <a href="#doxygen-inline_grouped_classes">inline_grouped_classes</a>, <a href="#doxygen-inline_simple_structs">inline_simple_structs</a>,
-        <a href="#doxygen-typedef_hides_struct">typedef_hides_struct</a>, <a href="#doxygen-lookup_cache_size">lookup_cache_size</a>, <a href="#doxygen-num_proc_threads">num_proc_threads</a>, <a href="#doxygen-timestamp">timestamp</a>, <a href="#doxygen-extract_all">extract_all</a>,
-        <a href="#doxygen-extract_private">extract_private</a>, <a href="#doxygen-extract_priv_virtual">extract_priv_virtual</a>, <a href="#doxygen-extract_package">extract_package</a>, <a href="#doxygen-extract_static">extract_static</a>, <a href="#doxygen-extract_local_classes">extract_local_classes</a>,
-        <a href="#doxygen-extract_local_methods">extract_local_methods</a>, <a href="#doxygen-extract_anon_nspaces">extract_anon_nspaces</a>, <a href="#doxygen-resolve_unnamed_params">resolve_unnamed_params</a>, <a href="#doxygen-hide_undoc_members">hide_undoc_members</a>,
-        <a href="#doxygen-hide_undoc_classes">hide_undoc_classes</a>, <a href="#doxygen-hide_undoc_namespaces">hide_undoc_namespaces</a>, <a href="#doxygen-hide_friend_compounds">hide_friend_compounds</a>, <a href="#doxygen-hide_in_body_docs">hide_in_body_docs</a>,
-        <a href="#doxygen-internal_docs">internal_docs</a>, <a href="#doxygen-case_sense_names">case_sense_names</a>, <a href="#doxygen-hide_scope_names">hide_scope_names</a>, <a href="#doxygen-hide_compound_reference">hide_compound_reference</a>, <a href="#doxygen-show_headerfile">show_headerfile</a>,
+doxygen(<a href="#doxygen-name">name</a>, <a href="#doxygen-srcs">srcs</a>, <a href="#doxygen-deps">deps</a>, <a href="#doxygen-dot_executable">dot_executable</a>, <a href="#doxygen-configurations">configurations</a>, <a href="#doxygen-doxyfile_template">doxyfile_template</a>, <a href="#doxygen-doxygen_extra_args">doxygen_extra_args</a>,
+        <a href="#doxygen-outs">outs</a>, <a href="#doxygen-doxyfile_encoding">doxyfile_encoding</a>, <a href="#doxygen-project_name">project_name</a>, <a href="#doxygen-project_number">project_number</a>, <a href="#doxygen-project_brief">project_brief</a>, <a href="#doxygen-project_logo">project_logo</a>,
+        <a href="#doxygen-project_icon">project_icon</a>, <a href="#doxygen-create_subdirs">create_subdirs</a>, <a href="#doxygen-create_subdirs_level">create_subdirs_level</a>, <a href="#doxygen-allow_unicode_names">allow_unicode_names</a>, <a href="#doxygen-output_language">output_language</a>,
+        <a href="#doxygen-brief_member_desc">brief_member_desc</a>, <a href="#doxygen-repeat_brief">repeat_brief</a>, <a href="#doxygen-abbreviate_brief">abbreviate_brief</a>, <a href="#doxygen-always_detailed_sec">always_detailed_sec</a>, <a href="#doxygen-inline_inherited_memb">inline_inherited_memb</a>,
+        <a href="#doxygen-full_path_names">full_path_names</a>, <a href="#doxygen-strip_from_path">strip_from_path</a>, <a href="#doxygen-strip_from_inc_path">strip_from_inc_path</a>, <a href="#doxygen-short_names">short_names</a>, <a href="#doxygen-javadoc_autobrief">javadoc_autobrief</a>,
+        <a href="#doxygen-javadoc_banner">javadoc_banner</a>, <a href="#doxygen-qt_autobrief">qt_autobrief</a>, <a href="#doxygen-multiline_cpp_is_brief">multiline_cpp_is_brief</a>, <a href="#doxygen-python_docstring">python_docstring</a>, <a href="#doxygen-inherit_docs">inherit_docs</a>,
+        <a href="#doxygen-separate_member_pages">separate_member_pages</a>, <a href="#doxygen-tab_size">tab_size</a>, <a href="#doxygen-aliases">aliases</a>, <a href="#doxygen-optimize_output_for_c">optimize_output_for_c</a>, <a href="#doxygen-optimize_output_java">optimize_output_java</a>,
+        <a href="#doxygen-optimize_for_fortran">optimize_for_fortran</a>, <a href="#doxygen-optimize_output_vhdl">optimize_output_vhdl</a>, <a href="#doxygen-optimize_output_slice">optimize_output_slice</a>, <a href="#doxygen-extension_mapping">extension_mapping</a>,
+        <a href="#doxygen-markdown_support">markdown_support</a>, <a href="#doxygen-toc_include_headings">toc_include_headings</a>, <a href="#doxygen-markdown_id_style">markdown_id_style</a>, <a href="#doxygen-autolink_support">autolink_support</a>,
+        <a href="#doxygen-autolink_ignore_words">autolink_ignore_words</a>, <a href="#doxygen-builtin_stl_support">builtin_stl_support</a>, <a href="#doxygen-cpp_cli_support">cpp_cli_support</a>, <a href="#doxygen-sip_support">sip_support</a>,
+        <a href="#doxygen-idl_property_support">idl_property_support</a>, <a href="#doxygen-distribute_group_doc">distribute_group_doc</a>, <a href="#doxygen-group_nested_compounds">group_nested_compounds</a>, <a href="#doxygen-subgrouping">subgrouping</a>,
+        <a href="#doxygen-inline_grouped_classes">inline_grouped_classes</a>, <a href="#doxygen-inline_simple_structs">inline_simple_structs</a>, <a href="#doxygen-typedef_hides_struct">typedef_hides_struct</a>, <a href="#doxygen-lookup_cache_size">lookup_cache_size</a>,
+        <a href="#doxygen-num_proc_threads">num_proc_threads</a>, <a href="#doxygen-timestamp">timestamp</a>, <a href="#doxygen-extract_all">extract_all</a>, <a href="#doxygen-extract_private">extract_private</a>, <a href="#doxygen-extract_priv_virtual">extract_priv_virtual</a>,
+        <a href="#doxygen-extract_package">extract_package</a>, <a href="#doxygen-extract_static">extract_static</a>, <a href="#doxygen-extract_local_classes">extract_local_classes</a>, <a href="#doxygen-extract_local_methods">extract_local_methods</a>,
+        <a href="#doxygen-extract_anon_nspaces">extract_anon_nspaces</a>, <a href="#doxygen-resolve_unnamed_params">resolve_unnamed_params</a>, <a href="#doxygen-hide_undoc_members">hide_undoc_members</a>, <a href="#doxygen-hide_undoc_classes">hide_undoc_classes</a>,
+        <a href="#doxygen-hide_undoc_namespaces">hide_undoc_namespaces</a>, <a href="#doxygen-hide_friend_compounds">hide_friend_compounds</a>, <a href="#doxygen-hide_in_body_docs">hide_in_body_docs</a>, <a href="#doxygen-internal_docs">internal_docs</a>,
+        <a href="#doxygen-case_sense_names">case_sense_names</a>, <a href="#doxygen-hide_scope_names">hide_scope_names</a>, <a href="#doxygen-hide_compound_reference">hide_compound_reference</a>, <a href="#doxygen-show_headerfile">show_headerfile</a>,
         <a href="#doxygen-show_include_files">show_include_files</a>, <a href="#doxygen-show_grouped_memb_inc">show_grouped_memb_inc</a>, <a href="#doxygen-force_local_includes">force_local_includes</a>, <a href="#doxygen-inline_info">inline_info</a>,
         <a href="#doxygen-sort_member_docs">sort_member_docs</a>, <a href="#doxygen-sort_brief_docs">sort_brief_docs</a>, <a href="#doxygen-sort_members_ctors_1st">sort_members_ctors_1st</a>, <a href="#doxygen-sort_group_names">sort_group_names</a>,
         <a href="#doxygen-sort_by_scope_name">sort_by_scope_name</a>, <a href="#doxygen-strict_proto_matching">strict_proto_matching</a>, <a href="#doxygen-generate_todolist">generate_todolist</a>, <a href="#doxygen-generate_testlist">generate_testlist</a>,
@@ -85,25 +105,40 @@ Depending on the type of the attribute, the macro will convert it to the appropr
 - list: the value of the attribute is a string with the elements separated by spaces and enclosed in double quotes
 - str: the value of the attribute is will be set to the string, unchanged. You may need to provide proper quoting if the value contains spaces
 
+For the complete list of Doxygen configuration options, please refer to the [Doxygen documentation](https://www.doxygen.nl/manual/config.html).
+
 ### Example
 
-```starlark
+```bzl
 # MODULE.bazel file
 bazel_dep(name = "rules_doxygen", dev_dependency = True)
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 use_repo(doxygen_extension, "doxygen")
 ```
 
-```starlark
+```bzl
 # BUILD.bazel file
 load("@doxygen//:doxygen.bzl", "doxygen")
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "lib",
+    srcs = ["add.cpp", "sub.cpp"],
+    hdrs = ["add.h", "sub.h"],
+)
+
+cc_library(
+    name = "main",
+    srcs = ["main.cpp"],
+    deps = [":lib"],
+)
 
 doxygen(
     name = "doxygen",
     srcs = glob([
-        "*.h",
-        "*.cpp",
+        "*.md",
     ]),
+    deps = [":main"]
     aliases = [
         "licence=@par Licence:^^",
         "verb{1}=@verbatim \\1 @endverbatim",
@@ -121,7 +156,8 @@ doxygen(
 | Name  | Description | Default Value |
 | :------------- | :------------- | :------------- |
 | <a id="doxygen-name"></a>name |  A name for the target.   |  none |
-| <a id="doxygen-srcs"></a>srcs |  A list of source files to generate documentation for.   |  none |
+| <a id="doxygen-srcs"></a>srcs |  A list of source files to generate documentation for.   |  `[]` |
+| <a id="doxygen-deps"></a>deps |  A list of dependencies whose source, header and data files, and those or the transitive dependencies, will be included in the documentation.   |  `[]` |
 | <a id="doxygen-dot_executable"></a>dot_executable |  Label of the doxygen executable. Make sure it is also added to the `srcs` of the macro   |  `None` |
 | <a id="doxygen-configurations"></a>configurations |  A list of additional configuration parameters to pass to Doxygen.   |  `None` |
 | <a id="doxygen-doxyfile_template"></a>doxyfile_template |  The template file to use to generate the Doxyfile. The following substitutions are available:<br> - `# {{INPUT}}`: Subpackage directory in the sandbox.<br> - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.<br> - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.   |  `None` |
@@ -433,5 +469,27 @@ doxygen(
 | <a id="doxygen-mscgen_tool"></a>mscgen_tool |  You can define message sequence charts within Doxygen comments using the \msc command.   |  `None` |
 | <a id="doxygen-mscfile_dirs"></a>mscfile_dirs |  The `mscfile_dirs` tag can be used to specify one or more directories that contain msc files that are included in the documentation (see the \mscfile command).   |  `None` |
 | <a id="doxygen-kwargs"></a>kwargs |  Additional arguments to pass to the rule (e.g. `visibility = ["//visibility:public"], tags = ["manual"]`)   |  none |
+
+
+<a id="collect_files_aspect"></a>
+
+## collect_files_aspect
+
+<pre>
+load("@rules_doxygen//doxygen:doxygen.bzl", "collect_files_aspect")
+
+collect_files_aspect()
+</pre>
+
+When applied to a target, this aspect collects the source files from the target and its dependencies, and makes them available in the TransitiveSourcesInfo provider.
+
+**ASPECT ATTRIBUTES**
+
+
+| Name | Type |
+| :------------- | :------------- |
+| deps| String |
+
+
 
 
