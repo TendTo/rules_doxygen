@@ -28,9 +28,24 @@ cc_library(
     deps = [":lib"],
 )
 
+genrule(
+    name = "section",
+    outs = ["Section.md"],
+    cmd = """
+        echo "# Section " > $@
+        echo "This is some amazing documentation with section!!  " >> $@
+        echo "Incredible." >> $@
+    """,
+)
+
 doxygen(
     name = "doxygen",
+    srcs = [
+        "README.md",  # file
+        ":section",  # genrule
+    ],
     project_brief = "Example project for doxygen",
     project_name = "dependencies",
-    deps = [":main"],
+    use_mdfile_as_mainpage = "dependencies/README.md",
+    deps = [":main"],  # cc_library
 )
