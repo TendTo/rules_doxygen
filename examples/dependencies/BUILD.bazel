@@ -1,0 +1,36 @@
+load("@doxygen//:doxygen.bzl", "doxygen")
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "add",
+    srcs = ["add.cpp"],
+    hdrs = ["add.h"],
+)
+
+cc_library(
+    name = "sub",
+    srcs = ["sub.cpp"],
+    hdrs = ["sub.h"],
+)
+
+cc_library(
+    name = "lib",
+    hdrs = ["lib.h"],
+    deps = [
+        ":add",
+        ":sub",
+    ],
+)
+
+cc_library(
+    name = "main",
+    srcs = ["main.cpp"],
+    deps = [":lib"],
+)
+
+doxygen(
+    name = "doxygen",
+    project_brief = "Example project for doxygen",
+    project_name = "dependencies",
+    deps = [":main"],
+)
