@@ -37,7 +37,7 @@ def _collect_files_aspect_impl(_, ctx):
 
     # Collect transitive files from dependencies
     transitive_files = []
-    for dep in ctx.rule.attr.deps:
+    for dep in ctx.rule.attr.deps if hasattr(ctx.rule.attr, "deps") else []:
         if TransitiveSourcesInfo in dep:
             transitive_files.append(dep[TransitiveSourcesInfo].srcs)
 
