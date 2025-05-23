@@ -25,6 +25,7 @@ jobs:
             custom,
             awesome,
             substitutions,
+            dependencies,
           ]
         exclude:
           # In substitution example we use `string_keyed_label_dict`, which is not supported in bazel 7.0.0
@@ -54,17 +55,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        subdir:
-          [
-            base,
-            kwargs,
-            doxyfile,
-            latex,
-            nested,
-            custom,
-            awesome,
-            substitutions,
-          ]
+        subdir: [base]
     runs-on: ${{ matrix.os }}
 
     steps:
