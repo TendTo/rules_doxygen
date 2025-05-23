@@ -11,7 +11,7 @@ bazel build //dependencies:doxygen
 
 In a very common scenario, imagine working on a C++ project with the following build file:
 
-```bazel
+```bzl
 # BUILD.bazel
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
@@ -54,7 +54,7 @@ graph TD;
 
 If we want to include all of the files in the documentation, we can use the `deps` attribute to collect the `main` target's files and those of its transitive dependencies, like this:
 
-```bazel
+```bzl
 # BUILD.bazel
 load("@doxygen//:doxygen.bzl", "doxygen")
 

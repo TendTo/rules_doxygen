@@ -150,6 +150,10 @@ doxygen(
         "*.h",          # Usually includes the source files and the markdown files.
         "*.cpp",
     ]) + ["README.md"],
+    # Additionally, you can use the `deps` attribute to select a target 
+    # and automatically include all of the files in its `srcs`, `hdrs`, and `data` attributes,
+    # along with all of its transitive dependencies.
+    # deps = [":my_cc_target"],
     project_brief = DESCRIPTION,            # Brief description of the project
     project_name = NAME,                    # Name of the project
     generate_html = True,                   # Whether to generate HTML output

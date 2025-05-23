@@ -192,7 +192,7 @@ You can further customize the repository by specifying the `doxygen_bzl`, `build
 
 ### Example
 
-```starlark
+```bzl
 # Download the os specific version 1.12.0 of doxygen supporting all the indicated platforms
 doxygen_repository(
     name = "doxygen",
@@ -389,7 +389,7 @@ No download will be performed, and the file indicated by the label will be used 
 
 ### Examples
 
-```starlark
+```bzl
 # MODULE.bazel file
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
@@ -407,7 +407,7 @@ doxygen_extension.configuration(
 use_repo(doxygen_extension, "doxygen")
 ```
 
-```starlark
+```bzl
 # MODULE.bazel file
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)

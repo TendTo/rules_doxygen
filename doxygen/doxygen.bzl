@@ -13,7 +13,7 @@ def _expand_make_variables(string, ctx):
     return string
 
 TransitiveSourcesInfo = provider(
-    "A provider to collect transitive source files",
+    "A provider to collect source files transitively from the target and its dependencies",
     fields = {"srcs": "depset of source files collected from the target and its dependencies"},
 )
 
@@ -48,6 +48,7 @@ def _collect_files_aspect_impl(_, ctx):
 collect_files_aspect = aspect(
     implementation = _collect_files_aspect_impl,
     attr_aspects = ["deps"],  # recursively apply on deps
+    doc = "When applied to a target, this aspect collects the source files from the target and its dependencies, and makes them available in the TransitiveSourcesInfo provider.",
 )
 
 def _doxygen_impl(ctx):
@@ -98,14 +99,14 @@ It is advised to use the `doxygen` macro instead of this rule directly.
 
 ### Example
 
-```starlark
+```bzl
 # MODULE.bazel file
 bazel_dep(name = "rules_doxygen", dev_dependency = True)
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 use_repo(doxygen_extension, "doxygen")
 ```
 
-```starlark
+```bzl
 # BUILD.bazel file
 load("@doxygen//:doxygen.bzl", "doxygen")
 
@@ -497,23 +498,36 @@ def doxygen(
 
     ### Example
 
-    ```starlark
+    ```bzl
     # MODULE.bazel file
     bazel_dep(name = "rules_doxygen", dev_dependency = True)
     doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
     use_repo(doxygen_extension, "doxygen")
     ```
 
-    ```starlark
+    ```bzl
     # BUILD.bazel file
     load("@doxygen//:doxygen.bzl", "doxygen")
+    load("@rules_cc//cc:defs.bzl", "cc_library")
+
+    cc_library(
+        name = "lib",
+        srcs = ["add.cpp", "sub.cpp"],
+        hdrs = ["add.h", "sub.h"],
+    )
+
+    cc_library(
+        name = "main",
+        srcs = ["main.cpp"],
+        deps = [":lib"],
+    )
 
     doxygen(
         name = "doxygen",
         srcs = glob([
-            "*.h",
-            "*.cpp",
+            "*.md",
         ]),
+        deps = [":main"]
         aliases = [
             "licence=@par Licence:^^",
             "verb{1}=@verbatim \\\\1 @endverbatim",
