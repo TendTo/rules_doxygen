@@ -496,6 +496,73 @@ def doxygen(
 
     For the complete list of Doxygen configuration options, please refer to the [Doxygen documentation](https://www.doxygen.nl/manual/config.html).
 
+    ### Differences between `srcs` and `deps`
+
+    The `srcs` and `deps` attributes work differently and are not interchangeable.
+
+    `srcs` is a list of files that will be passed to Doxygen for documentation generation.
+    You can use `glob` to include a collection of multiple files.
+    On the other hand, if you indicate a target (e.g., `:my_genrule`), it will include all the files produced by that target.
+    More precisely, the files in the DefaultInfo provider the target returns.
+    Hence, when the documentation is generated, all rules in the `srcs` attribute **will** be built, and the files they output will be passed to Doxygen.
+
+    On the other hand, `deps` is a list of targets whose sources will be included in the documentation generation.
+    It will automatically include all the files in the `srcs`, `hdrs`, and `data` attributes of the target, and the same applies to all of its transitive dependencies, recursively.
+    Since we are only interested in the source files, the `deps` targets **will not** be built when the documentation is generated.
+
+    ```bzl
+    # My BUILD.bazel file
+    load("@doxygen//:doxygen.bzl", "doxygen")
+    load("@rules_cc//cc:defs.bzl", "cc_library")
+
+    cc_library(
+        name = "lib",
+        hdrs = ["add.h", "sub.h"],
+        srcs = ["add.cpp", "sub.cpp"],
+    )
+
+    cc_library(
+        name = "main",
+        srcs = ["main.cpp"],
+        deps = [":lib"],
+    )
+
+
+    genrule(
+        name = "section",
+        outs = ["Section.md"],
+        cmd = \"\"\"
+            echo "# Section " > $@
+            echo "This is some amazing documentation with section!!  " >> $@
+            echo "Incredible." >> $@
+        \"\"\",
+    )
+
+    doxygen(
+        name = "doxygen",
+        project_name = "dependencies",
+
+        # The output of the genrule will be included in the documentation.
+        # The genrule will be executed when the documentation is generated.
+        srcs = [
+            "README.md",  # file
+            ":section",  # genrule
+
+            # WARNING: By adding this, the main target will be built
+            # and only the output files `libmain.so` and `libmain.a`
+            # will be passed to Doxygen, which is likely not what you want.
+            # ":main"
+        ],
+
+        # The sources of the main target and its dependencies will be included.
+        # No compilation will be performed, so compile error won't be reported.
+        deps = [":main"],  # cc_library
+
+        # Always starts at the root folder
+        use_mdfile_as_mainpage = "dependencies/README.md",
+    )
+    ```
+
     ### Example
 
     ```bzl

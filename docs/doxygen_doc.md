@@ -107,6 +107,73 @@ Depending on the type of the attribute, the macro will convert it to the appropr
 
 For the complete list of Doxygen configuration options, please refer to the [Doxygen documentation](https://www.doxygen.nl/manual/config.html).
 
+### Differences between `srcs` and `deps`
+
+The `srcs` and `deps` attributes work differently and are not interchangeable.
+
+`srcs` is a list of files that will be passed to Doxygen for documentation generation.
+You can use `glob` to include a collection of multiple files.
+On the other hand, if you indicate a target (e.g., `:my_genrule`), it will include all the files produced by that target.
+More precisely, the files in the DefaultInfo provider the target returns.
+Hence, when the documentation is generated, all rules in the `srcs` attribute **will** be built, and the files they output will be passed to Doxygen.
+
+On the other hand, `deps` is a list of targets whose sources will be included in the documentation generation.
+It will automatically include all the files in the `srcs`, `hdrs`, and `data` attributes of the target, and the same applies to all of its transitive dependencies, recursively.
+Since we are only interested in the source files, the `deps` targets **will not** be built when the documentation is generated.
+
+```bzl
+# My BUILD.bazel file
+load("@doxygen//:doxygen.bzl", "doxygen")
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "lib",
+    hdrs = ["add.h", "sub.h"],
+    srcs = ["add.cpp", "sub.cpp"],
+)
+
+cc_library(
+    name = "main",
+    srcs = ["main.cpp"],
+    deps = [":lib"],
+)
+
+
+genrule(
+    name = "section",
+    outs = ["Section.md"],
+    cmd = """
+        echo "# Section " > $@
+        echo "This is some amazing documentation with section!!  " >> $@
+        echo "Incredible." >> $@
+    """,
+)
+
+doxygen(
+    name = "doxygen",
+    project_name = "dependencies",
+
+    # The output of the genrule will be included in the documentation.
+    # The genrule will be executed when the documentation is generated.
+    srcs = [
+        "README.md",  # file
+        ":section",  # genrule
+
+        # WARNING: By adding this, the main target will be built
+        # and only the output files `libmain.so` and `libmain.a`
+        # will be passed to Doxygen, which is likely not what you want.
+        # ":main"
+    ],
+
+    # The sources of the main target and its dependencies will be included.
+    # No compilation will be performed, so compile error won't be reported.
+    deps = [":main"],  # cc_library
+
+    # Always starts at the root folder
+    use_mdfile_as_mainpage = "dependencies/README.md",
+)
+```
+
 ### Example
 
 ```bzl
@@ -155,14 +222,14 @@ doxygen(
 
 | Name  | Description | Default Value |
 | :------------- | :------------- | :------------- |
-| <a id="doxygen-name"></a>name |  A name for the target.   |  none |
-| <a id="doxygen-srcs"></a>srcs |  A list of source files to generate documentation for.   |  `[]` |
-| <a id="doxygen-deps"></a>deps |  A list of dependencies whose source, header and data files, and those or the transitive dependencies, will be included in the documentation.   |  `[]` |
+| <a id="doxygen-name"></a>name |  Name for the target.   |  none |
+| <a id="doxygen-srcs"></a>srcs |  List of source files to generate documentation for. Can include any file that Doxygen can parse, as well as targets that return a DefaultInfo provider (usually genrules). Since we are only considering the outputs files and not the sources, these targets **will** be built if necessary.   |  `[]` |
+| <a id="doxygen-deps"></a>deps |  List of dependencies targets whose files present in the 'src', 'hdrs' and 'data' attributes will be collected to generate the documentation. Transitive dependencies are also taken into account. Since we are only considering the source files and not the outputs, these targets **will not** be built.   |  `[]` |
 | <a id="doxygen-dot_executable"></a>dot_executable |  Label of the doxygen executable. Make sure it is also added to the `srcs` of the macro   |  `None` |
-| <a id="doxygen-configurations"></a>configurations |  A list of additional configuration parameters to pass to Doxygen.   |  `None` |
+| <a id="doxygen-configurations"></a>configurations |  List of additional configuration parameters to pass to Doxygen.   |  `None` |
 | <a id="doxygen-doxyfile_template"></a>doxyfile_template |  The template file to use to generate the Doxyfile. The following substitutions are available:<br> - `# {{INPUT}}`: Subpackage directory in the sandbox.<br> - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.<br> - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.   |  `None` |
 | <a id="doxygen-doxygen_extra_args"></a>doxygen_extra_args |  Extra arguments to pass to the doxygen executable.   |  `[]` |
-| <a id="doxygen-outs"></a>outs |  The output folders bazel will keep. If only the html outputs is of interest, the default value will do. otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]). Note that the rule will also generate an output group for each folder in the outs list having the same name.   |  `["html"]` |
+| <a id="doxygen-outs"></a>outs |  Output folders bazel will keep. If only the html outputs is of interest, the default value will do. otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]). Note that the rule will also generate an output group for each folder in the outs list having the same name.   |  `["html"]` |
 | <a id="doxygen-doxyfile_encoding"></a>doxyfile_encoding |  This tag specifies the encoding used for all characters in the configuration file that follow.   |  `None` |
 | <a id="doxygen-project_name"></a>project_name |  The `project_name` tag is a single word (or a sequence of words surrounded by double-quotes, unless you are using Doxywizard) that should identify the project for which the documentation is generated.   |  `None` |
 | <a id="doxygen-project_number"></a>project_number |  The `project_number` tag can be used to enter a project or revision number.   |  `None` |
