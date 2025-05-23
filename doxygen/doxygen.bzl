@@ -2,7 +2,7 @@
 
 def _expand_make_variables(string, ctx):
     """Replace make variables in a string with their values.
-    
+
     Args:
         string: The string to expand.
         ctx: The context object.
@@ -11,6 +11,41 @@ def _expand_make_variables(string, ctx):
         for variable, value in ctx.var.items():
             string = string.replace("$(%s)" % variable, value)
     return string
+
+
+TransitiveSourcesInfo = provider(fields = ["srcs"])
+
+def _collect_files_aspect_impl(target, ctx):
+    """Collect transitive source files from dependencies.
+
+    Args:
+        target: aspect target
+        ctx: aspect context
+
+    Returns:
+         TransitiveSourcesInfo with a depset of transitive sources
+    """
+    direct_files = []
+    srcs = ctx.rule.attr.srcs if hasattr(ctx.rule.attr, "srcs") else []
+    hdrs = ctx.rule.attr.hdrs if hasattr(ctx.rule.attr, "hdrs") else []
+    for src in srcs + hdrs:
+        if hasattr(src, "files"):
+            direct_files.extend(src.files.to_list())
+
+    # Collect transitive files from dependencies
+    srcs = []
+    for dep in ctx.rule.attr.deps:
+        if TransitiveSourcesInfo in dep:
+            srcs.append(dep[TransitiveSourcesInfo].srcs)
+
+    return [TransitiveSourcesInfo(
+        srcs = depset(direct=direct_files, transitive=srcs),
+    )]
+
+collect_files_aspect = aspect(
+    implementation = _collect_files_aspect_impl,
+    attr_aspects = ["deps"],  # recursively apply on deps
+)
 
 def _doxygen_impl(ctx):
     doxyfile = ctx.actions.declare_file("Doxyfile")
@@ -27,7 +62,8 @@ def _doxygen_impl(ctx):
     if len(outs) == 0:
         fail("At least one output folder must be specified")
 
-    input_dirs = {(file.dirname or "."): None for file in ctx.files.srcs}
+    deps = depset(transitive = [dep[TransitiveSourcesInfo].srcs for dep in ctx.attr.deps]).to_list()
+    input_dirs = {(file.dirname or "."): None for file in ctx.files.srcs + deps}
     ctx.actions.expand_template(
         template = ctx.file.doxyfile_template,
         output = doxyfile,
@@ -40,7 +76,7 @@ def _doxygen_impl(ctx):
     )
 
     ctx.actions.run(
-        inputs = ctx.files.srcs + [doxyfile],
+        inputs = ctx.files.srcs + deps + [doxyfile],
         outputs = outs,
         arguments = [doxyfile.path] + ctx.attr.doxygen_extra_args,
         progress_message = "Running doxygen",
@@ -84,13 +120,14 @@ doxygen(
     implementation = _doxygen_impl,
     attrs = {
         "srcs": attr.label_list(allow_files = True, doc = "The source files to generate documentation for. Can include header files, source files, and any other file Doxygen can parse."),
+        "deps": attr.label_list(aspects = [collect_files_aspect]),
         "configurations": attr.string_list(doc = "Additional configuration parameters to append to the Doxyfile. For example, to set the project name, use `PROJECT_NAME = example`."),
         "outs": attr.string_list(default = ["html"], allow_empty = False, doc = """The output folders to keep. If only the html outputs is of interest, the default value will do. Otherwise, a list of folders to keep is expected (e.g. `["html", "latex"]`)."""),
         "doxyfile_template": attr.label(
             allow_single_file = True,
             default = Label(":Doxyfile.template"),
-            doc = """The template file to use to generate the Doxyfile. You can provide your own or use the default one. 
-The following substitutions are available: 
+            doc = """The template file to use to generate the Doxyfile. You can provide your own or use the default one.
+The following substitutions are available:
 - `# {{INPUT}}`: Subpackage directory in the sandbox.
 - `# {{DOT_PATH}}`: Indicate to doxygen the location of the `dot_executable`
 - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.
@@ -1113,7 +1150,7 @@ def doxygen(
     _add_generic_configuration(configurations, "MSCFILE_DIRS", mscfile_dirs)
 
     if doxyfile_template:
-        kwargs["doxyfile_template"] = doxyfile_template 
+        kwargs["doxyfile_template"] = doxyfile_template
 
     _doxygen(
         name = name,
