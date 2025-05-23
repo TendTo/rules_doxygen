@@ -12,6 +12,10 @@ def _expand_make_variables(string, ctx):
             string = string.replace("$(%s)" % variable, value)
     return string
 
+TransitiveSourcesInfo = provider(
+    "A provider to collect transitive source files",
+    fields = {"srcs": "depset of source files collected from the target and its dependencies"},
+)
 
 TransitiveSourcesInfo = provider(fields = ["srcs"])
 
@@ -120,7 +124,7 @@ doxygen(
     implementation = _doxygen_impl,
     attrs = {
         "srcs": attr.label_list(allow_files = True, doc = "The source files to generate documentation for. Can include header files, source files, and any other file Doxygen can parse."),
-        "deps": attr.label_list(aspects = [collect_files_aspect]),
+        "deps": attr.label_list(aspects = [collect_files_aspect], doc = "The dependencies targets whose files in their 'src', 'hdrs' and 'data' attributes will be collected to generate the documentation. Transitive dependencies are also taken into account."),
         "configurations": attr.string_list(doc = "Additional configuration parameters to append to the Doxyfile. For example, to set the project name, use `PROJECT_NAME = example`."),
         "outs": attr.string_list(default = ["html"], allow_empty = False, doc = """The output folders to keep. If only the html outputs is of interest, the default value will do. Otherwise, a list of folders to keep is expected (e.g. `["html", "latex"]`)."""),
         "doxyfile_template": attr.label(
@@ -488,6 +492,8 @@ def doxygen(
     - bool: the value of the attribute is the string "YES" or "NO" respectively
     - list: the value of the attribute is a string with the elements separated by spaces and enclosed in double quotes
     - str: the value of the attribute is will be set to the string, unchanged. You may need to provide proper quoting if the value contains spaces
+
+    For the complete list of Doxygen configuration options, please refer to the [Doxygen documentation](https://www.doxygen.nl/manual/config.html).
 
     ### Example
 
