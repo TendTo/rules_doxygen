@@ -17,13 +17,11 @@ TransitiveSourcesInfo = provider(
     fields = {"srcs": "depset of source files collected from the target and its dependencies"},
 )
 
-TransitiveSourcesInfo = provider(fields = ["srcs"])
-
-def _collect_files_aspect_impl(target, ctx):
+def _collect_files_aspect_impl(_, ctx):
     """Collect transitive source files from dependencies.
 
     Args:
-        target: aspect target
+        _: target context. Not used in this aspect
         ctx: aspect context
 
     Returns:
@@ -32,18 +30,19 @@ def _collect_files_aspect_impl(target, ctx):
     direct_files = []
     srcs = ctx.rule.attr.srcs if hasattr(ctx.rule.attr, "srcs") else []
     hdrs = ctx.rule.attr.hdrs if hasattr(ctx.rule.attr, "hdrs") else []
-    for src in srcs + hdrs:
+    data = ctx.rule.attr.data if hasattr(ctx.rule.attr, "data") else []
+    for src in srcs + hdrs + data:
         if hasattr(src, "files"):
             direct_files.extend(src.files.to_list())
 
     # Collect transitive files from dependencies
-    srcs = []
+    transitive_files = []
     for dep in ctx.rule.attr.deps:
         if TransitiveSourcesInfo in dep:
-            srcs.append(dep[TransitiveSourcesInfo].srcs)
+            transitive_files.append(dep[TransitiveSourcesInfo].srcs)
 
     return [TransitiveSourcesInfo(
-        srcs = depset(direct=direct_files, transitive=srcs),
+        srcs = depset(direct = direct_files, transitive = transitive_files),
     )]
 
 collect_files_aspect = aspect(
