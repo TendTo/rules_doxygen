@@ -168,7 +168,8 @@ def _add_generic_configuration(configurations, name, value):
 
 def doxygen(
         name,
-        srcs,
+        srcs = [],
+        deps = [],
         # Bazel specific attributes
         dot_executable = None,
         configurations = None,
@@ -527,6 +528,7 @@ def doxygen(
     Args:
         name: A name for the target.
         srcs: A list of source files to generate documentation for.
+        deps: A list of dependencies whose source, header and data files, and those or the transitive dependencies, will be included in the documentation.
         dot_executable: Label of the doxygen executable. Make sure it is also added to the `srcs` of the macro
         configurations: A list of additional configuration parameters to pass to Doxygen.
         doxyfile_template: The template file to use to generate the Doxyfile.
@@ -1161,6 +1163,7 @@ def doxygen(
     _doxygen(
         name = name,
         srcs = srcs,
+        deps = deps,
         outs = outs,
         configurations = configurations,
         doxygen_extra_args = doxygen_extra_args,
