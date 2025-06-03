@@ -362,6 +362,7 @@ def doxygen(
         eclipse_doc_id = None,
         disable_index = None,
         generate_treeview = None,
+        page_outline_panel = None,
         full_sidebar = None,
         enum_values_per_line = None,
         show_enum_values = None,
@@ -455,6 +456,7 @@ def doxygen(
         group_graphs = None,
         uml_look = None,
         uml_limit_num_fields = None,
+        uml_max_edge_labels = None,
         dot_uml_details = None,
         dot_wrap_threshold = None,
         template_relations = None,
@@ -810,7 +812,8 @@ def doxygen(
         eclipse_doc_id: A unique identifier for the Eclipse help plugin.
         disable_index: If you want full control over the layout of the generated HTML pages it might be necessary to disable the index and replace it with your own.
         generate_treeview: The `generate_treeview` tag is used to specify whether a tree-like index structure should be generated to display hierarchical information.
-        full_sidebar: When both `generate_treeview` and `disable_index` are set to `True`, then the `full_sidebar` option determines if the side bar is limited to only the treeview area (value `False`) or if it should extend to the full height of the window (value `True`).
+        page_outline_panel: When `generate_treeview` is set to YES, the `page_outline_panel` option determines if an additional navigation panel is shown at the right hand side of the screen, displaying an outline of the contents of the main page, similar to e.g. https://developer.android.com/reference.
+        full_sidebar: When `generate_treeview` is set to `True`, the `full_sidebar` option determines if the side bar is limited to only the treeview area (value `False`) or if it should extend to the full height of the window (value `True`).
         enum_values_per_line: The `enum_values_per_line` tag can be used to set the number of enum values that Doxygen will group on one line in the generated HTML documentation.
         show_enum_values: When the `show_enum_values` tag is set doxygen will show the specified enumeration values besides the enumeration mnemonics.
         treeview_width: If the treeview is enabled (see `generate_treeview`) then this tag can be used to set the initial width (in pixels) of the frame in which the tree is shown.
@@ -903,6 +906,7 @@ def doxygen(
         group_graphs: If the `group_graphs` tag is set to `True` then Doxygen will generate a graph for groups, showing the direct groups dependencies.
         uml_look: If the `uml_look` tag is set to `True`, Doxygen will generate inheritance and collaboration diagrams in a style similar to the OMG's Unified Modeling Language.
         uml_limit_num_fields: If the `uml_look` tag is enabled, the fields and methods are shown inside the class node.
+        uml_max_edge_labels: If the `uml_look` tag is enabled, field labels are shown along the edge between two class nodes.
         dot_uml_details: If the `dot_uml_details` tag is set to `False`, Doxygen will show attributes and methods without types and arguments in the UML graphs.
         dot_wrap_threshold: The `dot_wrap_threshold` tag can be used to set the maximum number of characters to display on a single line.
         template_relations: If the `template_relations` tag is set to `True` then the inheritance and collaboration graphs will show the relations between templates and their instances.
@@ -1120,6 +1124,7 @@ def doxygen(
     _add_generic_configuration(configurations, "ECLIPSE_DOC_ID", eclipse_doc_id)
     _add_generic_configuration(configurations, "DISABLE_INDEX", disable_index)
     _add_generic_configuration(configurations, "GENERATE_TREEVIEW", generate_treeview)
+    _add_generic_configuration(configurations, "PAGE_OUTLINE_PANEL", page_outline_panel)
     _add_generic_configuration(configurations, "FULL_SIDEBAR", full_sidebar)
     _add_generic_configuration(configurations, "ENUM_VALUES_PER_LINE", enum_values_per_line)
     _add_generic_configuration(configurations, "SHOW_ENUM_VALUES", show_enum_values)
@@ -1213,6 +1218,7 @@ def doxygen(
     _add_generic_configuration(configurations, "GROUP_GRAPHS", group_graphs)
     _add_generic_configuration(configurations, "UML_LOOK", uml_look)
     _add_generic_configuration(configurations, "UML_LIMIT_NUM_FIELDS", uml_limit_num_fields)
+    _add_generic_configuration(configurations, "UML_MAX_EDGE_LABELS", uml_max_edge_labels)
     _add_generic_configuration(configurations, "DOT_UML_DETAILS", dot_uml_details)
     _add_generic_configuration(configurations, "DOT_WRAP_THRESHOLD", dot_wrap_threshold)
     _add_generic_configuration(configurations, "TEMPLATE_RELATIONS", template_relations)

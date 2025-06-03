@@ -44,7 +44,7 @@ doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_ex
 use_repo(doxygen_extension, "doxygen")
 ```
 
-The extension will create a default configuration for all platforms with the version `1.13.2` of Doxygen.
+The extension will create a default configuration for all platforms with the version `1.14.0` of Doxygen.
 You can override this value with a custom one for each supported platform, i.e. _windows_, _mac_, _mac-arm_, _linux_ and _linux-arm_.
 
 ```bzl
