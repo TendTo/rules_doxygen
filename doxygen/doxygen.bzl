@@ -57,10 +57,6 @@ collect_files_aspect = aspect(
 def _doxygen_impl(ctx):
     doxyfile = ctx.actions.declare_file("Doxyfile")
 
-    print("VAR", ctx.var)
-    print("doxyfile", doxyfile.path)
-    print("doxyfile", doxyfile.dirname)
-
     output_group_info = {}
     outs = []
     for out in ctx.attr.outs:
@@ -533,7 +529,7 @@ def doxygen(
     > Make sure that generated files are put in some directory and that directory is included in the `outs` attribute.
 
     You can add your own substitutions by adding a rule that returns a TemplateVariableInfo provider in the `toolchains` attribute of the `doxygen` rule.
-    See the [substitutions example](../examples/substitutions/) for more details.
+    See [this example](../examples/substitutions/) for more details.
 
     ### Differences between `srcs` and `deps`
 
