@@ -88,7 +88,7 @@ def _doxygen_impl(ctx):
     )
 
     return [
-        DefaultInfo(files = depset(outs)),
+        DefaultInfo(files = depset(outs + [doxyfile])),
         OutputGroupInfo(**output_group_info),
     ]
 
