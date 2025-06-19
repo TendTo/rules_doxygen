@@ -54,6 +54,10 @@ collect_files_aspect = aspect(
 def _doxygen_impl(ctx):
     doxyfile = ctx.actions.declare_file("Doxyfile")
 
+    print("VAR", ctx.var)
+    print("doxyfile", doxyfile.path)
+    print("doxyfile", doxyfile.dirname)
+
     output_group_info = {}
     outs = []
     for out in ctx.attr.outs:
@@ -83,8 +87,9 @@ def _doxygen_impl(ctx):
         inputs = ctx.files.srcs + deps + [doxyfile],
         outputs = outs,
         arguments = [doxyfile.path] + ctx.attr.doxygen_extra_args,
-        progress_message = "Running doxygen",
         executable = ctx.executable._executable,
+        mnemonic = "DoxygenBuild",
+        progress_message = "Building doxygen documentation for rule '%s'" % ctx.label.name,
     )
 
     return [
