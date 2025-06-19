@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.1]
+
+### Added
+
+- `Doxyfile` is now included in the `doxygen` rule DefaultInfo provider
+- Mnemonic `DoxygenBuild` added to the `ctx.run` in the `doxygen` rule
+- Added support by default for the `$(OUTDIR)` make variable in the `doxygen` rule
+- `doxylink` example in the documentation
+
+### Changed
+
+- Updated documentation
+- More information in the progress message of the `doxygen` rule
+
 ## [2.4.0]
 
 ### Changed
