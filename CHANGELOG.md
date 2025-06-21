@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `Doxyfile` is now included in the `doxygen` rule DefaultInfo provider
 - Mnemonic `DoxygenBuild` added to the `ctx.run` in the `doxygen` rule
-- Added support by default for the `$(OUTDIR)` make variable in the `doxygen` rule
+- Added support by default for the `$(OUTDIR)` make variable in the `doxygen` rule [#28](https://github.com/TendTo/rules_doxygen/pull/28) (thanks to @kaycebasques)
 - `doxylink` example in the documentation
 
 ### Changed
