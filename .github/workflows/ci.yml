@@ -20,6 +20,7 @@ jobs:
             base,
             kwargs,
             doxyfile,
+            doxylink,
             latex,
             nested,
             custom,

@@ -107,6 +107,35 @@ Depending on the type of the attribute, the macro will convert it to the appropr
 
 For the complete list of Doxygen configuration options, please refer to the [Doxygen documentation](https://www.doxygen.nl/manual/config.html).
 
+### Make variables
+
+There are cases where you need access to information about the build environment, such as the output directory doxygen is writing to.
+In such cases, you can use make variables in the parameters of the macro.
+The `doxygen` rule will take care of expanding them to the appropriate values.
+
+By default, the following make variables are available:
+
+- `$(OUTDIR)`: The output directory where the documentation will be generated.
+- All the predefined variables indicated in the [Bazel documentation](https://bazel.build/reference/be/make-variables#predefined_variables).
+
+The former is particularly useful when `doxygen` needs to generate unusual files, such as [tag files](https://www.doxygen.nl/manual/config.html#cfg_generate_tagfile).
+For example, you can use it to generate a tag file in the output directory:
+
+```bzl
+doxygen(
+    name = "doxygen",
+    srcs = ["README.md"] + glob(["*.h", "*.cpp"]),
+    outs = ["html", "tags"],
+    generate_tagfile = "$(OUTDIR)/tags/PolyVox.tag",
+)
+```
+
+> [!NOTE]
+> Make sure that generated files are put in some directory and that directory is included in the `outs` attribute.
+
+You can add your own substitutions by adding a rule that returns a TemplateVariableInfo provider in the `toolchains` attribute of the `doxygen` rule.
+See [this example](../examples/substitutions/) for more details.
+
 ### Differences between `srcs` and `deps`
 
 The `srcs` and `deps` attributes work differently and are not interchangeable.

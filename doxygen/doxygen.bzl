@@ -1,14 +1,17 @@
 """Doxygen rule for Bazel."""
 
-def _expand_make_variables(string, ctx):
+def _expand_make_variables(string, ctx, extra_sub_vars = {}):
     """Replace make variables in a string with their values.
 
     Args:
         string: The string to expand.
         ctx: The context object.
+        extra_sub_vars: A dictionary of additional variables to replace in the string.
     """
     if "$(" in string:
         for variable, value in ctx.var.items():
+            string = string.replace("$(%s)" % variable, value)
+        for variable, value in extra_sub_vars.items():
             string = string.replace("$(%s)" % variable, value)
     return string
 
@@ -61,7 +64,7 @@ def _doxygen_impl(ctx):
         outs.append(output_dir)
         output_group_info |= {out: depset([output_dir])}
 
-    configurations = [_expand_make_variables(conf, ctx) for conf in ctx.attr.configurations]
+    configurations = [_expand_make_variables(conf, ctx, {"OUTDIR": doxyfile.dirname}) for conf in ctx.attr.configurations]
 
     if len(outs) == 0:
         fail("At least one output folder must be specified")
@@ -83,12 +86,13 @@ def _doxygen_impl(ctx):
         inputs = ctx.files.srcs + deps + [doxyfile],
         outputs = outs,
         arguments = [doxyfile.path] + ctx.attr.doxygen_extra_args,
-        progress_message = "Running doxygen",
         executable = ctx.executable._executable,
+        mnemonic = "DoxygenBuild",
+        progress_message = "Building doxygen documentation for rule '%s'" % ctx.label.name,
     )
 
     return [
-        DefaultInfo(files = depset(outs)),
+        DefaultInfo(files = depset(outs + [doxyfile])),
         OutputGroupInfo(**output_group_info),
     ]
 
@@ -497,6 +501,35 @@ def doxygen(
     - str: the value of the attribute is will be set to the string, unchanged. You may need to provide proper quoting if the value contains spaces
 
     For the complete list of Doxygen configuration options, please refer to the [Doxygen documentation](https://www.doxygen.nl/manual/config.html).
+
+    ### Make variables
+
+    There are cases where you need access to information about the build environment, such as the output directory doxygen is writing to.
+    In such cases, you can use make variables in the parameters of the macro.
+    The `doxygen` rule will take care of expanding them to the appropriate values.
+
+    By default, the following make variables are available:
+
+    - `$(OUTDIR)`: The output directory where the documentation will be generated.
+    - All the predefined variables indicated in the [Bazel documentation](https://bazel.build/reference/be/make-variables#predefined_variables).
+
+    The former is particularly useful when `doxygen` needs to generate unusual files, such as [tag files](https://www.doxygen.nl/manual/config.html#cfg_generate_tagfile).
+    For example, you can use it to generate a tag file in the output directory:
+
+    ```bzl
+    doxygen(
+        name = "doxygen",
+        srcs = ["README.md"] + glob(["*.h", "*.cpp"]),
+        outs = ["html", "tags"],
+        generate_tagfile = "$(OUTDIR)/tags/PolyVox.tag",
+    )
+    ```
+
+    > [!NOTE]
+    > Make sure that generated files are put in some directory and that directory is included in the `outs` attribute.
+
+    You can add your own substitutions by adding a rule that returns a TemplateVariableInfo provider in the `toolchains` attribute of the `doxygen` rule.
+    See [this example](../examples/substitutions/) for more details.
 
     ### Differences between `srcs` and `deps`
 

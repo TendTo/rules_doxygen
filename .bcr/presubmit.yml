@@ -12,6 +12,7 @@ bcr_test_module:
         - "//base:doxygen"
         - "//latex:doxygen"
         - "//doxyfile:doxygen"
+        - "//doxylink:doxygen"
         - "//nested:doxygen"
         - "//custom:doxygen"
         - "//awesome:doxygen"

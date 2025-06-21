@@ -171,6 +171,10 @@ doxygen(
 )
 ```
 
+> [!Tip]  
+> The `doxygen` rule supports [Make variables](https://bazel.build/reference/be/make-variables) substitutions.
+> By default, only `OUTDIR` and the [predefined ones](https://bazel.build/reference/be/make-variables#predefined_variables) are available, but you can add your own, as shown in the [examples](examples/substitutions).
+
 > [!Note]  
 > `srcs` and `deps` attributes are **not** interchangeable.
 > Use `srcs` with files and when you want to capture the output of another rule, and use `deps` when you want to capture the source files of other rules transitively.

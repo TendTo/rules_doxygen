@@ -14,7 +14,8 @@ Keep in mind that the file will undergo the same template processing as the defa
 Namely, the following expressions will be replaced:
 
 - `# {{INPUT}}`: Subpackage directory in the sandbox.
+- `# {{DOT_PATH}}`: Indicate to doxygen the location of the `dot_executable`
 - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.
 - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.
 
-It is highly recommended to at least use the `# {{OUTPUT DIRECTORY}}` expression at the very end of your doxyfile, since the exact path of the output is computed at runtime by Bazel and may be different on different platforms.
+It is highly recommended to at least use the `# {{OUTPUT DIRECTORY}}` expression at the very end of your Doxyfile, since the exact path of the output is computed at runtime by Bazel and it may differ on each platform.
