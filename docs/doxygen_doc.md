@@ -107,6 +107,11 @@ Depending on the type of the attribute, the macro will convert it to the appropr
 
 For the complete list of Doxygen configuration options, please refer to the [Doxygen documentation](https://www.doxygen.nl/manual/config.html).
 
+> [!NOTE]
+> If not istructed otherwise, the rule will use the Doxyfile from its default `doxygen` version.
+> Any update could change some default values or add some flags which will be unrecognized by older `doxygen` versions, resulting in innocuous warnings.
+> If you want to use a specific Doxyfile, just generate one with `doxygen -g` and specify it in the `doxyfile_template` attribute.
+
 ### Make variables
 
 There are cases where you need access to information about the build environment, such as the output directory doxygen is writing to.
