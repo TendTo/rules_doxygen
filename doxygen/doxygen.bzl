@@ -79,6 +79,7 @@ def _doxygen_impl(ctx):
             "# {{DOT_PATH}}": ("DOT_PATH = %s" % ctx.executable.dot_executable.dirname) if ctx.executable.dot_executable else "",
             "# {{ADDITIONAL PARAMETERS}}": "\n".join(configurations),
             "# {{OUTPUT DIRECTORY}}": "OUTPUT_DIRECTORY = %s" % doxyfile.dirname,
+            "{{OUTDIR}}": "%s" % doxyfile.dirname,
         },
     )
 
