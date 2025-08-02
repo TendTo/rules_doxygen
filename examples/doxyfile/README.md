@@ -17,5 +17,8 @@ Namely, the following expressions will be replaced:
 - `# {{DOT_PATH}}`: Indicate to doxygen the location of the `dot_executable`
 - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.
 - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.
+- `{{OUTDIR}}`: The output directory where the generated documentation will be placed.
+  Can be used anywhere in the Doxyfile, usually to generate additional output files, like tag files.
 
+In this example, note how the `GENERATE_TAGFILE` value in the Doxyfile is set to `{{OUTDIR}}/html/index.tag`, which will be replaced with the actual output directory at runtime, generating the desired file.
 It is highly recommended to at least use the `# {{OUTPUT DIRECTORY}}` expression at the very end of your Doxyfile, since the exact path of the output is computed at runtime by Bazel and it may differ on each platform.
