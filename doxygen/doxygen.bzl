@@ -660,7 +660,9 @@ def doxygen(
             The following substitutions are available:<br>
             - `# {{INPUT}}`: Subpackage directory in the sandbox.<br>
             - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute.<br>
-            - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.
+            - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.<br>
+            - `{{OUTDIR}}`: The output directory where the generated documentation will be placed.
+                Can be used anywhere in the Doxyfile, usually to generate additional output files, like tag files.
         doxygen_extra_args: Extra arguments to pass to the doxygen executable.
         outs: Output folders bazel will keep. If only the html outputs is of interest, the default value will do.
              otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).
