@@ -1,6 +1,6 @@
 module(name = "submodule2")
 
-bazel_dep(name = "rules_doxygen", version = "2.4.1")
+bazel_dep(name = "rules_doxygen", version = "2.4.2")
 local_path_override(
     module_name = "rules_doxygen",
     path = "../../../",
