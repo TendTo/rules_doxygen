@@ -370,6 +370,14 @@ Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_
 > The build will fail when the download does not match the SHA256 checksum, i.e. when the platform changes.
 > Unless you are using a system-wide doxygen installation, you should always specify the platform.
 
+> [!Note]  
+> When a version is specified, the extension will download the doxygen binary from the official [Doxygen releases](https://github.com/doxygen/doxygen/releases).
+> If a binary for the specified platform is not available (e.g., _linux-arm_, _mac-arm_), the build may fail.
+> If that happens, you can either:
+> - Use a different version of doxygen that supports your platform.
+> - Use a system-wide doxygen installation by setting the version to `0.0.0`.
+> - Use a local doxygen executable by providing a label pointing to the doxygen executable in the `executable` parameter.
+
 #### System-wide doxygen installation
 
 If you set the version to `0.0.0`, the doxygen executable will be assumed to be available from the PATH.

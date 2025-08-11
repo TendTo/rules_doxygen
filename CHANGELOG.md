@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Documenting `exclude_patterns` workaround for issue [#31](https://github.com/TendTo/rules_doxygen/issues/31)
+- Documenting `exclude_patterns` workaround [#31](https://github.com/TendTo/rules_doxygen/issues/31) (thanks to @AustinSchuh)
+- Documenting limitations for the automatic download of the doxygen binary in the `doxygen` extension rule [#32](https://github.com/TendTo/rules_doxygen/issues/32) (thanks to @oxidase)
 
 ## [2.4.2]
 
