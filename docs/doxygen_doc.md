@@ -208,6 +208,13 @@ doxygen(
 )
 ```
 
+### Excluding Bazel specific folders
+
+Including the root directory among the input directories, which happens when a target starting with `//:` is used as a source,
+may cause Bazel specific folders, such as `external`, to be explored by Doxygen.
+This can slow down the documentation generation or even cause an input buffer overflow.
+To avoid this, it is recommended to use the `exclude_patterns` parameter and set it to something like `["*/external/*"]`, extending it with other patterns as needed.
+
 ### Example
 
 ```bzl
