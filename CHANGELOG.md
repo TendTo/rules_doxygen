@@ -5,13 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-
 ## [NEXT.VERSION]
 
 ### Added
 
 - Documenting `exclude_patterns` workaround [#31](https://github.com/TendTo/rules_doxygen/issues/31) (thanks to @AustinSchuh)
 - Documenting limitations for the automatic download of the doxygen binary in the `doxygen` extension rule [#32](https://github.com/TendTo/rules_doxygen/issues/32) (thanks to @oxidase)
+- `use_default_shell_env` parameter to allow the use of the default shell environment when running doxygen. Allows for better integration with the user's environment at the cost of hermeticity.
 
 ## [2.4.2]
 

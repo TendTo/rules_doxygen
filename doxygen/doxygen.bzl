@@ -90,6 +90,7 @@ def _doxygen_impl(ctx):
         executable = ctx.executable._executable,
         mnemonic = "DoxygenBuild",
         progress_message = "Building doxygen documentation for rule '%s'" % ctx.label.name,
+        use_default_shell_env = ctx.attr.use_default_shell_env,
     )
 
     return [
@@ -143,6 +144,10 @@ The following substitutions are available:
 - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.
 """,
         ),
+        "use_default_shell_env": attr.bool(
+            default = False,
+            doc = "Whether to use the default shell environment when running doxygen.",
+        ),
         "dot_executable": attr.label(
             executable = True,
             cfg = "exec",
@@ -180,6 +185,7 @@ def doxygen(
         configurations = None,
         doxyfile_template = None,
         doxygen_extra_args = [],
+        use_default_shell_env = False,
         outs = ["html"],
         # Doxygen specific attributes
         doxyfile_encoding = None,
@@ -671,6 +677,7 @@ def doxygen(
             - `{{OUTDIR}}`: The output directory where the generated documentation will be placed.
                 Can be used anywhere in the Doxyfile, usually to generate additional output files, like tag files.
         doxygen_extra_args: Extra arguments to pass to the doxygen executable.
+        use_default_shell_env: Whether to use the default shell environment when running doxygen.
         outs: Output folders bazel will keep. If only the html outputs is of interest, the default value will do.
              otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).
              Note that the rule will also generate an output group for each folder in the outs list having the same name.
@@ -1306,5 +1313,6 @@ def doxygen(
         configurations = configurations,
         doxygen_extra_args = doxygen_extra_args,
         dot_executable = dot_executable,
+        use_default_shell_env = use_default_shell_env,
         **kwargs
     )
