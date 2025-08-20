@@ -83,6 +83,13 @@ def _doxygen_impl(ctx):
         },
     )
 
+    tools_path = {tool.dirname: None for tool in ctx.files.tools}.keys()
+    if ctx.attr.host_platform == "windows":
+        path = ";".join(tools_path) + ";C:\\Windows\\system32"
+    else:
+        path = ":".join(tools_path)
+    env = {"PATH": path} if tools_path else {}
+
     ctx.actions.run(
         inputs = ctx.files.srcs + deps + [doxyfile],
         outputs = outs,
@@ -91,6 +98,8 @@ def _doxygen_impl(ctx):
         mnemonic = "DoxygenBuild",
         progress_message = "Building doxygen documentation for rule '%s'" % ctx.label.name,
         use_default_shell_env = ctx.attr.use_default_shell_env,
+        tools = ctx.files.tools,
+        env = env,
     )
 
     return [
@@ -154,7 +163,16 @@ The following substitutions are available:
             allow_single_file = True,
             doc = "dot executable to use. Must refer to an executable file.",
         ),
+        "tools": attr.label_list(
+            allow_files = True,
+            doc = "List of additional tools to include in the doxygen environment. Tools are executable inputs that may have their own runfiles which are automatically made available to the action.",
+        ),
         "doxygen_extra_args": attr.string_list(default = [], doc = "Extra arguments to pass to the doxygen executable."),
+        "host_platform": attr.string(
+            default = "other",
+            values = ["linux", "mac", "windows"],
+            doc = """The host platform to use for the doxygen executable. Can be one of: linux, mac, windows""",
+        ),
         "_executable": attr.label(
             executable = True,
             cfg = "exec",
@@ -186,6 +204,7 @@ def doxygen(
         doxyfile_template = None,
         doxygen_extra_args = [],
         use_default_shell_env = False,
+        tools = [],
         outs = ["html"],
         # Doxygen specific attributes
         doxyfile_encoding = None,
@@ -678,6 +697,7 @@ def doxygen(
                 Can be used anywhere in the Doxyfile, usually to generate additional output files, like tag files.
         doxygen_extra_args: Extra arguments to pass to the doxygen executable.
         use_default_shell_env: Whether to use the default shell environment when running doxygen.
+        tools: List of additional tools to include in the doxygen environment. Tools are executable inputs that may have their own runfiles which are automatically made available to the action.
         outs: Output folders bazel will keep. If only the html outputs is of interest, the default value will do.
              otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).
              Note that the rule will also generate an output group for each folder in the outs list having the same name.
@@ -1314,5 +1334,14 @@ def doxygen(
         doxygen_extra_args = doxygen_extra_args,
         dot_executable = dot_executable,
         use_default_shell_env = use_default_shell_env,
+        tools = tools,
+        host_platform = select(
+            {
+                "@platforms//os:linux": "linux",
+                "@platforms//os:macos": "mac",
+                "@platforms//os:windows": "windows",
+            },
+            "Unsupported platform",
+        ),
         **kwargs
     )
