@@ -1,0 +1,27 @@
+load("@doxygen//:doxygen.bzl", "doxygen")
+load("@aspect_bazel_lib//lib:copy_file.bzl", "copy_file")
+
+# This is highly advised to avoid chasing the jar file who knows where
+# Instead, we copy it in the OUTDIR folder
+copy_file(
+    name = "plantuml",
+    src = "@plantuml_file//file",
+    out = "plantuml.jar",
+    allow_symlink = False,
+    is_executable = False,
+)
+
+doxygen(
+    name = "doxygen",
+    srcs = [
+        "lib.h",
+        ":plantuml",
+    ],
+    plantuml_jar_path = "$(OUTDIR)",
+    project_brief = "Example project for doxygen",
+    project_name = "Plantuml example",
+    tools = [
+        # Using the java executable from `rules_java`
+        "@rules_java//toolchains:current_java_runtime",
+    ],
+)

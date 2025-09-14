@@ -1,1 +1,9 @@
 # exports_files(["doxygen"])
+load("@doxygen//:doxygen.bzl", "doxygen")
+
+doxygen(
+    name = "doxygen",
+    srcs = ["//:README.md"],
+    project_brief = "Root folder example",
+    project_name = "root",
+)
