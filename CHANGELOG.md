@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Documenting limitations for the automatic download of the doxygen binary in the `doxygen` extension rule [#32](https://github.com/TendTo/rules_doxygen/issues/32) (thanks to @oxidase)
 - `use_default_shell_env` parameter to allow the use of the default shell environment when running doxygen. Allows for better integration with the user's environment at the cost of hermeticity
 - `tools` parameter to allow the use of additional tools when running doxygen. Allows for hermetic integration with other executables
+- `env` parameter to allow the use of custom environment variables when running doxygen
+
+### Changed
+
+- Renamed `_executable` parameter in the `doxygen` rule to `executable` to allow its use from the `doxygen` macro (thanks to @mutalibmohammed)
 
 ## [2.4.2]
 

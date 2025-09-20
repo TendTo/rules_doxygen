@@ -84,17 +84,18 @@ def _doxygen_impl(ctx):
     )
 
     tools_path = {tool.dirname: None for tool in ctx.files.tools}.keys()
+    tools_path += [ctx.attr.env.get("PATH", "")] if ctx.attr.env.get("PATH", "") != "" else []
     if ctx.attr.host_platform == "windows":
-        path = ";".join(tools_path) + ";C:\\Windows\\system32"
+        path = ";".join(tools_path + ["C:\\Windows\\system32"])
     else:
         path = ":".join(tools_path)
-    env = {"PATH": path} if tools_path else {}
+    env = ctx.attr.env.update({"PATH": path}) if path != "" else ctx.attr.env
 
     ctx.actions.run(
         inputs = ctx.files.srcs + deps + [doxyfile],
         outputs = outs,
         arguments = [doxyfile.path] + ctx.attr.doxygen_extra_args,
-        executable = ctx.executable._executable,
+        executable = ctx.executable.executable,
         mnemonic = "DoxygenBuild",
         progress_message = "Building doxygen documentation for rule '%s'" % ctx.label.name,
         use_default_shell_env = ctx.attr.use_default_shell_env,
@@ -173,7 +174,11 @@ The following substitutions are available:
             values = ["linux", "mac", "windows"],
             doc = """The host platform to use for the doxygen executable. Can be one of: linux, mac, windows""",
         ),
-        "_executable": attr.label(
+        "env": attr.string_dict(
+            default = {},
+            doc = "Environment variables to set when running doxygen.",
+        ),
+        "executable": attr.label(
             executable = True,
             cfg = "exec",
             allow_single_file = True,
@@ -199,11 +204,13 @@ def doxygen(
         srcs = [],
         deps = [],
         # Bazel specific attributes
+        executable = None,
         dot_executable = None,
         configurations = None,
         doxyfile_template = None,
         doxygen_extra_args = [],
         use_default_shell_env = False,
+        env = {},
         tools = [],
         outs = ["html"],
         # Doxygen specific attributes
@@ -528,7 +535,7 @@ def doxygen(
 
     For the complete list of Doxygen configuration options, please refer to the [Doxygen documentation](https://www.doxygen.nl/manual/config.html).
 
-    > [!NOTE]  
+    > [!NOTE]
     > If not istructed otherwise, the rule will use the Doxyfile from its default `doxygen` version.
     > Any update could change some default values or add some flags which will be unrecognized by older `doxygen` versions, resulting in innocuous warnings.
     > If you want to use a specific Doxyfile, just generate one with `doxygen -g` and specify it in the `doxyfile_template` attribute.
@@ -686,6 +693,7 @@ def doxygen(
         deps: List of dependencies targets whose files present in the 'src', 'hdrs' and 'data' attributes will be collected to generate the documentation.
             Transitive dependencies are also taken into account.
             Since we are only considering the source files and not the outputs, these targets **will not** be built.
+        executable: Label of the doxygen executable.
         dot_executable: Label of the doxygen executable. Make sure it is also added to the `srcs` of the macro
         configurations: List of additional configuration parameters to pass to Doxygen.
         doxyfile_template: The template file to use to generate the Doxyfile.
@@ -697,6 +705,7 @@ def doxygen(
                 Can be used anywhere in the Doxyfile, usually to generate additional output files, like tag files.
         doxygen_extra_args: Extra arguments to pass to the doxygen executable.
         use_default_shell_env: Whether to use the default shell environment when running doxygen.
+        env: Additional environment variables to set when running doxygen.
         tools: List of additional tools to include in the doxygen environment. Tools are executable inputs that may have their own runfiles which are automatically made available to the action.
         outs: Output folders bazel will keep. If only the html outputs is of interest, the default value will do.
              otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).
@@ -1332,7 +1341,9 @@ def doxygen(
         outs = outs,
         configurations = configurations,
         doxygen_extra_args = doxygen_extra_args,
+        executable = executable,
         dot_executable = dot_executable,
+        env = env,
         use_default_shell_env = use_default_shell_env,
         tools = tools,
         host_platform = select(
