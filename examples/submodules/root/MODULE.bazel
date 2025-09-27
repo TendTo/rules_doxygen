@@ -18,5 +18,7 @@ local_path_override(
     path = "../../../",
 )
 
+bazel_dep(name = "platforms", version = "1.0.0")
+
 doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
 use_repo(doxygen_extension, "doxygen")
