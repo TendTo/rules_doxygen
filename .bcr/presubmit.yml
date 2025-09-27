@@ -19,3 +19,4 @@ bcr_test_module:
         - "//kwargs:doxygen"
         - "//substitutions:doxygen"
         - "//dependencies:doxygen"
+        - "//executable:doxygen"

@@ -1,0 +1,15 @@
+load("@doxygen//:doxygen.bzl", "doxygen")
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
+cc_binary(
+    name = "executable",
+    srcs = ["main.cpp"],
+)
+
+doxygen(
+    name = "doxygen",
+    srcs = ["README.md"] + glob([
+        "*.cpp",
+    ]),
+    executable = ":executable",
+)

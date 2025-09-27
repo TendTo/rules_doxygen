@@ -27,6 +27,7 @@ jobs:
             awesome,
             substitutions,
             dependencies,
+            executable,
           ]
         exclude:
           # In substitution example we use `string_keyed_label_dict`, which is not supported in bazel 7.0.0
