@@ -89,7 +89,7 @@ def _doxygen_impl(ctx):
         path = ";".join(tools_path + ["C:\\Windows\\system32"])
     else:
         path = ":".join(tools_path)
-    env = ctx.attr.env.update({"PATH": path}) if path != "" else ctx.attr.env
+    env = (ctx.attr.env | {"PATH": path}) if path != "" else ctx.attr.env
 
     ctx.actions.run(
         inputs = ctx.files.srcs + deps + [doxyfile],
