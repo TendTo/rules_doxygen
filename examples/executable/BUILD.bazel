@@ -4,6 +4,10 @@ load("@rules_cc//cc:defs.bzl", "cc_binary")
 cc_binary(
     name = "executable",
     srcs = ["main.cpp"],
+    copts = select({
+        "@rules_cc//cc/compiler:msvc-cl": ["/std:c++17"],
+        "//conditions:default": ["-std=c++17"],
+    }),
 )
 
 doxygen(
