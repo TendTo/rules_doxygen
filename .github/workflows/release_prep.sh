@@ -9,6 +9,15 @@ TAG=$1
 PREFIX="rules_doxygen-${TAG}"
 ARCHIVE="rules_doxygen-$TAG.tar.gz"
 git archive --format=tar --prefix="${PREFIX}/" "${TAG}" | gzip > "$ARCHIVE"
+
+# Add generated API docs to the release, see https://github.com/bazelbuild/bazel-central-registry/issues/5593
+docs="$(mktemp -d)"; targets="$(mktemp)"
+bazel --output_base="$docs" query --output=label --output_file="$targets" 'kind("starlark_doc_extract rule", //docs/...)'
+bazel --output_base="$docs" build --target_pattern_file="$targets" --remote_download_regex='.*doc_extract\.binaryproto'
+tar --create --auto-compress \
+    --directory "$(bazel --output_base="$docs" info bazel-bin)" \
+    --file "$GITHUB_WORKSPACE/${ARCHIVE%.tar.gz}.docs.tar.gz" .
+
 SHA=$(shasum -a 256 "$ARCHIVE" | awk '{print $1}')
 
 cat << EOF

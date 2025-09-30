@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Bump in the version of multiple dependencies, to accommodate for incompatible flags and ease future migrations
+- Autogenerate documentation for the bcr
 
 ## [2.5.0]
 
