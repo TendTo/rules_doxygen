@@ -552,7 +552,7 @@ def doxygen(
     - All the predefined variables indicated in the [Bazel documentation](https://bazel.build/reference/be/make-variables#predefined_variables).
 
     The former is particularly useful when `doxygen` needs to generate unusual files, such as [tag files](https://www.doxygen.nl/manual/config.html#cfg_generate_tagfile).
-    For example, you can use it to generate a tag file in the output directory:
+    An example of this is shown below, where the tag file `PolyVox.tag` is stored in the `tags` output directory.
 
     ```bzl
     doxygen(
