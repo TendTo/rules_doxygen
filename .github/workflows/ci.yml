@@ -33,6 +33,17 @@ jobs:
           # In substitution example we use `string_keyed_label_dict`, which is not supported in bazel 7.0.0
           - bazel: 7.0.0
             subdir: substitutions
+          # Incompatible versions of rules_python and bazel 7.0.0
+          - bazel: 7.0.0
+            subdir: dependencies
+          - bazel: 7.0.0
+            subdir: executable
+          - bazel: 7.0.0
+            subdir: doxylink
+          - bazel: 7.0.0
+            subdir: executable
+          - bazel: 7.0.0
+            subdir: plantuml
     runs-on: ${{ matrix.os }}
 
     steps:
