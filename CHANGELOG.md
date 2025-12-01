@@ -10,11 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Default doxygen version is now `1.15.0`
-
-## [2.5.1]
-
-### Changed
-
 - Bump in the version of multiple dependencies, to accommodate for incompatible flags and ease future migrations
 - Autogenerate documentation for the bcr
 - Add 'rolling' to the CI bazel versions
@@ -227,4 +222,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [2.4.1]: https://github.com/TendTo/rules_doxygen/compare/2.4.0...2.4.1
 [2.4.2]: https://github.com/TendTo/rules_doxygen/compare/2.4.1...2.4.2
 [2.5.0]: https://github.com/TendTo/rules_doxygen/compare/2.4.2...2.5.0
-[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/2.5.0...HEAD
+[2.6.0]: https://github.com/TendTo/rules_doxygen/compare/2.5.0...2.6.0
+[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/2.6.0...HEAD
