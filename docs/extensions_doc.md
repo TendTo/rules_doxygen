@@ -128,7 +128,7 @@ The resulting repository will have the following targets:
 - `@doxygen//:doxygen.bzl`, containing the doxygen macro used to generate the documentation.
 - `@doxygen//:Doxyfile.template`, default Doxyfile template used to generate the Doxyfile.
 
-The extension will create a default configuration for all platforms with the version `1.14.0` of Doxygen.
+The extension will create a default configuration for all platforms with the version `1.15.0` of Doxygen.
 You can override this value with a custom one for each supported platform, i.e. _windows_, _mac_, _mac-arm_, _linux_ and _linux-arm_.
 
 ```bzl

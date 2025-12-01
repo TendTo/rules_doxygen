@@ -249,6 +249,7 @@ def doxygen(
         optimize_output_slice = None,
         extension_mapping = None,
         markdown_support = None,
+        markdown_strict = None,
         toc_include_headings = None,
         markdown_id_style = None,
         autolink_support = None,
@@ -746,6 +747,7 @@ def doxygen(
         optimize_output_slice: Set the `optimize_output_slice` tag to `True` if your project consists of Slice sources only.
         extension_mapping: Doxygen selects the parser to use depending on the extension of the files it parses.
         markdown_support: If the `markdown_support` tag is enabled then Doxygen pre-processes all comments according to the Markdown format, which allows for more readable documentation.
+        markdown_strict: If the markdown_strict tag is enabled then Doxygen treats text in comments as Markdown formatted also in cases where Doxygen's native markup format conflicts with that of Markdown.
         toc_include_headings: When the `toc_include_headings` tag is set to a non-zero value, all headings up to that level are automatically included in the table of contents, even if they do not have an id attribute.
         markdown_id_style: The `markdown_id_style` tag can be used to specify the algorithm used to generate identifiers for the Markdown headings.
         autolink_support: When enabled Doxygen tries to link words that correspond to documented classes, or namespaces to their corresponding documentation.
@@ -1058,6 +1060,7 @@ def doxygen(
     _add_generic_configuration(configurations, "OPTIMIZE_OUTPUT_SLICE", optimize_output_slice)
     _add_generic_configuration(configurations, "EXTENSION_MAPPING", extension_mapping)
     _add_generic_configuration(configurations, "MARKDOWN_SUPPORT", markdown_support)
+    _add_generic_configuration(configurations, "MARKDOWN_STRICT", markdown_strict)
     _add_generic_configuration(configurations, "TOC_INCLUDE_HEADINGS", toc_include_headings)
     _add_generic_configuration(configurations, "MARKDOWN_ID_STYLE", markdown_id_style)
     _add_generic_configuration(configurations, "AUTOLINK_SUPPORT", autolink_support)

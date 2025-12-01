@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  DEFAULT_DOXYGEN_VERSION: "1.14.0"
+  DEFAULT_DOXYGEN_VERSION: "1.15.0"
 
 jobs:
   tests:
