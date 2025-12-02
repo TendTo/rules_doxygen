@@ -6,12 +6,12 @@ local_path_override(
     path = "../",
 )
 
-bazel_dep(name = "rules_cc", version = "0.2.8")
+bazel_dep(name = "rules_cc", version = "0.2.14")
 bazel_dep(name = "aspect_bazel_lib", version = "2.21.2")
 bazel_dep(name = "bazel_skylib", version = "1.8.2")
-bazel_dep(name = "rules_python", version = "1.6.3")
+bazel_dep(name = "rules_python", version = "1.7.0")
 bazel_dep(name = "platforms", version = "1.0.0")
-bazel_dep(name = "rules_java", version = "8.16.1")
+bazel_dep(name = "rules_java", version = "9.2.0")
 
 http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
 http_file(
