@@ -144,7 +144,7 @@ doxygen(
         "deps": attr.label_list(aspects = [collect_files_aspect], doc = "List of dependencies targets whose files present in the 'src', 'hdrs' and 'data' attributes will be collected to generate the documentation. Transitive dependencies are also taken into account. Since we are only considering the source files and not the outputs, these targets **will not** be built"),
         "configurations": attr.string_list(doc = "Additional configuration parameters to append to the Doxyfile. For example, to set the project name, use `PROJECT_NAME = example`."),
         "outs": attr.string_list(default = ["html"], allow_empty = False, doc = """Output folders to keep. If only the html outputs is of interest, the default value will do. Otherwise, a list of folders to keep is expected (e.g. `["html", "latex"]`)."""),
-        "doxyfile_prefix" : attr.string(doc = "Prefix to add to Doxyfile path.", default= ""),
+        "doxyfile_prefix" : attr.string(doc = "Prefix to add to the Doxyfile path.", default= ""),
         "doxyfile_template": attr.label(
             allow_single_file = True,
             default = Label(":Doxyfile.template"),
@@ -209,13 +209,13 @@ def doxygen(
         executable = None,
         dot_executable = None,
         configurations = None,
+        doxyfile_prefix = "",
         doxyfile_template = None,
         doxygen_extra_args = [],
         use_default_shell_env = False,
         env = {},
         tools = [],
         outs = ["html"],
-        doxyfile_prefix = "",
         # Doxygen specific attributes
         doxyfile_encoding = None,
         project_name = None,
@@ -700,6 +700,7 @@ def doxygen(
         executable: Label of the doxygen executable.
         dot_executable: Label of the doxygen executable. Make sure it is also added to the `srcs` of the macro
         configurations: List of additional configuration parameters to pass to Doxygen.
+        doxyfile_prefix: Prefix to add to the Doxyfile path.
         doxyfile_template: The template file to use to generate the Doxyfile.
             The following substitutions are available:<br>
             - `# {{INPUT}}`: Subpackage directory in the sandbox.<br>
