@@ -258,14 +258,19 @@ jobs:
       - name: Build nested
         run: bazel build //nested:doxygen_a //nested:doxygen_b
         working-directory: examples/nested
-      - name: Check output
+      - name: Check output (a)
         uses: andstor/file-existence-action@v3
         with:
-          files: examples/bazel-bin/nested/html/index.html
+          files: examples/bazel-bin/nested/a/html/index.html
           fail: true
-      - name: Check doxygen version in produced index.html
-        run: grep "Doxygen $DEFAULT_DOXYGEN_VERSION" examples/bazel-bin/nested/nested/a/html/index.html
+      - name: Check output (b)
+        uses: andstor/file-existence-action@v3
+        with:
+          files: examples/bazel-bin/nested/b/html/index.html
+          fail: true
+      - name: Check doxygen version in produced index.html (a)
+        run: grep "Doxygen $DEFAULT_DOXYGEN_VERSION" examples/bazel-bin/nested/a/html/index.html
         shell: bash
-      - name: Check doxygen version in produced index.html
-        run: grep "Doxygen $DEFAULT_DOXYGEN_VERSION" examples/bazel-bin/nested/nested/b/html/index.html
+      - name: Check doxygen version in produced index.html (b)
+        run: grep "Doxygen $DEFAULT_DOXYGEN_VERSION" examples/bazel-bin/nested/b/html/index.html
         shell: bash
