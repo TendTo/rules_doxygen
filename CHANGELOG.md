@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Add `doxyfile_prefix` parameter to optionally allow configuring the directory into which the `Doxyfile` is emitted. Addresses [#35](https://github.com/TendTo/rules_doxygen/issues/35).
+- `doxyfile_prefix` parameter to optionally allow configuring the directory into which the `Doxyfile` is emitted [#35](https://github.com/TendTo/rules_doxygen/issues/35) (thanks to @renesas-abigail)
 
 ## [2.6.0]
 
