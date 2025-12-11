@@ -47,7 +47,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Create .bazelversion file
         working-directory: examples
         run: echo "${{ matrix.bazel }}" > .bazelversion
@@ -72,7 +72,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install doxygen
         uses: ssciwr/doxygen-install@v1
         with:
@@ -103,7 +103,7 @@ jobs:
         subdir: [base]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Create .bazelversion file
         working-directory: examples
         run: echo "${{ matrix.bazel }}" > .bazelversion
@@ -157,7 +157,7 @@ jobs:
         subdir: [base]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Create .bazelversion file
         working-directory: examples
         run: echo "${{ matrix.bazel }}" > .bazelversion
@@ -225,7 +225,7 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Create .bazelversion file
         working-directory: examples
         run: echo "${{ matrix.bazel }}" > .bazelversion
@@ -240,4 +240,32 @@ jobs:
           fail: true
       - name: Check doxygen version in produced index.html
         run: grep "Doxygen $DEFAULT_DOXYGEN_VERSION" examples/submodules/${{ matrix.subdir }}/bazel-bin/html/index.html
+        shell: bash
+
+  nested:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        bazel: [7.0.0, 8.0.0, rolling]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v6
+      - name: Create .bazelversion file
+        working-directory: examples
+        run: echo "${{ matrix.bazel }}" > .bazelversion
+        shell: bash
+      - name: Build nested
+        run: bazel build //nested:doxygen_a //nested:doxygen_b
+        working-directory: examples/nested
+      - name: Check output
+        uses: andstor/file-existence-action@v3
+        with:
+          files: examples/bazel-bin/nested/html/index.html
+          fail: true
+      - name: Check doxygen version in produced index.html
+        run: grep "Doxygen $DEFAULT_DOXYGEN_VERSION" examples/bazel-bin/nested/nested/a/html/index.html
+        shell: bash
+      - name: Check doxygen version in produced index.html
+        run: grep "Doxygen $DEFAULT_DOXYGEN_VERSION" examples/bazel-bin/nested/nested/b/html/index.html
         shell: bash

@@ -77,3 +77,41 @@ doxygen(
     project_name = "nested",
 )
 ```
+
+## Handling multiple doxygen rules in the same folder
+
+Having multiple `doxygen` rules in the same folder is supported, but requires some extra configuration.
+By default, all rules would create a `Doxyfile` in the same location, causing a conflict.
+The same applies to the output `html` folder.  
+To avoid this, remember to specify different `doxyfile_prefix` and `outs` for each rule:
+
+```bzl
+doxygen(
+    name = "doxygen_a",
+    srcs = ["//nested/lib_a:sources"],
+    outs = [
+        "a/html",
+        "a/tags",
+    ],
+    doxyfile_prefix = "a",
+    project_brief = "Example project for doxygen, library A",
+    project_name = "nested",
+    generate_tagfile = "$(OUTDIR)/tags/tagfile.xml",
+)
+
+doxygen(
+    name = "doxygen_b",
+        srcs = glob([
+        "lib_b/*.h",
+        "lib_b/*.cpp",
+    ]),
+    outs = [
+        "b/html",
+        "b/tags",
+    ],
+    doxyfile_prefix = "b",
+    project_brief = "Example project for doxygen, library B",
+    project_name = "nested",
+    generate_tagfile = "$(OUTDIR)/tags/tagfile.xml",
+)
+```
