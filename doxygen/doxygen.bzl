@@ -55,7 +55,8 @@ collect_files_aspect = aspect(
 )
 
 def _doxygen_impl(ctx):
-    doxyfile = ctx.actions.declare_file("Doxyfile")
+    doxyfile_prefix = ctx.attr.doxyfile_prefix
+    doxyfile = ctx.actions.declare_file("{}/Doxyfile".format(doxyfile_prefix) if doxyfile_prefix else "Doxyfile")
 
     output_group_info = {}
     outs = []
@@ -143,6 +144,7 @@ doxygen(
         "deps": attr.label_list(aspects = [collect_files_aspect], doc = "List of dependencies targets whose files present in the 'src', 'hdrs' and 'data' attributes will be collected to generate the documentation. Transitive dependencies are also taken into account. Since we are only considering the source files and not the outputs, these targets **will not** be built"),
         "configurations": attr.string_list(doc = "Additional configuration parameters to append to the Doxyfile. For example, to set the project name, use `PROJECT_NAME = example`."),
         "outs": attr.string_list(default = ["html"], allow_empty = False, doc = """Output folders to keep. If only the html outputs is of interest, the default value will do. Otherwise, a list of folders to keep is expected (e.g. `["html", "latex"]`)."""),
+        "doxyfile_prefix" : attr.string(doc = "Prefix to add to doxyfile path.", default= ""),
         "doxyfile_template": attr.label(
             allow_single_file = True,
             default = Label(":Doxyfile.template"),
@@ -213,6 +215,7 @@ def doxygen(
         env = {},
         tools = [],
         outs = ["html"],
+        doxyfile_prefix = "",
         # Doxygen specific attributes
         doxyfile_encoding = None,
         project_name = None,
@@ -1342,6 +1345,7 @@ def doxygen(
         srcs = srcs,
         deps = deps,
         outs = outs,
+        doxyfile_prefix = doxyfile_prefix,
         configurations = configurations,
         doxygen_extra_args = doxygen_extra_args,
         executable = executable,
