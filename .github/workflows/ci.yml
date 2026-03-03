@@ -55,7 +55,11 @@ jobs:
       - name: Build ${{ matrix.subdir }}
         run: bazel build //${{ matrix.subdir }}:doxygen --action_env=DEFAULT_DOXYGEN_VERSION=$DEFAULT_DOXYGEN_VERSION
         working-directory: examples
-        shell: bash
+        if: matrix.os != 'windows-latest'
+      - name: Build ${{ matrix.subdir }} (windows)
+        run: bazel build //${{ matrix.subdir }}:doxygen --action_env=DEFAULT_DOXYGEN_VERSION=$env:DEFAULT_DOXYGEN_VERSION
+        working-directory: examples
+        if: matrix.os == 'windows-latest'
       - name: Check output
         uses: andstor/file-existence-action@v3
         with:
