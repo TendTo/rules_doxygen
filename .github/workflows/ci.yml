@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  DEFAULT_DOXYGEN_VERSION: "1.15.0"
+  DEFAULT_DOXYGEN_VERSION: "1.16.1"
 
 jobs:
   tests:
@@ -53,8 +53,13 @@ jobs:
         run: echo "${{ matrix.bazel }}" > .bazelversion
         shell: bash
       - name: Build ${{ matrix.subdir }}
-        run: bazel build //${{ matrix.subdir }}:doxygen
+        run: bazel build //${{ matrix.subdir }}:doxygen --action_env=DEFAULT_DOXYGEN_VERSION=$DEFAULT_DOXYGEN_VERSION
         working-directory: examples
+        if: matrix.os != 'windows-latest'
+      - name: Build ${{ matrix.subdir }} (windows)
+        run: bazel build //${{ matrix.subdir }}:doxygen --action_env=DEFAULT_DOXYGEN_VERSION=$env:DEFAULT_DOXYGEN_VERSION
+        working-directory: examples
+        if: matrix.os == 'windows-latest'
       - name: Check output
         uses: andstor/file-existence-action@v3
         with:
@@ -74,7 +79,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install doxygen
-        uses: ssciwr/doxygen-install@v1
+        uses: ssciwr/doxygen-install@v1.6.4
         with:
           version: "1.9.7"
       - name: Enable use of system doxygen by decommenting the module extension line
@@ -109,7 +114,7 @@ jobs:
         run: echo "${{ matrix.bazel }}" > .bazelversion
         shell: bash
       - name: Install doxygen
-        uses: ssciwr/doxygen-install@v1
+        uses: ssciwr/doxygen-install@v1.6.4
       - name: Enable use of windows doxygen by decommenting the module extension line
         uses: richardrigutins/replace-in-files@v2
         with:
@@ -163,7 +168,7 @@ jobs:
         run: echo "${{ matrix.bazel }}" > .bazelversion
         shell: bash
       - name: Install doxygen
-        uses: ssciwr/doxygen-install@v1
+        uses: ssciwr/doxygen-install@v1.6.4
         with:
           version: "1.10.0"
 
