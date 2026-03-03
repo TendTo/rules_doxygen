@@ -55,6 +55,7 @@ jobs:
       - name: Build ${{ matrix.subdir }}
         run: bazel build //${{ matrix.subdir }}:doxygen --action_env=DEFAULT_DOXYGEN_VERSION=$DEFAULT_DOXYGEN_VERSION
         working-directory: examples
+        shell: bash
       - name: Check output
         uses: andstor/file-existence-action@v3
         with:
