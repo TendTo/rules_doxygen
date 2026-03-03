@@ -303,6 +303,8 @@ def doxygen(
         generate_testlist = None,
         generate_buglist = None,
         generate_deprecatedlist = None,
+        generate_requirements = None,
+        req_traceability_info = None,
         enabled_sections = None,
         max_initializer_lines = None,
         show_used_files = None,
@@ -802,6 +804,8 @@ def doxygen(
         generate_testlist: The `generate_testlist` tag can be used to enable (YES) or disable (NO) the test list.
         generate_buglist: The `generate_buglist` tag can be used to enable (YES) or disable (NO) the bug list.
         generate_deprecatedlist: The `generate_deprecatedlist` tag can be used to enable (YES) or disable (NO) the deprecated list.
+        generate_requirements: The `generate_requirements` tag can be used to enable (YES) or disable (NO) the requirements page
+        req_traceability_info: The `req_traceability_info` tag controls if traceability information is shown on the requirements page (only relevant when using \\requirement comment blocks).
         enabled_sections: The `enabled_sections` tag can be used to enable conditional documentation sections, marked by \\if <section_label> ... \\endif and \\cond <section_label> ... \\endcond blocks.
         max_initializer_lines: The `max_initializer_lines` tag determines the maximum number of lines that the initial value of a variable or macro / define can have for it to appear in the documentation.
         show_used_files: Set the `show_used_files` tag to `False` to disable the list of files generated at the bottom of the documentation of classes and structs.
