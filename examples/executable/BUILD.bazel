@@ -16,4 +16,5 @@ doxygen(
         "*.cpp",
     ]),
     executable = ":executable",
+    use_default_shell_env = True,
 )
