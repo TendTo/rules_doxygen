@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [NEXT.VERSION]
 
+## [2.6.2]
+
+### Added
+
+- The `doxygen` extension will try to automatically download the `arm` version of the `doxygen` binary on `arm` platform, provided it is present in the official release of the chosen version (thanks to @mutalibmohammed)
+
+### Changed
+
+- Default doxygen version is now `1.16.1` (thanks to @mutalibmohammed)
+
 ## [2.6.1]
 
 ### Added
@@ -232,4 +242,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [2.5.0]: https://github.com/TendTo/rules_doxygen/compare/2.4.2...2.5.0
 [2.6.0]: https://github.com/TendTo/rules_doxygen/compare/2.5.0...2.6.0
 [2.6.1]: https://github.com/TendTo/rules_doxygen/compare/2.6.0...2.6.1
-[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/2.6.1...HEAD
+[2.6.2]: https://github.com/TendTo/rules_doxygen/compare/2.6.1...2.6.2
+[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/2.6.2...HEAD
