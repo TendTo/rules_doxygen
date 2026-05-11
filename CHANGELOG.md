@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Default doxygen version is now `1.17.0`
+- Updated dependencies (platforms 1.0.0 -> 1.1.0)
 
 ## [2.6.2]
 
