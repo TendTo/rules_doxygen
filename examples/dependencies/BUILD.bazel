@@ -1,5 +1,7 @@
 load("@doxygen//:doxygen.bzl", "doxygen")
+load("@greet_generator//:defs.bzl", "generate_greeting")
 load("@rules_cc//cc:defs.bzl", "cc_library")
+load(":defs.bzl", "ext_and_gen_doxygen_rule")
 
 cc_library(
     name = "add",
@@ -22,10 +24,21 @@ cc_library(
     ],
 )
 
+generate_greeting(
+    name = "greet",
+    greeting = "Hello world!",
+    greeting_version = 42,
+    strip_include_prefix = "//dependencies",
+)
+
 cc_library(
     name = "main",
     srcs = ["main.cpp"],
-    deps = [":lib"],
+    deps = [
+        ":greet",
+        ":lib",
+        "@greet_generator//:greet_api",
+    ],
 )
 
 genrule(
@@ -44,6 +57,26 @@ doxygen(
         "README.md",  # file
         ":section",  # genrule
     ],
+    project_brief = "Example project for doxygen",
+    project_name = "dependencies",
+    use_mdfile_as_mainpage = "dependencies/README.md",
+    deps = [":main"],  # cc_library
+)
+
+# This demonstrates using a custom aspect and rule to also document external and generated source files.
+# See defs.bzl for the custom aspect and rule construction.
+doxygen(
+    name = "doxygen_ext_and_gen",
+    srcs = [
+        "README.md",  # file
+        ":section",  # genrule
+    ],
+    outs = [
+        "ext_and_gen/html",
+        "ext_and_gen/tags",
+    ],
+    doxyfile_prefix = "ext_and_gen",
+    doxygen_rule = ext_and_gen_doxygen_rule,
     project_brief = "Example project for doxygen",
     project_name = "dependencies",
     use_mdfile_as_mainpage = "dependencies/README.md",
