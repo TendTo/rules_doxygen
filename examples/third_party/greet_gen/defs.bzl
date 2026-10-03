@@ -1,13 +1,5 @@
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
-GeneratedCcCode = provider(
-    doc="Holds generated source and header files",
-    fields={
-        "src": "The generated .cpp file",
-        "hdr": "The generated .h file",
-    },
-)
-
 
 def _generate_greeting_impl(ctx):
     out_src_filename = ctx.attr.name + ".cpp"
@@ -39,7 +31,6 @@ def _generate_greeting_impl(ctx):
     # Return the file wrapped in DefaultInfo so other targets or command-line requests can find it
     return [
         DefaultInfo(files=depset([out_src_file, out_hdr_file])),
-        GeneratedCcCode(src=out_src_file, hdr=out_hdr_file),
     ]
 
 
