@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.7.0]
+
+### Added
+
+- Support for C++20 module interfaces (thanks to @rdong8)
+
+### Fix
+
+- Fixed missing use of `GENERATE_REQUIREMENTS` and `REQ_TRACEABILITY_INFO` configurations in the `doxygen` macro
+
 ## [2.6.4]
 
 ### Changed
@@ -257,4 +267,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [2.6.2]: https://github.com/TendTo/rules_doxygen/compare/2.6.1...2.6.2
 [2.6.3]: https://github.com/TendTo/rules_doxygen/compare/2.6.2...2.6.3
 [2.6.4]: https://github.com/TendTo/rules_doxygen/compare/2.6.3...2.6.4
+[2.7.0]: https://github.com/TendTo/rules_doxygen/compare/2.6.4...2.7.0
 [NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/2.6.4...HEAD

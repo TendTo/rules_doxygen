@@ -618,7 +618,7 @@ def doxygen(
 
     For the complete list of Doxygen configuration options, please refer to the [Doxygen documentation](https://www.doxygen.nl/manual/config.html).
 
-    > [!NOTE]
+    > [!NOTE]  
     > If not istructed otherwise, the rule will use the Doxyfile from its default `doxygen` version.
     > Any update could change some default values or add some flags which will be unrecognized by older `doxygen` versions, resulting in innocuous warnings.
     > If you want to use a specific Doxyfile, just generate one with `doxygen -g` and specify it in the `doxyfile_template` attribute.
@@ -646,7 +646,7 @@ def doxygen(
     )
     ```
 
-    > [!NOTE]
+    > [!NOTE]  
     > Make sure that generated files are put in some directory and that directory is included in the `outs` attribute.
 
     You can add your own substitutions by adding a rule that returns a TemplateVariableInfo provider in the `toolchains` attribute of the `doxygen` rule.
@@ -1206,6 +1206,8 @@ def doxygen(
     _add_generic_configuration(configurations, "GENERATE_TESTLIST", generate_testlist)
     _add_generic_configuration(configurations, "GENERATE_BUGLIST", generate_buglist)
     _add_generic_configuration(configurations, "GENERATE_DEPRECATEDLIST", generate_deprecatedlist)
+    _add_generic_configuration(configurations, "GENERATE_REQUIREMENTS", generate_requirements)
+    _add_generic_configuration(configurations, "REQ_TRACEABILITY_INFO", req_traceability_info)
     _add_generic_configuration(configurations, "ENABLED_SECTIONS", enabled_sections)
     _add_generic_configuration(configurations, "MAX_INITIALIZER_LINES", max_initializer_lines)
     _add_generic_configuration(configurations, "SHOW_USED_FILES", show_used_files)

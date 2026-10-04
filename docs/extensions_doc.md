@@ -64,7 +64,7 @@ Depending on the version, the behavior will change:
 - If the version is set to `0.0.0`, the repository will use the installed version of doxygen, getting the binary from the PATH.
 - If a version is specified, the repository will download the correct version of doxygen and make it available to the requesting module.
 
-> [!Warning]
+> [!WARNING]  
 > If version is set to `0.0.0`, the rules needs doxygen to be installed on your system and the binary (named doxygen) must available in the PATH.
 > Keep in mind that this will break the hermeticity of your build, as it will now depend on the environment.
 
@@ -156,12 +156,12 @@ The build will fail with an error message containing the correct SHA256.
 Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_0/doxygen-1.10.0.windows.x64.bin.zip failed: class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b but wanted 0000000000000000000000000000000000000000000000000000000000000000
 ```
 
-> [!Tip]
+> [!TIP]  
 > Not indicating the platform will make the configuration apply to the platform it is running on.
 > The build will fail when the download does not match the SHA256 checksum, i.e. when the platform changes.
 > Unless you are using a system-wide doxygen installation, you should always specify the platform.
 
-> [!Note]
+> [!NOTE]  
 > When a version is specified, the extension will download the doxygen binary from the official [Doxygen releases](https://github.com/doxygen/doxygen/releases).
 > If a binary for the specified platform is not available (e.g., _linux-arm_, _mac-arm_), the build may fail.
 > If that happens, you can either:
@@ -174,7 +174,7 @@ Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_
 If you set the version to `0.0.0`, the doxygen executable will be assumed to be available from the PATH.
 No download will be performed and bazel will use the installed version of doxygen.
 
-> [!Warning]
+> [!WARNING]  
 > Setting the version to `0.0.0` this will break the hermeticity of your build, as it will now depend on the environment.
 
 #### Using a local doxygen executable
@@ -182,7 +182,7 @@ No download will be performed and bazel will use the installed version of doxyge
 You can also provide a label pointing to the `doxygen` executable you want to use by using the `executable` parameter in the extension configuration.
 No download will be performed, and the file indicated by the label will be used as the doxygen executable.
 
-> [!Note]
+> [!NOTE]  
 > `version` and `executable` are mutually exclusive.
 > You must provide exactly one of them.
 
