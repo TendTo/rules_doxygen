@@ -1,14 +1,20 @@
 load("@doxygen//:doxygen.bzl", "doxygen")
 
-# WARNINING: this assume the existence of a repository @graphviz exposing the target :executable
+# By default, uses dot from the host system PATH (or dot_path).
+# To use a hermetic BCR target with Bazel >= 8:
+# 1. Enable `bazel_dep(name = "graphviz", ...)` in examples/MODULE.bazel
+# 2. Set `dot_executable = "@graphviz//:dot"`
 doxygen(
     name = "doxygen",
-    srcs = glob([
-        "*.h",
-        "*.cpp",
-        "*.sh",
-    ]) + ["@graphviz//:executable"],
-    dot_executable = "@graphviz//:executable",
+    srcs = glob(
+        [
+            "*.h",
+            "*.cpp",
+            "*.sh",
+        ],
+        allow_empty = True,
+    ),
+    # dot_executable = "@graphviz//:dot",
     have_dot = True,
     project_brief = "Example project for doxygen",
     project_name = "graphviz",

@@ -73,19 +73,25 @@ def _doxygen_impl(ctx):
 
     deps = depset(transitive = [dep[TransitiveSourcesInfo].srcs for dep in ctx.attr.deps]).to_list()
     input_dirs = {(file.dirname or "."): None for file in ctx.files.srcs + deps}
+    dot_dir = ctx.executable.dot_executable.dirname if ctx.executable.dot_executable else ""
+
     ctx.actions.expand_template(
         template = ctx.file.doxyfile_template,
         output = doxyfile,
         substitutions = {
             "# {{INPUT}}": "INPUT = %s" % " ".join(input_dirs.keys()),
-            "# {{DOT_PATH}}": ("DOT_PATH = %s" % ctx.executable.dot_executable.dirname) if ctx.executable.dot_executable else "",
+            "# {{DOT_PATH}}": "DOT_PATH = $(DOT_PATH)" if dot_dir else "",
             "# {{ADDITIONAL PARAMETERS}}": "\n".join(configurations),
             "# {{OUTPUT DIRECTORY}}": "OUTPUT_DIRECTORY = %s" % doxyfile.dirname,
             "{{OUTDIR}}": "%s" % doxyfile.dirname,
         },
     )
 
-    tools_path = {tool.dirname: None for tool in ctx.files.tools}.keys()
+    tools_list = list(ctx.files.tools)
+    if ctx.executable.dot_executable:
+        tools_list.append(ctx.executable.dot_executable)
+
+    tools_path = {tool.dirname: None for tool in tools_list}.keys()
     tools_path += [ctx.attr.env.get("PATH", "")] if ctx.attr.env.get("PATH", "") != "" else []
     if ctx.attr.host_platform == "windows":
         path = ";".join(tools_path + ["C:\\Windows\\system32"])
@@ -93,15 +99,23 @@ def _doxygen_impl(ctx):
         path = ":".join(tools_path)
     env = (ctx.attr.env | {"PATH": path}) if path != "" else ctx.attr.env
 
-    ctx.actions.run(
+    command = """\
+if [ -n "{dot_dir}" ]; then
+  export DOT_PATH="$PWD/{dot_dir}"
+  export PATH="$DOT_PATH:$PATH"
+fi
+exec "$@"
+""".format(dot_dir = dot_dir)
+
+    ctx.actions.run_shell(
         inputs = ctx.files.srcs + deps + [doxyfile],
         outputs = outs,
-        arguments = [doxyfile.path] + ctx.attr.doxygen_extra_args,
-        executable = ctx.executable.executable,
+        command = command,
+        arguments = [ctx.executable.executable.path, doxyfile.path] + ctx.attr.doxygen_extra_args,
         mnemonic = "DoxygenBuild",
         progress_message = "Building doxygen documentation for rule '%s'" % ctx.label.name,
         use_default_shell_env = ctx.attr.use_default_shell_env,
-        tools = ctx.files.tools,
+        tools = tools_list + [ctx.executable.executable],
         env = env,
     )
 
@@ -707,7 +721,7 @@ def doxygen(
             Transitive dependencies are also taken into account.
             Since we are only considering the source files and not the outputs, these targets **will not** be built.
         executable: Label of the doxygen executable.
-        dot_executable: Label of the doxygen executable. Make sure it is also added to the `srcs` of the macro
+        dot_executable: Label of the dot executable.
         configurations: List of additional configuration parameters to pass to Doxygen.
         doxyfile_prefix: Prefix to add to the Doxyfile path.
         doxyfile_template: The template file to use to generate the Doxyfile.
