@@ -3,9 +3,7 @@
  * @author Ernesto Casablanca (casablancaernesto@gmail.com)
  * @copyright 2026
  */
-
-#ifndef GREET_GEN_GREET_H_
-#define GREET_GEN_GREET_H_
+#pragma once
 
 #include <string>
 
@@ -23,5 +21,3 @@ namespace greet {
 std::string generated_greeting();
 
 } // namespace greet
-
-#endif // GREET_GEN_GREET_H_

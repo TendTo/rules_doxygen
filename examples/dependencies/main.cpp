@@ -6,9 +6,9 @@
 
 #include <iostream>
 
-#include "lib.h"
 #include "greet.h"
 #include "greet_gen.h"
+#include "lib.h"
 
 int main(int, char*[]) {
   std::cout << greet::generated_greeting() << std::endl;
