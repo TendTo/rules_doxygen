@@ -15,7 +15,7 @@ Add the following to your _MODULE.bazel_:
 bazel_dep(name = "rules_doxygen", version = "2.6.4", dev_dependency = True)
 ```
 
-If you don't want to depend on the [Bazel package registry](https://bazel.build/external/bazelbuild/rules_pkg) or need a not-yet-published version of this module, you can use a `git_override` by adding the following lines below `bazel_dep` in your _MODULE.bazel_ file:
+If you don't want to depend on the [Bazel package registry](https://registry.bazel.build/modules/rules_doxygen) or need a not-yet-published version of this module, you can use a `git_override` by adding the following lines below `bazel_dep` in your _MODULE.bazel_ file:
 
 ```bzl
 # MODULE.bazel file
@@ -28,7 +28,7 @@ git_override(
 )
 ```
 
-> [!Note]  
+> [!NOTE]  
 > Only [Bazel 7](https://blog.bazel.build/2023/12/11/bazel-7-release.html) and above are supported.
 
 ### Doxygen version selection
@@ -69,10 +69,13 @@ If you don't know the SHA256 value, just leave it empty.
 The build will fail with an error message containing the correct SHA256.
 
 ```bash
-Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_0/doxygen-1.10.0.windows.x64.bin.zip failed: class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b but wanted 0000000000000000000000000000000000000000000000000000000000000000
+Download from https://github.com/doxygen/doxygen/releases/... failed: 
+class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException 
+Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b 
+but wanted 0000000000000000000000000000000000000000000000000000000000000000
 ```
 
-> [!Tip]  
+> [!TIP]  
 > Not indicating the platform will make the configuration apply to the platform it is running on.
 > The build will fail when the download does not match the SHA256 checksum, i.e. when the platform changes.
 > Unless you are using a system-wide doxygen installation, you should always specify the platform.
@@ -82,7 +85,7 @@ Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_
 If you set the version to `0.0.0`, the doxygen executable will be assumed to be available from the PATH.
 No download will be performed and Bazel will use the installed version of doxygen.
 
-> [!Warning]  
+> [!WARNING]  
 > Setting the version to `0.0.0` this will break the hermeticity of your build, as it will now depend on the environment.
 
 #### Using a local doxygen executable
@@ -90,7 +93,7 @@ No download will be performed and Bazel will use the installed version of doxyge
 You can also provide a label pointing to the `doxygen` executable you want to use by using the `executable` parameter in the extension configuration.
 No download will be performed, and the file indicated by the label will be used as the doxygen executable.
 
-> [!Note]  
+> [!NOTE]  
 > `version` and `executable` are mutually exclusive.
 > You must provide exactly one of them.
 
@@ -127,7 +130,7 @@ doxygen_extension.configuration(
 use_repo(doxygen_extension, "doxygen")
 ```
 
-> [!Note]
+> [!NOTE]  
 > See [the documentation](docs/extensions_doc.md) for more information.
 
 ## Use
@@ -171,18 +174,18 @@ doxygen(
 )
 ```
 
-> [!Tip]  
+> [!TIP]  
 > The `doxygen` rule supports [Make variables](https://bazel.build/reference/be/make-variables) substitutions.
 > By default, only `OUTDIR` and the [predefined ones](https://bazel.build/reference/be/make-variables#predefined_variables) are available, but you can add your own, as shown in the [examples](examples/substitutions).
 
-> [!Note]  
+> [!NOTE]  
 > `srcs` and `deps` attributes are **not** interchangeable.
 > Use `srcs` with files and when you want to capture the output of another rule, and use `deps` when you want to capture the source files of other rules transitively.
 
 Use the [Doxygen documentation](https://www.doxygen.nl/manual/config.html) or generate a brand new _Doxyfile_ with `doxygen -g` to see all the available options to put in the `configurations` list.
 They will simply be appended at the end of the file, overriding the default values.
 
-> [!Note]
+> [!NOTE]  
 > See the [documentation](docs/doxygen_doc.md) for more information or the [examples](examples) directory for examples of how to use the rules.
 
 ## Build

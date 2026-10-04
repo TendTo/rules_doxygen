@@ -110,7 +110,7 @@ Depending on the type of the attribute, the macro will convert it to the appropr
 
 For the complete list of Doxygen configuration options, please refer to the [Doxygen documentation](https://www.doxygen.nl/manual/config.html).
 
-> [!NOTE]
+> [!NOTE]  
 > If not istructed otherwise, the rule will use the Doxyfile from its default `doxygen` version.
 > Any update could change some default values or add some flags which will be unrecognized by older `doxygen` versions, resulting in innocuous warnings.
 > If you want to use a specific Doxyfile, just generate one with `doxygen -g` and specify it in the `doxyfile_template` attribute.
@@ -138,7 +138,7 @@ doxygen(
 )
 ```
 
-> [!NOTE]
+> [!NOTE]  
 > Make sure that generated files are put in some directory and that directory is included in the `outs` attribute.
 
 You can add your own substitutions by adding a rule that returns a TemplateVariableInfo provider in the `toolchains` attribute of the `doxygen` rule.
