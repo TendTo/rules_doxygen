@@ -1132,6 +1132,8 @@ def doxygen(
     _add_generic_configuration(configurations, "GENERATE_TESTLIST", generate_testlist)
     _add_generic_configuration(configurations, "GENERATE_BUGLIST", generate_buglist)
     _add_generic_configuration(configurations, "GENERATE_DEPRECATEDLIST", generate_deprecatedlist)
+    _add_generic_configuration(configurations, "GENERATE_REQUIREMENTS", generate_requirements)
+    _add_generic_configuration(configurations, "REQ_TRACEABILITY_INFO", req_traceability_info)
     _add_generic_configuration(configurations, "ENABLED_SECTIONS", enabled_sections)
     _add_generic_configuration(configurations, "MAX_INITIALIZER_LINES", max_initializer_lines)
     _add_generic_configuration(configurations, "SHOW_USED_FILES", show_used_files)
