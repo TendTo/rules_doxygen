@@ -15,8 +15,8 @@ def _expand_make_variables(string, ctx, extra_sub_vars = {}):
             string = string.replace("$(%s)" % variable, value)
     return string
 
-TransitiveSourcesInfo = provider(
-    "A provider to collect source files transitively from the target and its dependencies",
+DoxygenCollectedSourcesInfo = provider(
+    "A provider to collect source files for doxygen that are transitively upstream from a target",
     fields = {"srcs": "depset of source files collected from the target and its dependencies"},
 )
 
@@ -28,11 +28,11 @@ def _collect_files_aspect_impl(_, ctx):
         ctx: aspect context
 
     Returns:
-         TransitiveSourcesInfo with a depset of transitive sources
+         DoxygenCollectedSourcesInfo with a depset of transitive sources
     """
     if (not ctx.attr._collect_external and ctx.label.workspace_root.startswith("external")):
         # Nothing to gather on external targets
-        return [TransitiveSourcesInfo(srcs = depset())]
+        return [DoxygenCollectedSourcesInfo(srcs = depset())]
 
     direct_files = []
     srcs = ctx.rule.attr.srcs if hasattr(ctx.rule.attr, "srcs") else []
@@ -50,10 +50,10 @@ def _collect_files_aspect_impl(_, ctx):
     # Collect transitive files from dependencies
     transitive_files = []
     for dep in ctx.rule.attr.deps if hasattr(ctx.rule.attr, "deps") else []:
-        if TransitiveSourcesInfo in dep:
-            transitive_files.append(dep[TransitiveSourcesInfo].srcs)
+        if DoxygenCollectedSourcesInfo in dep:
+            transitive_files.append(dep[DoxygenCollectedSourcesInfo].srcs)
 
-    return [TransitiveSourcesInfo(
+    return [DoxygenCollectedSourcesInfo(
         srcs = depset(direct = direct_files, transitive = transitive_files),
     )]
 
@@ -79,8 +79,8 @@ def collect_files_aspect_factory(
     return aspect(
         implementation = _collect_files_aspect_impl,
         attr_aspects = ["deps"],  # recursively apply on deps
-        provides = [TransitiveSourcesInfo],
-        doc = "When applied to a target, this aspect collects the source files from the target and its dependencies, and makes them available in the TransitiveSourcesInfo provider.",
+        provides = [DoxygenCollectedSourcesInfo],
+        doc = "When applied to a target, this aspect collects the source files from the target and its dependencies, and makes them available in the DoxygenCollectedSourcesInfo provider.",
         attrs = {
             "_collect_external": attr.bool(
                 default = collect_external,
@@ -119,7 +119,7 @@ def _doxygen_impl(ctx):
     if len(outs) == 0:
         fail("At least one output folder must be specified")
 
-    deps = depset(transitive = [dep[TransitiveSourcesInfo].srcs for dep in ctx.attr.deps]).to_list()
+    deps = depset(transitive = [dep[DoxygenCollectedSourcesInfo].srcs for dep in ctx.attr.deps]).to_list()
     input_dirs = {(file.dirname or "."): None for file in ctx.files.srcs + deps}
     ctx.actions.expand_template(
         template = ctx.file.doxyfile_template,
@@ -618,7 +618,7 @@ def doxygen(
 
     For the complete list of Doxygen configuration options, please refer to the [Doxygen documentation](https://www.doxygen.nl/manual/config.html).
 
-    > [!NOTE]  
+    > [!NOTE]
     > If not istructed otherwise, the rule will use the Doxyfile from its default `doxygen` version.
     > Any update could change some default values or add some flags which will be unrecognized by older `doxygen` versions, resulting in innocuous warnings.
     > If you want to use a specific Doxyfile, just generate one with `doxygen -g` and specify it in the `doxyfile_template` attribute.
@@ -646,7 +646,7 @@ def doxygen(
     )
     ```
 
-    > [!NOTE]  
+    > [!NOTE]
     > Make sure that generated files are put in some directory and that directory is included in the `outs` attribute.
 
     You can add your own substitutions by adding a rule that returns a TemplateVariableInfo provider in the `toolchains` attribute of the `doxygen` rule.
