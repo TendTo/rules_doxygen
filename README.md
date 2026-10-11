@@ -154,8 +154,8 @@ doxygen(
         "*.cpp",
     ]) + ["README.md"],
     # Additionally, you can use the `deps` attribute to select a target
-    # and automatically include all of the files in its `srcs`, `hdrs`, and `data` attributes,
-    # along with all of its transitive dependencies.
+    # and automatically include all of the files in its `srcs` and `hdrs` attributes,
+    # along with all of its transitive dependencies (excluding external or generated files).
     # deps = [":my_cc_target"],
     project_brief = DESCRIPTION,            # Brief description of the project
     project_name = NAME,                    # Name of the project
@@ -180,7 +180,8 @@ doxygen(
 
 > [!NOTE]  
 > `srcs` and `deps` attributes are **not** interchangeable.
-> Use `srcs` with files and when you want to capture the output of another rule, and use `deps` when you want to capture the source files of other rules transitively.
+> Use `srcs` with files and when you want to capture the output of another rule, and use `deps` when you want to capture the source files of other rules transitively. See the [documentation](docs/doxygen_doc.md) for more information. The `"doxygen_skip"` tag can be added to the `tags` attribute of
+a target to exclude it during the transitive dependencies being gathered.
 
 Use the [Doxygen documentation](https://www.doxygen.nl/manual/config.html) or generate a brand new _Doxyfile_ with `doxygen -g` to see all the available options to put in the `configurations` list.
 They will simply be appended at the end of the file, overriding the default values.

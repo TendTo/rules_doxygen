@@ -14,11 +14,12 @@ bazel_dep(name = "platforms", version = "1.1.0")
 bazel_dep(name = "rules_java", version = "9.6.1")
 
 http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+
 http_file(
     name = "plantuml_file",
-    urls = ["https://github.com/plantuml/plantuml/releases/download/v1.2025.4/plantuml-1.2025.4.jar"],
-    sha256 = "26518e14a3a04100cd76c0d96cab2d1171f36152215edd9790a28d20268200c1",
     downloaded_file_path = "plantuml.jar",
+    sha256 = "26518e14a3a04100cd76c0d96cab2d1171f36152215edd9790a28d20268200c1",
+    urls = ["https://github.com/plantuml/plantuml/releases/download/v1.2025.4/plantuml-1.2025.4.jar"],
 )
 
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
@@ -43,3 +44,10 @@ doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_ex
 # doxygen_extension.configuration(executable = "@//:doxygen")
 
 use_repo(doxygen_extension, "doxygen")
+
+# Example of an external dependency and code-generator.
+bazel_dep(name = "greet_generator", version = "0.1.0")
+local_path_override(
+    module_name = "greet_generator",
+    path = "third_party/greet_gen",
+)

@@ -2,14 +2,14 @@
 
 Doxygen rule for Bazel.
 
-<a id="TransitiveSourcesInfo"></a>
+<a id="DoxygenCollectedSourcesInfo"></a>
 
-## TransitiveSourcesInfo
+## DoxygenCollectedSourcesInfo
 
 <pre>
-load("@rules_doxygen//doxygen:doxygen.bzl", "TransitiveSourcesInfo")
+load("@rules_doxygen//doxygen:doxygen.bzl", "DoxygenCollectedSourcesInfo")
 
-TransitiveSourcesInfo(<a href="#TransitiveSourcesInfo-srcs">srcs</a>)
+DoxygenCollectedSourcesInfo(<a href="#DoxygenCollectedSourcesInfo-srcs">srcs</a>)
 </pre>
 
 A provider to collect source files transitively from the target and its dependencies
@@ -18,7 +18,7 @@ A provider to collect source files transitively from the target and its dependen
 
 | Name  | Description |
 | :------------- | :------------- |
-| <a id="TransitiveSourcesInfo-srcs"></a>srcs |  depset of source files collected from the target and its dependencies    |
+| <a id="DoxygenCollectedSourcesInfo-srcs"></a>srcs |  depset of source files collected from the target and its dependencies    |
 
 
 <a id="doxygen"></a>
@@ -29,7 +29,7 @@ A provider to collect source files transitively from the target and its dependen
 load("@doxygen//:doxygen.bzl", "doxygen")
 
 doxygen(<a href="#doxygen-name">name</a>, <a href="#doxygen-srcs">srcs</a>, <a href="#doxygen-deps">deps</a>, <a href="#doxygen-executable">executable</a>, <a href="#doxygen-dot_executable">dot_executable</a>, <a href="#doxygen-configurations">configurations</a>, <a href="#doxygen-doxyfile_prefix">doxyfile_prefix</a>,
-        <a href="#doxygen-doxyfile_template">doxyfile_template</a>, <a href="#doxygen-doxygen_extra_args">doxygen_extra_args</a>, <a href="#doxygen-use_default_shell_env">use_default_shell_env</a>, <a href="#doxygen-env">env</a>, <a href="#doxygen-tools">tools</a>, <a href="#doxygen-outs">outs</a>,
+        <a href="#doxygen-doxyfile_template">doxyfile_template</a>, <a href="#doxygen-doxygen_extra_args">doxygen_extra_args</a>, <a href="#doxygen-use_default_shell_env">use_default_shell_env</a>, <a href="#doxygen-env">env</a>, <a href="#doxygen-tools">tools</a>, <a href="#doxygen-outs">outs</a>, <a href="#doxygen-doxygen_rule">doxygen_rule</a>,
         <a href="#doxygen-doxyfile_encoding">doxyfile_encoding</a>, <a href="#doxygen-project_name">project_name</a>, <a href="#doxygen-project_number">project_number</a>, <a href="#doxygen-project_brief">project_brief</a>, <a href="#doxygen-project_logo">project_logo</a>, <a href="#doxygen-project_icon">project_icon</a>,
         <a href="#doxygen-create_subdirs">create_subdirs</a>, <a href="#doxygen-create_subdirs_level">create_subdirs_level</a>, <a href="#doxygen-allow_unicode_names">allow_unicode_names</a>, <a href="#doxygen-output_language">output_language</a>, <a href="#doxygen-brief_member_desc">brief_member_desc</a>,
         <a href="#doxygen-repeat_brief">repeat_brief</a>, <a href="#doxygen-abbreviate_brief">abbreviate_brief</a>, <a href="#doxygen-always_detailed_sec">always_detailed_sec</a>, <a href="#doxygen-inline_inherited_memb">inline_inherited_memb</a>, <a href="#doxygen-full_path_names">full_path_names</a>,
@@ -155,8 +155,17 @@ More precisely, the files in the DefaultInfo provider the target returns.
 Hence, when the documentation is generated, all rules in the `srcs` attribute **will** be built, and the files they output will be passed to Doxygen.
 
 On the other hand, `deps` is a list of targets whose sources will be included in the documentation generation.
-It will automatically include all the files in the `srcs`, `hdrs`, and `data` attributes of the target, and the same applies to all of its transitive dependencies, recursively.
+It will automatically include all the files in the `srcs` and `hdrs` attributes of the target, and the same applies to all
+of its transitive `deps` dependencies, recursively, unless a target has `"doxygen_skip"` in its `tags` attribute.
 Since we are only interested in the source files, the `deps` targets **will not** be built when the documentation is generated.
+
+Furthermore, collection of source files through the `deps` targets and their dependencies will stop at (and exclude)
+external targets, generated source files, and `data` dependencies, since those are not files that users
+typically want to document and only excluding them via the doxygen `exclude_patterns` parameter will still require them
+in the build-graph (and Bazel's cache). Specific files that should be included, but get excluded from `deps` as described,
+can be passed through the `srcs` attribute instead. To customize this behavior, see
+the <a href="#doxygen-doxygen_rule">`doxygen_rule`</a> parameter and
+the <a href="#collect_files_aspect_factory">`collect_files_aspect_factory`</a> factory function for the file collection aspect.
 
 ```bzl
 # My BUILD.bazel file
@@ -170,9 +179,16 @@ cc_library(
 )
 
 cc_library(
+    name = "weird_lib",
+    hdrs = ["weird_header.h"],
+    # This weird library breaks doxygen, so skip it.
+    tags = ["doxygen_skip"],
+)
+
+cc_library(
     name = "main",
     srcs = ["main.cpp"],
-    deps = [":lib"],
+    deps = [":lib", ":weird_lib"],
 )
 
 
@@ -211,12 +227,17 @@ doxygen(
 )
 ```
 
-### Excluding Bazel specific folders
+### Excluding Bazel specific folders or targets
 
 Including the root directory among the input directories, which happens when a target starting with `//:` is used as a source,
 may cause Bazel specific folders, such as `external`, to be explored by Doxygen.
 This can slow down the documentation generation or even cause an input buffer overflow.
-To avoid this, it is recommended to use the `exclude_patterns` parameter and set it to something like `["*/external/*"]`, extending it with other patterns as needed.
+To avoid this, it is recommended to use the `exclude_patterns` parameter and set it to something like `["*/external/*"]`,
+extending it with other patterns as needed.
+
+Furthermore, when using the `deps` parameter which collects transitive dependencies (preferred for source code files),
+the default behavior is to **exclude** external files, generated files and data dependencies. Also, any target
+not falling into one of these categories can also be excluded by adding the `"doxygen_skip"` tag to its `tags` attribute.
 
 ### Example
 
@@ -279,6 +300,7 @@ doxygen(
 | <a id="doxygen-env"></a>env |  Additional environment variables to set when running doxygen.   |  `{}` |
 | <a id="doxygen-tools"></a>tools |  List of additional tools to include in the doxygen environment. Tools are executable inputs that may have their own runfiles which are automatically made available to the action.   |  `[]` |
 | <a id="doxygen-outs"></a>outs |  Output folders bazel will keep. If only the html outputs is of interest, the default value will do. otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]). Note that the rule will also generate an output group for each folder in the outs list having the same name.   |  `["html"]` |
+| <a id="doxygen-doxygen_rule"></a>doxygen_rule |  Underlying doxygen rule to use. Custom doxygen rules can be created via `doxygen_rule_factory` and `collect_files_aspect_factory` from `doxygen.bzl` to modify the default behaviors. | `default_doxygen_rule` |
 | <a id="doxygen-doxyfile_encoding"></a>doxyfile_encoding |  This tag specifies the encoding used for all characters in the configuration file that follow.   |  `None` |
 | <a id="doxygen-project_name"></a>project_name |  The `project_name` tag is a single word (or a sequence of words surrounded by double-quotes, unless you are using Doxywizard) that should identify the project for which the documentation is generated.   |  `None` |
 | <a id="doxygen-project_number"></a>project_number |  The `project_number` tag can be used to enter a project or revision number.   |  `None` |
@@ -598,25 +620,75 @@ doxygen(
 | <a id="doxygen-kwargs"></a>kwargs |  Additional arguments to pass to the rule (e.g. `visibility = ["//visibility:public"], tags = ["manual"]`)   |  none |
 
 
-<a id="collect_files_aspect"></a>
+<a id="default_collect_files_aspect"></a>
 
-## collect_files_aspect
+## default_collect_files_aspect
 
 <pre>
-load("@rules_doxygen//doxygen:doxygen.bzl", "collect_files_aspect")
-
-collect_files_aspect()
+load("@rules_doxygen//doxygen:doxygen.bzl", "default_collect_files_aspect")
 </pre>
 
-When applied to a target, this aspect collects the source files from the target and its dependencies, and makes them available in the TransitiveSourcesInfo provider.
+When applied to a target, this aspect collects the source files from the target and its dependencies, and makes them available
+in the <a href="#DoxygenCollectedSourcesInfo">DoxygenCollectedSourcesInfo</a> provider.
 
-**ASPECT ATTRIBUTES**
+<a id="default_collect_files_aspect"></a>
+
+## default_doxygen_rule
+
+<pre>
+load("@rules_doxygen//doxygen:doxygen.bzl", "default_doxygen_rule")
+</pre>
+
+This is the default doxygen rule used by the <a href="#doxygen">`doxygen`</a> macro, which can be changed using
+the <a href="#doxygen-doxygen_rule">`doxygen_rule`</a> parameter of the macro.
+This default rule is tied to the default collection aspect <a href="#default_collect_files_aspect">`default_collect_files_aspect`</a>
+whose behavior is described in the <a href="#doxygen">`doxygen`</a> macro documentation above.
+
+<a id="doxygen_rule_factory"></a>
+
+## doxygen_rule_factory
+
+<pre>
+load("@rules_doxygen//doxygen:doxygen.bzl", "doxygen_rule_factory")
+
+my_doxygen_rule = doxygen_rule_factory(collect_files_aspect = my_collect_files_aspect)
+</pre>
+
+This is a factory function (macro) to construct a doxygen rule (see parameter <a href="#doxygen-doxygen_rule">`doxygen_rule`</a>)
+suitable for the doxygen macro to use. Its primary purpose is to make the doxygen rule use a particular
+aspect for collecting files to hand down to doxygen by walking through the transitive dependencies.
+
+**PARAMETERS**
 
 
-| Name | Type |
-| :------------- | :------------- |
-| deps| String |
+| Name  | Description | Default Value |
+| :------------- | :------------- | :------------- |
+| <a id="doxygen_rule_factory-collect_files_aspect"></a>collect_files_aspect |  Custom file collection aspect, see `collect_files_aspect_factory`.   |  default_collect_files_aspect |
 
+<a id="collect_files_aspect_factory"></a>
+
+## collect_files_aspect_factory
+
+<pre>
+load("@rules_doxygen//doxygen:doxygen.bzl", "collect_files_aspect_factory")
+
+my_collect_files_aspect = collect_files_aspect_factory()
+</pre>
+
+This is a factory function (macro) to construct a file collection aspect (see parameter <a href="#doxygen-doxygen_rule">`doxygen_rule`</a>)
+suitable for a doxygen rule created with <a href="#doxygen_rule_factory">`doxygen_rule_factory`</a>. This can be used
+to customize the collection of files when walking through the transitive dependencies.
+Alternatively, the user can also create an entirely custom aspect that provides
+the <a href="#DoxygenCollectedSourcesInfo">DoxygenCollectedSourcesInfo</a> provider to have full control over file collection.
+
+**PARAMETERS**
+
+
+| Name  | Description | Default Value |
+| :------------- | :------------- | :------------- |
+| <a id="collect_files_aspect_factory-collect_external"></a>collect_external |  Collect files from external dependencies.  |  False |
+| <a id="collect_files_aspect_factory-collect_generated"></a>collect_generated |  Collect files from generated files (e.g., protobuf generated sources).  |  False |
+| <a id="collect_files_aspect_factory-collect_data_deps"></a>collect_external |  Collect files from data dependencies.  |  False |
 
 
 
