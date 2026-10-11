@@ -274,4 +274,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [2.6.3]: https://github.com/TendTo/rules_doxygen/compare/2.6.2...2.6.3
 [2.6.4]: https://github.com/TendTo/rules_doxygen/compare/2.6.3...2.6.4
 [2.7.0]: https://github.com/TendTo/rules_doxygen/compare/2.6.4...2.7.0
-[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/2.6.4...HEAD
+[NEXT.VERSION]: https://github.com/TendTo/rules_doxygen/compare/2.7.0...HEAD
