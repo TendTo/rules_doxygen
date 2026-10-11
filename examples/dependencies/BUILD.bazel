@@ -58,6 +58,8 @@ genrule(
     """,
 )
 
+# By default, files from external dependencies (i.e., @greet_generator//:greet_api) 
+# and generated files (i.e., :greet_gen) will not be made available to doxygen.
 doxygen(
     name = "doxygen",
     srcs = [
@@ -70,7 +72,7 @@ doxygen(
     deps = [":main"],  # cc_library
 )
 
-# This demonstrates using a custom aspect and rule to also document external and generated source files.
+# To override the default behavior, we can use a custom aspect and rule to also document external and generated source files.
 # See defs.bzl for the custom aspect and rule construction.
 doxygen(
     name = "doxygen_ext_and_gen",

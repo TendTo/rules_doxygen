@@ -23,6 +23,8 @@ DoxygenCollectedSourcesInfo = provider(
 def _collect_files_aspect_impl(_, ctx):
     """Collect transitive source files from dependencies.
 
+    The aspect configuration will determine which files are collected.
+
     Args:
         _: target context. Not used in this aspect
         ctx: aspect context
@@ -58,24 +60,25 @@ def _collect_files_aspect_impl(_, ctx):
         srcs = depset(direct = direct_files, transitive = transitive_files),
     )]
 
-def collect_files_aspect_factory(
-        collect_external = False,
-        collect_generated = False,
-        collect_data_deps = False):
+def collect_files_aspect_factory(collect_external = False, collect_generated = False, collect_data_deps = False):
     """
     Create a file collection aspect to gather files to be processed by doxygen.
 
     Use the factory in a `.bzl` file to instantiate an aspect:
-    ```starlark
+    ```bzl
     load("@doxygen//:doxygen.bzl", "collect_files_aspect_factory")
 
-    my_collect_files_aspect = collect_files_aspect_factory(<aspect_options>)
+    my_collect_files_aspect = collect_files_aspect_factory(
+        collect_external = True,
+        collect_generated = True,
+        collect_data_deps = True,
+    )
     ```
 
     Args:
-        collect_external: Collect (and document) source files from external dependencies (default: false).
-        collect_generated: Collect (and document) generated source files (default: false).
-        collect_data_deps: Collect (and document) source files from data dependencies (default: false).
+        collect_external: Collect (and document) source files from external dependencies.
+        collect_generated: Collect (and document) generated source files.
+        collect_data_deps: Collect (and document) source files from data dependencies.
     """
     return aspect(
         implementation = _collect_files_aspect_impl,
@@ -85,15 +88,15 @@ def collect_files_aspect_factory(
         attrs = {
             "_collect_external": attr.bool(
                 default = collect_external,
-                doc = "Collect (and document) source files from external dependencies (default: false).",
+                doc = "Collect (and document) source files from external dependencies.",
             ),
             "_collect_generated": attr.bool(
                 default = collect_generated,
-                doc = "Collect (and document) generated source files (default: false).",
+                doc = "Collect (and document) generated source files.",
             ),
             "_collect_data_deps": attr.bool(
                 default = collect_data_deps,
-                doc = "Collect (and document) source files from data dependencies (default: false).",
+                doc = "Collect (and document) source files from data dependencies.",
             ),
         },
     )
@@ -105,6 +108,11 @@ def collect_files_aspect_factory(
 default_collect_files_aspect = collect_files_aspect_factory()
 
 def _doxygen_impl(ctx):
+    """Implementation of the doxygen rule.
+
+    Args:
+        ctx: The rule context.
+    """
     doxyfile_prefix = ctx.attr.doxyfile_prefix
     doxyfile = ctx.actions.declare_file("%s/Doxyfile" % doxyfile_prefix if doxyfile_prefix else "Doxyfile")
 
@@ -163,25 +171,43 @@ def doxygen_rule_factory(collect_files_aspect = default_collect_files_aspect):
     """
     Create an underlying doxygen rule to process files with doxygen.
 
+    The rule factory is only needed because some parameters affect the construction of the build graph itself, and cannot be passed via ordinary rule arguments.
+
     Use the factory in a `.bzl` file to instantiate a rule:
-    ```starlark
+    ```bzl
+    # defs.bzl
     load("@doxygen//:doxygen.bzl", "doxygen_rule_factory")
 
     my_doxygen_rule = doxygen_rule_factory(<options>)
     ```
 
-    This doxygen rule is not meant to be used directly, but instead, it should
-    be passed as the `doxygen_rule` argument to the `doxygen` macro. This rule
-    factory is only needed because some parameters affect the construction
-    of the build graph itself, and cannot be passed via ordinary rule arguments.
+    Then, use the rule in a `BUILD.bazel` file:
+    ```bzl
+    # BUILD.bazel
+    load("@doxygen//:doxygen.bzl", "doxygen")
+    load("//:defs.bzl", "my_doxygen_rule")
+
+    doxygen(
+        name = "doxygen",
+        srcs = glob([
+            "*.h",
+            "*.cpp",
+        ]),
+        doxygen_rule = my_doxygen_rule,
+        project_brief = "Example project for doxygen",
+        project_name = "example",
+    )
+    ```
+
+    See [`examples/dependencies`](/examples/dependencies/) for an example.
 
     Args:
-        collect_files_aspect: Custom file collection aspect, see `collect_files_aspect_factory` (default: `default_collect_files_aspect`).
+        collect_files_aspect: Custom file collection aspect, see [`collect_files_aspect_factory`](#collect_files_aspect_factory).
     """
     return rule(
         doc = """Run the doxygen binary to generate the documentation.
 
-It is advised to use the `doxygen` macro instead of this rule directly.
+This doxygen rule is not meant to be used directly, but instead, it should be passed as the [`doxygen_rule`](#doxygen-doxygen_rule) argument to the [`doxygen`](#doxygen) macro.
 
 ### Example
 
@@ -192,9 +218,19 @@ doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_ex
 use_repo(doxygen_extension, "doxygen")
 ```
 
+To customize the behavior of the doxygen rule, you can create your own `.bzl` file and use the `doxygen_rule_factory` to create a new rule with your desired options.
 ```bzl
-# BUILD.bazel file
+# defs.bzl
+load("@doxygen//:doxygen.bzl", "doxygen_rule_factory")
+
+my_doxygen_rule = doxygen_rule_factory(<options>)
+```
+
+Then, use the rule in a `BUILD.bazel` file:
+```bzl
+# BUILD.bazel
 load("@doxygen//:doxygen.bzl", "doxygen")
+load("//:defs.bzl", "my_doxygen_rule")
 
 doxygen(
     name = "doxygen",
@@ -202,10 +238,13 @@ doxygen(
         "*.h",
         "*.cpp",
     ]),
+    doxygen_rule = my_doxygen_rule,
     project_brief = "Example project for doxygen",
     project_name = "example",
 )
 ```
+
+See [`examples/dependencies`](/examples/dependencies/) for an example.
 """,
         implementation = _doxygen_impl,
         attrs = {
@@ -664,11 +703,17 @@ def doxygen(
     Hence, when the documentation is generated, all rules in the `srcs` attribute **will** be built, and the files they output will be passed to Doxygen.
 
     On the other hand, `deps` is a list of targets whose sources will be included in the documentation generation.
-    It will automatically include all the files in the `srcs` and `hdrs` attributes of the target, and the same applies to
-    all of its transitive dependencies, recursively.
-    The `doxygen_rule` option can used to override default behaviors like skipping external, generated or
-    data dependencies when traversing the dependency tree.
+    It will automatically include all the files in the `srcs` and `hdrs` attributes of the target, and the same applies to all of its transitive `deps` dependencies,
+    recursively, unless a target has `"doxygen_skip"` in its `tags` attribute.
     Since we are only interested in the source files, the `deps` targets **will not** be built when the documentation is generated.
+
+    The collection of source files through the `deps` targets and their dependencies will stop at (and exclude) external targets,
+    generated source files, and `data` dependencies, reflecting the fact that these are not files that users typically want to document.
+    A similar result can be achieved by using the `exclude_patterns` doxygen parameter,
+    but excluding them from bazel's build graph make the process more efficient and cache-friendly.
+    It is possible to override this behavior, either by indicating the desired files directly in the `srcs` attribute,
+    or by customizing the [`doxygen_rule`](#doxygen-doxygen_rule) parameter
+    and the [`collect_files_aspect_factory`](#collect_files_aspect_factory) factory function for the file collection aspect.
 
     ```bzl
     # My BUILD.bazel file
@@ -723,12 +768,16 @@ def doxygen(
     )
     ```
 
-    ### Excluding Bazel specific folders
+    ### Excluding Bazel specific folders or targets
 
     Including the root directory among the input directories, which happens when a target starting with `//:` is used as a source,
     may cause Bazel specific folders, such as `external`, to be explored by Doxygen.
     This can slow down the documentation generation or even cause an input buffer overflow.
     To avoid this, it is recommended to use the `exclude_patterns` parameter and set it to something like `["*/external/*"]`, extending it with other patterns as needed.
+
+    When using the `deps` parameter which collects transitive dependencies (preferred for source code files),
+    the default behavior is to **exclude** external files, generated files and data dependencies.
+    Any target not falling into one of these categories can also be excluded by adding the `"doxygen_skip"` tag to its `tags` attribute.
 
     ### Example
 
@@ -751,9 +800,16 @@ def doxygen(
     )
 
     cc_library(
+        name = "weird_lib",
+        hdrs = ["weird_header.h"],
+        # This weird library breaks doxygen, so skip it.
+        tags = ["doxygen_skip"],
+    )
+
+    cc_library(
         name = "main",
         srcs = ["main.cpp"],
-        deps = [":lib"],
+        deps = [":lib", ":weird_lib"],
     )
 
     doxygen(
@@ -798,7 +854,7 @@ def doxygen(
         outs: Output folders bazel will keep. If only the html outputs is of interest, the default value will do.
              otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]).
              Note that the rule will also generate an output group for each folder in the outs list having the same name.
-        doxygen_rule: Underlying doxygen rule to use (default: default_doxygen_rule).
+        doxygen_rule: Custom doxygen rules can be created via [`doxygen_rule_factory`](#doxygen_rule_factory) and [`collect_files_aspect_factory`](#collect_files_aspect_factory) to modify the default behaviors.
 
         doxyfile_encoding: This tag specifies the encoding used for all characters in the configuration file that follow.
         project_name: The `project_name` tag is a single word (or a sequence of words surrounded by double-quotes, unless you are using Doxywizard) that should identify the project for which the documentation is generated.

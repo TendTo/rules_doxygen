@@ -13,6 +13,9 @@ namespace lib {
  * Provide the int you gave.
  * @be_warned I like to use custom doxygen tags that break everyone's workflows for no reason.
  */
-template <int I> int pointless_identity() { return I; }
+template <int I>
+int pointless_identity() {
+  return I;
+}
 
 }  // namespace lib

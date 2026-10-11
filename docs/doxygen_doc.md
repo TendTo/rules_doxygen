@@ -2,23 +2,131 @@
 
 Doxygen rule for Bazel.
 
+<a id="default_doxygen_rule"></a>
+
+## default_doxygen_rule
+
+<pre>
+load("@doxygen//:doxygen.bzl", "default_doxygen_rule")
+
+default_doxygen_rule(<a href="#default_doxygen_rule-name">name</a>, <a href="#default_doxygen_rule-deps">deps</a>, <a href="#default_doxygen_rule-srcs">srcs</a>, <a href="#default_doxygen_rule-outs">outs</a>, <a href="#default_doxygen_rule-configurations">configurations</a>, <a href="#default_doxygen_rule-dot_executable">dot_executable</a>, <a href="#default_doxygen_rule-doxyfile_prefix">doxyfile_prefix</a>,
+                     <a href="#default_doxygen_rule-doxyfile_template">doxyfile_template</a>, <a href="#default_doxygen_rule-doxygen_extra_args">doxygen_extra_args</a>, <a href="#default_doxygen_rule-env">env</a>, <a href="#default_doxygen_rule-executable">executable</a>, <a href="#default_doxygen_rule-host_platform">host_platform</a>, <a href="#default_doxygen_rule-tools">tools</a>,
+                     <a href="#default_doxygen_rule-use_default_shell_env">use_default_shell_env</a>)
+</pre>
+
+Run the doxygen binary to generate the documentation.
+
+This doxygen rule is not meant to be used directly, but instead, it should be passed as the [`doxygen_rule`](#doxygen-doxygen_rule) argument to the [`doxygen`](#doxygen) macro.
+
+### Example
+
+```bzl
+# MODULE.bazel file
+bazel_dep(name = "rules_doxygen", dev_dependency = True)
+doxygen_extension = use_extension("@doxygen//:extensions.bzl", "doxygen_extension")
+use_repo(doxygen_extension, "doxygen")
+```
+
+To customize the behavior of the doxygen rule, you can create your own `.bzl` file and use the `doxygen_rule_factory` to create a new rule with your desired options.
+```bzl
+# defs.bzl
+load("@doxygen//:doxygen.bzl", "doxygen_rule_factory")
+
+my_doxygen_rule = doxygen_rule_factory(<options>)
+```
+
+Then, use the rule in a `BUILD.bazel` file:
+```bzl
+# BUILD.bazel
+load("@doxygen//:doxygen.bzl", "doxygen")
+load("//:defs.bzl", "my_doxygen_rule")
+
+doxygen(
+    name = "doxygen",
+    srcs = glob([
+        "*.h",
+        "*.cpp",
+    ]),
+    doxygen_rule = my_doxygen_rule,
+    project_brief = "Example project for doxygen",
+    project_name = "example",
+)
+```
+
+See [`examples/dependencies`](/examples/dependencies/) for an example.
+
+**ATTRIBUTES**
+
+
+| Name  | Description | Type | Mandatory | Default |
+| :------------- | :------------- | :------------- | :------------- | :------------- |
+| <a id="default_doxygen_rule-name"></a>name |  A unique name for this target.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required |  |
+| <a id="default_doxygen_rule-deps"></a>deps |  List of dependencies targets whose files present in the 'src', 'hdrs' and 'data' attributes will be collected to generate the documentation. Transitive dependencies are also taken into account. Since we are only considering the source files and not the outputs, these targets **will not** be built   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+| <a id="default_doxygen_rule-srcs"></a>srcs |  List of source files to generate documentation for. Can include any file that Doxygen can parse, as well as targets that return a DefaultInfo provider (usually genrules). Since we are only considering the outputs files and not the sources, these targets **will** be built if necessary.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+| <a id="default_doxygen_rule-outs"></a>outs |  Output folders to keep. If only the html outputs is of interest, the default value will do. Otherwise, a list of folders to keep is expected (e.g. `["html", "latex"]`).   | List of strings | optional |  `["html"]`  |
+| <a id="default_doxygen_rule-configurations"></a>configurations |  Additional configuration parameters to append to the Doxyfile. For example, to set the project name, use `PROJECT_NAME = example`.   | List of strings | optional |  `[]`  |
+| <a id="default_doxygen_rule-dot_executable"></a>dot_executable |  dot executable to use. Must refer to an executable file.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `None`  |
+| <a id="default_doxygen_rule-doxyfile_prefix"></a>doxyfile_prefix |  Prefix to add to the Doxyfile path.   | String | optional |  `""`  |
+| <a id="default_doxygen_rule-doxyfile_template"></a>doxyfile_template |  Template file to use to generate the Doxyfile. You can provide your own or use the default one. The following substitutions are available: - `# {{INPUT}}`: Subpackage directory in the sandbox. - `# {{DOT_PATH}}`: Indicate to doxygen the location of the `dot_executable` - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute. - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@doxygen//:Doxyfile.template"`  |
+| <a id="default_doxygen_rule-doxygen_extra_args"></a>doxygen_extra_args |  Extra arguments to pass to the doxygen executable.   | List of strings | optional |  `[]`  |
+| <a id="default_doxygen_rule-env"></a>env |  Environment variables to set when running doxygen.   | <a href="https://bazel.build/rules/lib/core/dict">Dictionary: String -> String</a> | optional |  `{}`  |
+| <a id="default_doxygen_rule-executable"></a>executable |  doxygen executable to use. Must refer to an executable file.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@doxygen//:executable"`  |
+| <a id="default_doxygen_rule-host_platform"></a>host_platform |  The host platform to use for the doxygen executable. Can be one of: linux, mac, windows   | String | optional |  `"other"`  |
+| <a id="default_doxygen_rule-tools"></a>tools |  List of additional tools to include in the doxygen environment. Tools are executable inputs that may have their own runfiles which are automatically made available to the action.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
+| <a id="default_doxygen_rule-use_default_shell_env"></a>use_default_shell_env |  Whether to use the default shell environment when running doxygen.   | Boolean | optional |  `False`  |
+
+
 <a id="DoxygenCollectedSourcesInfo"></a>
 
 ## DoxygenCollectedSourcesInfo
 
 <pre>
-load("@rules_doxygen//doxygen:doxygen.bzl", "DoxygenCollectedSourcesInfo")
+load("@doxygen//:doxygen.bzl", "DoxygenCollectedSourcesInfo")
 
 DoxygenCollectedSourcesInfo(<a href="#DoxygenCollectedSourcesInfo-srcs">srcs</a>)
 </pre>
 
-A provider to collect source files transitively from the target and its dependencies
+A provider to collect source files for doxygen that are transitively upstream from a target
 
 **FIELDS**
 
 | Name  | Description |
 | :------------- | :------------- |
 | <a id="DoxygenCollectedSourcesInfo-srcs"></a>srcs |  depset of source files collected from the target and its dependencies    |
+
+
+<a id="collect_files_aspect_factory"></a>
+
+## collect_files_aspect_factory
+
+<pre>
+load("@doxygen//:doxygen.bzl", "collect_files_aspect_factory")
+
+collect_files_aspect_factory(<a href="#collect_files_aspect_factory-collect_external">collect_external</a>, <a href="#collect_files_aspect_factory-collect_generated">collect_generated</a>, <a href="#collect_files_aspect_factory-collect_data_deps">collect_data_deps</a>)
+</pre>
+
+Create a file collection aspect to gather files to be processed by doxygen.
+
+Use the factory in a `.bzl` file to instantiate an aspect:
+```bzl
+load("@doxygen//:doxygen.bzl", "collect_files_aspect_factory")
+
+my_collect_files_aspect = collect_files_aspect_factory(
+    collect_external = True,
+    collect_generated = True,
+    collect_data_deps = True,
+)
+```
+
+
+**PARAMETERS**
+
+
+| Name  | Description | Default Value |
+| :------------- | :------------- | :------------- |
+| <a id="collect_files_aspect_factory-collect_external"></a>collect_external |  Collect (and document) source files from external dependencies.   |  `False` |
+| <a id="collect_files_aspect_factory-collect_generated"></a>collect_generated |  Collect (and document) generated source files.   |  `False` |
+| <a id="collect_files_aspect_factory-collect_data_deps"></a>collect_data_deps |  Collect (and document) source files from data dependencies.   |  `False` |
 
 
 <a id="doxygen"></a>
@@ -155,17 +263,17 @@ More precisely, the files in the DefaultInfo provider the target returns.
 Hence, when the documentation is generated, all rules in the `srcs` attribute **will** be built, and the files they output will be passed to Doxygen.
 
 On the other hand, `deps` is a list of targets whose sources will be included in the documentation generation.
-It will automatically include all the files in the `srcs` and `hdrs` attributes of the target, and the same applies to all
-of its transitive `deps` dependencies, recursively, unless a target has `"doxygen_skip"` in its `tags` attribute.
+It will automatically include all the files in the `srcs` and `hdrs` attributes of the target, and the same applies to all of its transitive `deps` dependencies,
+recursively, unless a target has `"doxygen_skip"` in its `tags` attribute.
 Since we are only interested in the source files, the `deps` targets **will not** be built when the documentation is generated.
 
-Furthermore, collection of source files through the `deps` targets and their dependencies will stop at (and exclude)
-external targets, generated source files, and `data` dependencies, since those are not files that users
-typically want to document and only excluding them via the doxygen `exclude_patterns` parameter will still require them
-in the build-graph (and Bazel's cache). Specific files that should be included, but get excluded from `deps` as described,
-can be passed through the `srcs` attribute instead. To customize this behavior, see
-the <a href="#doxygen-doxygen_rule">`doxygen_rule`</a> parameter and
-the <a href="#collect_files_aspect_factory">`collect_files_aspect_factory`</a> factory function for the file collection aspect.
+The collection of source files through the `deps` targets and their dependencies will stop at (and exclude) external targets,
+generated source files, and `data` dependencies, reflecting the fact that these are not files that users typically want to document.
+A similar result can be achieved by using the `exclude_patterns` doxygen parameter,
+but excluding them from bazel's build graph make the process more efficient and cache-friendly.
+It is possible to override this behavior, either by indicating the desired files directly in the `srcs` attribute,
+or by customizing the [`doxygen_rule`](#doxygen-doxygen_rule) parameter
+and the [`collect_files_aspect_factory`](#collect_files_aspect_factory) factory function for the file collection aspect.
 
 ```bzl
 # My BUILD.bazel file
@@ -179,16 +287,9 @@ cc_library(
 )
 
 cc_library(
-    name = "weird_lib",
-    hdrs = ["weird_header.h"],
-    # This weird library breaks doxygen, so skip it.
-    tags = ["doxygen_skip"],
-)
-
-cc_library(
     name = "main",
     srcs = ["main.cpp"],
-    deps = [":lib", ":weird_lib"],
+    deps = [":lib"],
 )
 
 
@@ -232,19 +333,18 @@ doxygen(
 Including the root directory among the input directories, which happens when a target starting with `//:` is used as a source,
 may cause Bazel specific folders, such as `external`, to be explored by Doxygen.
 This can slow down the documentation generation or even cause an input buffer overflow.
-To avoid this, it is recommended to use the `exclude_patterns` parameter and set it to something like `["*/external/*"]`,
-extending it with other patterns as needed.
+To avoid this, it is recommended to use the `exclude_patterns` parameter and set it to something like `["*/external/*"]`, extending it with other patterns as needed.
 
-Furthermore, when using the `deps` parameter which collects transitive dependencies (preferred for source code files),
-the default behavior is to **exclude** external files, generated files and data dependencies. Also, any target
-not falling into one of these categories can also be excluded by adding the `"doxygen_skip"` tag to its `tags` attribute.
+When using the `deps` parameter which collects transitive dependencies (preferred for source code files),
+the default behavior is to **exclude** external files, generated files and data dependencies.
+Any target not falling into one of these categories can also be excluded by adding the `"doxygen_skip"` tag to its `tags` attribute.
 
 ### Example
 
 ```bzl
 # MODULE.bazel file
 bazel_dep(name = "rules_doxygen", dev_dependency = True)
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+doxygen_extension = use_extension("@doxygen//:extensions.bzl", "doxygen_extension")
 use_repo(doxygen_extension, "doxygen")
 ```
 
@@ -260,9 +360,16 @@ cc_library(
 )
 
 cc_library(
+    name = "weird_lib",
+    hdrs = ["weird_header.h"],
+    # This weird library breaks doxygen, so skip it.
+    tags = ["doxygen_skip"],
+)
+
+cc_library(
     name = "main",
     srcs = ["main.cpp"],
-    deps = [":lib"],
+    deps = [":lib", ":weird_lib"],
 )
 
 doxygen(
@@ -300,7 +407,7 @@ doxygen(
 | <a id="doxygen-env"></a>env |  Additional environment variables to set when running doxygen.   |  `{}` |
 | <a id="doxygen-tools"></a>tools |  List of additional tools to include in the doxygen environment. Tools are executable inputs that may have their own runfiles which are automatically made available to the action.   |  `[]` |
 | <a id="doxygen-outs"></a>outs |  Output folders bazel will keep. If only the html outputs is of interest, the default value will do. otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]). Note that the rule will also generate an output group for each folder in the outs list having the same name.   |  `["html"]` |
-| <a id="doxygen-doxygen_rule"></a>doxygen_rule |  Underlying doxygen rule to use. Custom doxygen rules can be created via `doxygen_rule_factory` and `collect_files_aspect_factory` from `doxygen.bzl` to modify the default behaviors. | `default_doxygen_rule` |
+| <a id="doxygen-doxygen_rule"></a>doxygen_rule |  Custom doxygen rules can be created via [`doxygen_rule_factory`](#doxygen_rule_factory) and [`collect_files_aspect_factory`](#collect_files_aspect_factory) from `doxygen.bzl` to modify the default behaviors.   |  `<rule default_doxygen_rule>` |
 | <a id="doxygen-doxyfile_encoding"></a>doxyfile_encoding |  This tag specifies the encoding used for all characters in the configuration file that follow.   |  `None` |
 | <a id="doxygen-project_name"></a>project_name |  The `project_name` tag is a single word (or a sequence of words surrounded by double-quotes, unless you are using Doxywizard) that should identify the project for which the documentation is generated.   |  `None` |
 | <a id="doxygen-project_number"></a>project_number |  The `project_number` tag can be used to enter a project or revision number.   |  `None` |
@@ -620,75 +727,69 @@ doxygen(
 | <a id="doxygen-kwargs"></a>kwargs |  Additional arguments to pass to the rule (e.g. `visibility = ["//visibility:public"], tags = ["manual"]`)   |  none |
 
 
-<a id="default_collect_files_aspect"></a>
-
-## default_collect_files_aspect
-
-<pre>
-load("@rules_doxygen//doxygen:doxygen.bzl", "default_collect_files_aspect")
-</pre>
-
-When applied to a target, this aspect collects the source files from the target and its dependencies, and makes them available
-in the <a href="#DoxygenCollectedSourcesInfo">DoxygenCollectedSourcesInfo</a> provider.
-
-<a id="default_collect_files_aspect"></a>
-
-## default_doxygen_rule
-
-<pre>
-load("@rules_doxygen//doxygen:doxygen.bzl", "default_doxygen_rule")
-</pre>
-
-This is the default doxygen rule used by the <a href="#doxygen">`doxygen`</a> macro, which can be changed using
-the <a href="#doxygen-doxygen_rule">`doxygen_rule`</a> parameter of the macro.
-This default rule is tied to the default collection aspect <a href="#default_collect_files_aspect">`default_collect_files_aspect`</a>
-whose behavior is described in the <a href="#doxygen">`doxygen`</a> macro documentation above.
-
 <a id="doxygen_rule_factory"></a>
 
 ## doxygen_rule_factory
 
 <pre>
-load("@rules_doxygen//doxygen:doxygen.bzl", "doxygen_rule_factory")
+load("@doxygen//:doxygen.bzl", "doxygen_rule_factory")
 
-my_doxygen_rule = doxygen_rule_factory(collect_files_aspect = my_collect_files_aspect)
+doxygen_rule_factory(<a href="#doxygen_rule_factory-collect_files_aspect">collect_files_aspect</a>)
 </pre>
 
-This is a factory function (macro) to construct a doxygen rule (see parameter <a href="#doxygen-doxygen_rule">`doxygen_rule`</a>)
-suitable for the doxygen macro to use. Its primary purpose is to make the doxygen rule use a particular
-aspect for collecting files to hand down to doxygen by walking through the transitive dependencies.
+Create an underlying doxygen rule to process files with doxygen.
+
+The rule factory is only needed because some parameters affect the construction of the build graph itself, and cannot be passed via ordinary rule arguments.
+
+Use the factory in a `.bzl` file to instantiate a rule:
+```bzl
+# defs.bzl
+load("@doxygen//:doxygen.bzl", "doxygen_rule_factory")
+
+my_doxygen_rule = doxygen_rule_factory(<options>)
+```
+
+Then, use the rule in a `BUILD.bazel` file:
+```bzl
+# BUILD.bazel
+load("@doxygen//:doxygen.bzl", "doxygen")
+load("//:defs.bzl", "my_doxygen_rule")
+
+doxygen(
+    name = "doxygen",
+    srcs = glob([
+        "*.h",
+        "*.cpp",
+    ]),
+    doxygen_rule = my_doxygen_rule,
+    project_brief = "Example project for doxygen",
+    project_name = "example",
+)
+```
+
+See [`examples/dependencies`](/examples/dependencies/) for an example.
+
 
 **PARAMETERS**
 
 
 | Name  | Description | Default Value |
 | :------------- | :------------- | :------------- |
-| <a id="doxygen_rule_factory-collect_files_aspect"></a>collect_files_aspect |  Custom file collection aspect, see `collect_files_aspect_factory`.   |  default_collect_files_aspect |
+| <a id="doxygen_rule_factory-collect_files_aspect"></a>collect_files_aspect |  Custom file collection aspect, see [`collect_files_aspect_factory`](#collect_files_aspect_factory).   |  `<aspect>` |
 
-<a id="collect_files_aspect_factory"></a>
 
-## collect_files_aspect_factory
+<a id="default_collect_files_aspect"></a>
+
+## default_collect_files_aspect
 
 <pre>
-load("@rules_doxygen//doxygen:doxygen.bzl", "collect_files_aspect_factory")
+load("@doxygen//:doxygen.bzl", "default_collect_files_aspect")
 
-my_collect_files_aspect = collect_files_aspect_factory()
+default_collect_files_aspect()
 </pre>
 
-This is a factory function (macro) to construct a file collection aspect (see parameter <a href="#doxygen-doxygen_rule">`doxygen_rule`</a>)
-suitable for a doxygen rule created with <a href="#doxygen_rule_factory">`doxygen_rule_factory`</a>. This can be used
-to customize the collection of files when walking through the transitive dependencies.
-Alternatively, the user can also create an entirely custom aspect that provides
-the <a href="#DoxygenCollectedSourcesInfo">DoxygenCollectedSourcesInfo</a> provider to have full control over file collection.
+When applied to a target, this aspect collects the source files from the target and its dependencies, and makes them available in the DoxygenCollectedSourcesInfo provider.
 
-**PARAMETERS**
-
-
-| Name  | Description | Default Value |
-| :------------- | :------------- | :------------- |
-| <a id="collect_files_aspect_factory-collect_external"></a>collect_external |  Collect files from external dependencies.  |  False |
-| <a id="collect_files_aspect_factory-collect_generated"></a>collect_generated |  Collect files from generated files (e.g., protobuf generated sources).  |  False |
-| <a id="collect_files_aspect_factory-collect_data_deps"></a>collect_external |  Collect files from data dependencies.  |  False |
 
 
 

@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Support for C++20 module interfaces (thanks to @rdong8)
+- Support for customization in the collection logic of the `DoxygenCollectedSourcesInfo` provider, via the `collect_files_aspect_factory` and `doxygen_rule_factory` functions in (thanks to @mikael-s-persson)
+
+### Changed
+
+- <span style="color: darkorange;">**BREAKING**</span> The `DoxygenCollectedSourcesInfo` will ignore generated, external and data files by default. To include them, a custom aspect and rule must be created via the `collect_files_aspect_factory` and `doxygen_rule_factory` functions in `doxygen.bzl`. See [`examples/dependencies`](/examples/dependencies/) for an example (thanks to @mikael-s-persson)
+- Updated documentation
 
 ### Fix
 

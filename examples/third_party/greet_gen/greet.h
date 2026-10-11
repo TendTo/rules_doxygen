@@ -20,4 +20,4 @@ namespace greet {
  */
 std::string generated_greeting();
 
-} // namespace greet
+}  // namespace greet

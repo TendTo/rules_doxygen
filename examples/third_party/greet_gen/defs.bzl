@@ -13,10 +13,7 @@ std::string generated_greeting() {{
     return "{}";
 }}
 }} // namespace greet
-""".format(
-        out_src_filename,
-        ctx.attr.greeting,
-    )
+""".format(out_src_filename, ctx.attr.greeting)
 
     ctx.actions.write(
         output = out_src_file,
@@ -32,10 +29,7 @@ std::string generated_greeting() {{
 namespace greet {{
 static const int greeting_version = {};
 }} // namespace greet
-""".format(
-        out_hdr_filename,
-        ctx.attr.greeting_version,
-    )
+""".format(out_hdr_filename, ctx.attr.greeting_version)
 
     ctx.actions.write(
         output = out_hdr_file,
