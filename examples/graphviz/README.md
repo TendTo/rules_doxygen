@@ -1,46 +1,58 @@
-# Graphiz path example
+# Graphviz example
 
-This is an example of how to use the `doxygen` alongside `graphviz` to generate inheritance diagrams for C++ classes.
-By default, `doxygen` looks for the `dot` executable in the system path, meaning that a system installation of `graphviz` will work out of the box.
-If you want to make the build fully hermetic, you can specify the path to the `dot` executable in the `doxygen` rule, making it point to a `dot` binary of your choosing.
+This is an example of how to use `doxygen` alongside `graphviz` to generate inheritance, collaboration, and dependency diagrams for C++ classes.
+
+Remember to set `have_dot = True`, otherwise no graphs will be produced.
 
 ```bash
-bazel build //doxyfile:doxygen
+bazel build //graphviz:doxygen
 ```
 
-## Custom dot binary
+## Hermetic vs. Non-Hermetic Dot
 
-To ensure the `dot` binary is available to the rule, make sure to add it to the sources of the macro.
-Also, remember to add the `have_dot = True` parameter, otherwise no graphs will be produced.
+Depending on how `graphviz` is provided, there are two mutually exclusive ways to configure the `dot` tool:
+
+### 1. Hermetic Bazel target (`dot_executable`)
+
+For a fully hermetic build using a Bazel target (e.g. from the BCR's [`@graphviz`](https://registry.bazel.build/modules/graphviz) module or a local target), pass the label to the **`dot_executable`** attribute.
+
+> [!NOTE]
+> The `@graphviz` module in BCR requires **Bazel >= 8.0.0**. If you are using Bazel >= 8, enable `bazel_dep(name = "graphviz", version = "14.0.0.bcr.3")` in `examples/MODULE.bazel`.
 
 ```bzl
 load("@doxygen//:doxygen.bzl", "doxygen")
-
-# Assuming the binary is located in the same folder
-
-filegroup(
-    name = "dot_executable",
-    srcs = select(
-        {
-            "@platforms//os:linux": ["dot"],
-            "@platforms//os:macos": ["dot"],
-            "@platforms//os:windows": ["dot"],
-        },
-        "Unsupported platform",
-    ),
-)
-
-# Ideally, instead of using a local filegroup, you would want and external module, like "@graphviz//:bin/dot"
 
 doxygen(
     name = "doxygen",
     srcs = glob([
         "*.h",
         "*.cpp",
-        "*.sh",
-    ]) + [":dot_executable"],
-    dot_executable = ":dot_executable",
+    ]),
+    dot_executable = "@graphviz//:dot",
     have_dot = True,
     project_name = "graphviz",
 )
 ```
+
+`rules_doxygen` automatically stages the executable into the execution sandbox tools and ensures Doxygen can resolve it regardless of working directory changes during documentation generation.
+
+### 2. Non-hermetic host installation (`dot_path` or system `PATH`)
+
+For a non-hermetic build using a host installation (such as Homebrew or a system package manager):
+
+- **Specific host directory (`dot_path`)**: Specify the host directory containing the `dot` executable with `dot_path`, which corresponds directly to `DOT_PATH` in the generated `Doxyfile`:
+
+  ```bzl
+  doxygen(
+      name = "doxygen",
+      srcs = glob([
+          "*.h",
+          "*.cpp",
+      ]),
+      dot_path = "/home/linuxbrew/.linuxbrew/bin",  # or "/opt/homebrew/bin"
+      have_dot = True,
+      project_name = "graphviz",
+  )
+  ```
+
+- **System `PATH` lookup**: If `dot` is installed in a standard location on your `PATH` (such as `/usr/bin/dot`), leave both `dot_executable` and `dot_path` unset. Doxygen will automatically search the system `PATH`.
