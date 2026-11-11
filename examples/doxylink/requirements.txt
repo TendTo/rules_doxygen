@@ -12,7 +12,7 @@ Pygments==2.21.0
 pyparsing==3.2.3
 python-dateutil==2.9.0.post0
 requests==2.32.4
-roman-numerals-py==3.1.0
+roman-numerals-py==4.1.0
 six==1.17.0
 snowballstemmer==3.0.1
 Sphinx==9.2.0
