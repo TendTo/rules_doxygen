@@ -10,7 +10,9 @@ updates:
       schedule:
           interval: "weekly"
     - package-ecosystem: "bazel"
-      directories: ["/", "/examples"] # Location of package manifests
+      directories: 
+        - "/"
+        # - "/examples" # There are some dependencies that, when updated, do not support bazel 7.0.0
       schedule:
           interval: "weekly"
     - package-ecosystem: "pip"
