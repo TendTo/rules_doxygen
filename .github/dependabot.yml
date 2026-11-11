@@ -10,10 +10,10 @@ updates:
       schedule:
           interval: "weekly"
     - package-ecosystem: "bazel"
-      directory: "/" # Location of package manifests
+      directories: ["/", "/examples"] # Location of package manifests
       schedule:
           interval: "weekly"
     - package-ecosystem: "pip"
-      directory: "/" # Location of package manifests
+      directory: "/examples/doxylink" # Location of package manifests
       schedule:
           interval: "weekly"
