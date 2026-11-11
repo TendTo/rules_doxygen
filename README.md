@@ -40,7 +40,7 @@ To add the `@doxygen` repository to your module, use `doxygen_extension` under `
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
 use_repo(doxygen_extension, "doxygen")
 ```
 
@@ -52,7 +52,7 @@ You can override this value with a custom one for each supported platform, i.e. 
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
 
 # Download doxygen version 1.10.0 on linux, default version on all other platforms
 doxygen_extension.configuration(
@@ -106,7 +106,7 @@ Different strategies can be combined in the same file, one for each platform, as
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
 
 # Download doxygen version 1.10.0 on linux
 doxygen_extension.configuration(

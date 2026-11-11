@@ -350,7 +350,7 @@ You can override this value with a custom one for each supported platform, i.e. 
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
 
 # Download doxygen version 1.10.0 on linux, default version on all other platforms
 doxygen_extension.configuration(
@@ -407,7 +407,7 @@ No download will be performed, and the file indicated by the label will be used 
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
 
 # Using the 1.10.0 version of Doxygen instead of the default one.
 # Note that che checksum is correct only if the platform is windows.
@@ -425,7 +425,7 @@ use_repo(doxygen_extension, "doxygen")
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
 
 doxygen_extension.configuration(
     version = "1.10.0",
@@ -461,7 +461,7 @@ use_repo(doxygen_extension, "doxygen")
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
 
 # Download doxygen version 1.10.0 on linux
 doxygen_extension.configuration(

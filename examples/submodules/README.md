@@ -34,7 +34,7 @@ module(name = "my_module")
 
 bazel_dep(name = "rules_doxygen", version = "...")
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
 doxygen_extension.repository(name = "submodule2_doxygen")
 use_repo(doxygen_extension, "submodule2_doxygen")
 ```

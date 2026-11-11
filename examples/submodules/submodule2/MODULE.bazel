@@ -8,6 +8,6 @@ local_path_override(
 
 bazel_dep(name = "platforms", version = "1.1.0")
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension")
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
 doxygen_extension.repository(name = "submodule2_doxygen")
 use_repo(doxygen_extension, "submodule2_doxygen")

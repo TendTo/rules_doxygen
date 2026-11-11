@@ -23,7 +23,7 @@ This doxygen rule is not meant to be used directly, but instead, it should be pa
 ```bzl
 # MODULE.bazel file
 bazel_dep(name = "rules_doxygen", dev_dependency = True)
-doxygen_extension = use_extension("@doxygen//:extensions.bzl", "doxygen_extension")
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
 use_repo(doxygen_extension, "doxygen")
 ```
 
@@ -67,10 +67,10 @@ See [`examples/dependencies`](/examples/dependencies/) for an example.
 | <a id="default_doxygen_rule-configurations"></a>configurations |  Additional configuration parameters to append to the Doxyfile. For example, to set the project name, use `PROJECT_NAME = example`.   | List of strings | optional |  `[]`  |
 | <a id="default_doxygen_rule-dot_executable"></a>dot_executable |  dot executable to use. Must refer to an executable file.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `None`  |
 | <a id="default_doxygen_rule-doxyfile_prefix"></a>doxyfile_prefix |  Prefix to add to the Doxyfile path.   | String | optional |  `""`  |
-| <a id="default_doxygen_rule-doxyfile_template"></a>doxyfile_template |  Template file to use to generate the Doxyfile. You can provide your own or use the default one. The following substitutions are available: - `# {{INPUT}}`: Subpackage directory in the sandbox. - `# {{DOT_PATH}}`: Indicate to doxygen the location of the `dot_executable` - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute. - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@doxygen//:Doxyfile.template"`  |
+| <a id="default_doxygen_rule-doxyfile_template"></a>doxyfile_template |  Template file to use to generate the Doxyfile. You can provide your own or use the default one. The following substitutions are available: - `# {{INPUT}}`: Subpackage directory in the sandbox. - `# {{DOT_PATH}}`: Indicate to doxygen the location of the `dot_executable` - `# {{ADDITIONAL PARAMETERS}}`: Additional parameters given in the `configurations` attribute. - `# {{OUTPUT DIRECTORY}}`: The directory provided in the `outs` attribute.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@rules_doxygen//doxygen:Doxyfile.template"`  |
 | <a id="default_doxygen_rule-doxygen_extra_args"></a>doxygen_extra_args |  Extra arguments to pass to the doxygen executable.   | List of strings | optional |  `[]`  |
 | <a id="default_doxygen_rule-env"></a>env |  Environment variables to set when running doxygen.   | <a href="https://bazel.build/rules/lib/core/dict">Dictionary: String -> String</a> | optional |  `{}`  |
-| <a id="default_doxygen_rule-executable"></a>executable |  doxygen executable to use. Must refer to an executable file.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@doxygen//:executable"`  |
+| <a id="default_doxygen_rule-executable"></a>executable |  doxygen executable to use. Must refer to an executable file.   | <a href="https://bazel.build/concepts/labels">Label</a> | optional |  `"@rules_doxygen//doxygen:executable"`  |
 | <a id="default_doxygen_rule-host_platform"></a>host_platform |  The host platform to use for the doxygen executable. Can be one of: linux, mac, windows   | String | optional |  `"other"`  |
 | <a id="default_doxygen_rule-tools"></a>tools |  List of additional tools to include in the doxygen environment. Tools are executable inputs that may have their own runfiles which are automatically made available to the action.   | <a href="https://bazel.build/concepts/labels">List of labels</a> | optional |  `[]`  |
 | <a id="default_doxygen_rule-use_default_shell_env"></a>use_default_shell_env |  Whether to use the default shell environment when running doxygen.   | Boolean | optional |  `False`  |
@@ -81,7 +81,7 @@ See [`examples/dependencies`](/examples/dependencies/) for an example.
 ## DoxygenCollectedSourcesInfo
 
 <pre>
-load("@doxygen//:doxygen.bzl", "DoxygenCollectedSourcesInfo")
+load("@rules_doxygen//doxygen:doxygen.bzl", "DoxygenCollectedSourcesInfo")
 
 DoxygenCollectedSourcesInfo(<a href="#DoxygenCollectedSourcesInfo-srcs">srcs</a>)
 </pre>
@@ -100,7 +100,7 @@ A provider to collect source files for doxygen that are transitively upstream fr
 ## collect_files_aspect_factory
 
 <pre>
-load("@doxygen//:doxygen.bzl", "collect_files_aspect_factory")
+load("@rules_doxygen//doxygen:doxygen.bzl", "collect_files_aspect_factory")
 
 collect_files_aspect_factory(<a href="#collect_files_aspect_factory-collect_external">collect_external</a>, <a href="#collect_files_aspect_factory-collect_generated">collect_generated</a>, <a href="#collect_files_aspect_factory-collect_data_deps">collect_data_deps</a>)
 </pre>
@@ -134,7 +134,7 @@ my_collect_files_aspect = collect_files_aspect_factory(
 ## doxygen
 
 <pre>
-load("@doxygen//:doxygen.bzl", "doxygen")
+load("@rules_doxygen//doxygen:doxygen.bzl", "doxygen")
 
 doxygen(<a href="#doxygen-name">name</a>, <a href="#doxygen-srcs">srcs</a>, <a href="#doxygen-deps">deps</a>, <a href="#doxygen-executable">executable</a>, <a href="#doxygen-dot_executable">dot_executable</a>, <a href="#doxygen-configurations">configurations</a>, <a href="#doxygen-doxyfile_prefix">doxyfile_prefix</a>,
         <a href="#doxygen-doxyfile_template">doxyfile_template</a>, <a href="#doxygen-doxygen_extra_args">doxygen_extra_args</a>, <a href="#doxygen-use_default_shell_env">use_default_shell_env</a>, <a href="#doxygen-env">env</a>, <a href="#doxygen-tools">tools</a>, <a href="#doxygen-outs">outs</a>, <a href="#doxygen-doxygen_rule">doxygen_rule</a>,
@@ -218,7 +218,7 @@ Depending on the type of the attribute, the macro will convert it to the appropr
 
 For the complete list of Doxygen configuration options, please refer to the [Doxygen documentation](https://www.doxygen.nl/manual/config.html).
 
-> [!NOTE]  
+> [!NOTE]
 > If not istructed otherwise, the rule will use the Doxyfile from its default `doxygen` version.
 > Any update could change some default values or add some flags which will be unrecognized by older `doxygen` versions, resulting in innocuous warnings.
 > If you want to use a specific Doxyfile, just generate one with `doxygen -g` and specify it in the `doxyfile_template` attribute.
@@ -246,7 +246,7 @@ doxygen(
 )
 ```
 
-> [!NOTE]  
+> [!NOTE]
 > Make sure that generated files are put in some directory and that directory is included in the `outs` attribute.
 
 You can add your own substitutions by adding a rule that returns a TemplateVariableInfo provider in the `toolchains` attribute of the `doxygen` rule.
@@ -344,7 +344,7 @@ Any target not falling into one of these categories can also be excluded by addi
 ```bzl
 # MODULE.bazel file
 bazel_dep(name = "rules_doxygen", dev_dependency = True)
-doxygen_extension = use_extension("@doxygen//:extensions.bzl", "doxygen_extension")
+doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
 use_repo(doxygen_extension, "doxygen")
 ```
 
@@ -407,7 +407,7 @@ doxygen(
 | <a id="doxygen-env"></a>env |  Additional environment variables to set when running doxygen.   |  `{}` |
 | <a id="doxygen-tools"></a>tools |  List of additional tools to include in the doxygen environment. Tools are executable inputs that may have their own runfiles which are automatically made available to the action.   |  `[]` |
 | <a id="doxygen-outs"></a>outs |  Output folders bazel will keep. If only the html outputs is of interest, the default value will do. otherwise, a list of folders to keep is expected (e.g. ["html", "latex"]). Note that the rule will also generate an output group for each folder in the outs list having the same name.   |  `["html"]` |
-| <a id="doxygen-doxygen_rule"></a>doxygen_rule |  Custom doxygen rules can be created via [`doxygen_rule_factory`](#doxygen_rule_factory) and [`collect_files_aspect_factory`](#collect_files_aspect_factory) from `doxygen.bzl` to modify the default behaviors.   |  `<rule default_doxygen_rule>` |
+| <a id="doxygen-doxygen_rule"></a>doxygen_rule |  Custom doxygen rules can be created via [`doxygen_rule_factory`](#doxygen_rule_factory) and [`collect_files_aspect_factory`](#collect_files_aspect_factory) to modify the default behaviors.   |  `<rule default_doxygen_rule>` |
 | <a id="doxygen-doxyfile_encoding"></a>doxyfile_encoding |  This tag specifies the encoding used for all characters in the configuration file that follow.   |  `None` |
 | <a id="doxygen-project_name"></a>project_name |  The `project_name` tag is a single word (or a sequence of words surrounded by double-quotes, unless you are using Doxywizard) that should identify the project for which the documentation is generated.   |  `None` |
 | <a id="doxygen-project_number"></a>project_number |  The `project_number` tag can be used to enter a project or revision number.   |  `None` |
