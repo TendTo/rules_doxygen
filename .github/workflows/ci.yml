@@ -3,8 +3,10 @@ name: CI
 on:
   push:
     branches: [main]
+    paths-ignore: [.github, docs, README.md, CHANGELOG.md, LICENSE, .bcr]
   pull_request:
     branches: [main]
+    paths-ignore: [.github, docs, README.md, CHANGELOG.md, LICENSE, .bcr]
 
 env:
   DEFAULT_DOXYGEN_VERSION: "1.18.0"
