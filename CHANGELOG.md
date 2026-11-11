@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [NEXT.VERSION]
+
+## Added
+
+- Dependabot support for python and bazel dependencies.
+  Some modules in `examples` are excluded for as long as we want to support bazel `7.0.0`.
+
+## Changed
+
+- Documentation now suggests specifying `dev_dependency = True` in `use_extension` to avoid transitive dependency errors.
+
 ## [2.7.0]
 
 ### Added
