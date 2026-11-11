@@ -136,7 +136,11 @@ You can override this value with a custom one for each supported platform, i.e. 
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
+doxygen_extension = use_extension(
+    "@rules_doxygen//:extensions.bzl",
+    "doxygen_extension",
+    dev_dependency = True,
+)
 
 # Download doxygen version 1.10.0 on linux, default version on all other platforms
 doxygen_extension.configuration(
@@ -153,7 +157,10 @@ If you don't know the SHA256 value, just leave it empty.
 The build will fail with an error message containing the correct SHA256.
 
 ```bash
-Download from https://github.com/doxygen/doxygen/releases/download/Release_1_10_0/doxygen-1.10.0.windows.x64.bin.zip failed: class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b but wanted 0000000000000000000000000000000000000000000000000000000000000000
+Download from https://github.com/doxygen/doxygen/releases/... failed:
+class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException
+Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b
+but wanted 0000000000000000000000000000000000000000000000000000000000000000
 ```
 
 > [!TIP]  
@@ -193,7 +200,11 @@ No download will be performed, and the file indicated by the label will be used 
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
+doxygen_extension = use_extension(
+    "@rules_doxygen//:extensions.bzl",
+    "doxygen_extension",
+    dev_dependency = True,
+)
 
 # Using the 1.10.0 version of Doxygen instead of the default one.
 # Note that che checksum is correct only if the platform is windows.
@@ -211,7 +222,11 @@ use_repo(doxygen_extension, "doxygen")
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
+doxygen_extension = use_extension(
+    "@rules_doxygen//:extensions.bzl",
+    "doxygen_extension",
+    dev_dependency = True,
+)
 
 doxygen_extension.configuration(
     version = "1.10.0",
@@ -247,7 +262,11 @@ use_repo(doxygen_extension, "doxygen")
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
+doxygen_extension = use_extension(
+    "@rules_doxygen//:extensions.bzl",
+    "doxygen_extension",
+    dev_dependency = True,
+)
 
 # Download doxygen version 1.10.0 on linux
 doxygen_extension.configuration(

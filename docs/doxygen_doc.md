@@ -23,7 +23,11 @@ This doxygen rule is not meant to be used directly, but instead, it should be pa
 ```bzl
 # MODULE.bazel file
 bazel_dep(name = "rules_doxygen", dev_dependency = True)
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
+doxygen_extension = use_extension(
+    "@rules_doxygen//:extensions.bzl",
+    "doxygen_extension",
+    dev_dependency = True,
+)
 use_repo(doxygen_extension, "doxygen")
 ```
 
@@ -344,7 +348,11 @@ Any target not falling into one of these categories can also be excluded by addi
 ```bzl
 # MODULE.bazel file
 bazel_dep(name = "rules_doxygen", dev_dependency = True)
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
+doxygen_extension = use_extension(
+    "@rules_doxygen//:extensions.bzl",
+    "doxygen_extension",
+    dev_dependency = True,
+)
 use_repo(doxygen_extension, "doxygen")
 ```
 

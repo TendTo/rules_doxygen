@@ -28,7 +28,11 @@ cat << EOF
 
 bazel_dep(name = "rules_doxygen", version = "${TAG}", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
+doxygen_extension = use_extension(
+    "@rules_doxygen//:extensions.bzl",
+    "doxygen_extension",
+    dev_dependency = True,
+)
 
 # Specify the desired version of Doxygen to use
 # ...

@@ -40,7 +40,11 @@ To add the `@doxygen` repository to your module, use `doxygen_extension` under `
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
+doxygen_extension = use_extension(
+    "@rules_doxygen//:extensions.bzl",
+    "doxygen_extension",
+    dev_dependency = True,
+)
 use_repo(doxygen_extension, "doxygen")
 ```
 
@@ -52,7 +56,11 @@ You can override this value with a custom one for each supported platform, i.e. 
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
+doxygen_extension = use_extension(
+    "@rules_doxygen//:extensions.bzl",
+    "doxygen_extension",
+    dev_dependency = True,
+)
 
 # Download doxygen version 1.10.0 on linux, default version on all other platforms
 doxygen_extension.configuration(
@@ -69,9 +77,9 @@ If you don't know the SHA256 value, just leave it empty.
 The build will fail with an error message containing the correct SHA256.
 
 ```bash
-Download from https://github.com/doxygen/doxygen/releases/... failed: 
-class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException 
-Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b 
+Download from https://github.com/doxygen/doxygen/releases/... failed:
+class com.google.devtools.build.lib.bazel.repository.downloader.UnrecoverableHttpException
+Checksum was 2135c1d5bdd6e067b3d0c40a4daac5d63d0fee1b3f4d6ef1e4f092db0d632d5b
 but wanted 0000000000000000000000000000000000000000000000000000000000000000
 ```
 
@@ -106,7 +114,11 @@ Different strategies can be combined in the same file, one for each platform, as
 
 bazel_dep(name = "rules_doxygen", version = "...", dev_dependency = True)
 
-doxygen_extension = use_extension("@rules_doxygen//:extensions.bzl", "doxygen_extension", dev_dependency = True)
+doxygen_extension = use_extension(
+    "@rules_doxygen//:extensions.bzl",
+    "doxygen_extension",
+    dev_dependency = True,
+)
 
 # Download doxygen version 1.10.0 on linux
 doxygen_extension.configuration(
@@ -181,7 +193,7 @@ doxygen(
 > [!NOTE]  
 > `srcs` and `deps` attributes are **not** interchangeable.
 > Use `srcs` with files and when you want to capture the output of another rule, and use `deps` when you want to capture the source files of other rules transitively. See the [documentation](docs/doxygen_doc.md) for more information. The `"doxygen_skip"` tag can be added to the `tags` attribute of
-a target to exclude it during the transitive dependencies being gathered.
+> a target to exclude it during the transitive dependencies being gathered.
 
 Use the [Doxygen documentation](https://www.doxygen.nl/manual/config.html) or generate a brand new _Doxyfile_ with `doxygen -g` to see all the available options to put in the `configurations` list.
 They will simply be appended at the end of the file, overriding the default values.
