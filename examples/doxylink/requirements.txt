@@ -11,7 +11,7 @@ packaging==26.3
 Pygments==2.21.0
 pyparsing==3.3.3
 python-dateutil==4.0.0
-requests==2.32.4
+requests==2.34.2
 roman-numerals-py==4.1.0
 six==1.17.0
 snowballstemmer==3.1.1
